@@ -1,0 +1,233 @@
+---
+id: aula-1
+title: Aula 1 — Introdução à computação em nuvem
+sidebar_position: 2
+description: Evolução da computação centralizada à nuvem, características, benefícios e limitações.
+---
+
+
+**Disciplina:** Tópicos em Cloud Computing  
+
+## Objetivos de aprendizagem
+
+Ao final da aula, o estudante deverá ser capaz de:
+
+- descrever, em linhas gerais, a evolução da computação centralizada até a computação em nuvem;
+- explicar o que é computação em nuvem e reconhecer suas características essenciais;
+- diferenciar a contratação de um servidor hospedado da utilização de serviços de nuvem;
+- discutir benefícios, limitações e responsabilidades associados ao uso da nuvem.
+
+## 1. Abertura: onde está a nuvem?
+
+Quando usamos e-mail, armazenamento de fotos, uma plataforma de streaming ou um sistema acadêmico, acessamos esses serviços pela rede. A expressão “está na nuvem” pode dar a impressão de que os dados ficam em um lugar abstrato. Na prática, os serviços são executados em computadores, dispositivos de armazenamento e redes instalados em centros de processamento de dados.
+
+A diferença está em como esses recursos são organizados, disponibilizados e consumidos. A nuvem oferece recursos computacionais por meio de serviços que podem ser provisionados conforme a necessidade, acessados pela rede e acompanhados por mecanismos de gestão e cobrança.
+
+**Pergunta inicial:** quando alguém salva um arquivo em um serviço de nuvem, que equipamentos e serviços precisam funcionar para que esse arquivo possa ser acessado depois?
+
+Respostas esperadas: dispositivo do usuário, conexão de rede, DNS e outros componentes de comunicação, servidores, armazenamento, sistemas de autenticação, energia, refrigeração e mecanismos de cópia e proteção de dados.
+
+## 2. Evolução dos modelos de computação
+
+A computação em nuvem não surgiu de uma única tecnologia. Ela resulta da combinação de ideias e avanços em computação, redes, virtualização e automação.
+
+### 2.1 Computação centralizada
+
+Nos primeiros modelos de uso corporativo, um computador central concentrava processamento e dados. Terminais conectados permitiam que usuários interagissem com esse computador, mas normalmente tinham pouca capacidade de processamento próprio.
+
+**Características:**
+
+- processamento e armazenamento concentrados;
+- administração centralizada;
+- usuários dependentes do computador central e da rede de acesso;
+- expansão geralmente associada à aquisição ou atualização do equipamento central.
+
+**Exemplo conceitual:** vários terminais de uma organização acessam um sistema executado em um computador central.
+
+### 2.2 Modelo cliente-servidor
+
+Com o avanço dos computadores pessoais e das redes, tornou-se comum dividir responsabilidades entre clientes e servidores. O cliente inicia uma solicitação; o servidor fornece dados, processamento ou algum serviço.
+
+**Características:**
+
+- o cliente pode executar parte da interface e de outras tarefas;
+- o servidor atende solicitações e pode concentrar dados ou regras do sistema;
+- clientes e servidores comunicam-se por uma rede;
+- a organização precisa administrar os servidores e planejar sua capacidade.
+
+**Exemplo:** um navegador solicita uma página a um servidor web; o servidor responde com o conteúdo solicitado.
+
+### 2.3 Virtualização
+
+A virtualização permite criar ambientes computacionais isolados sobre um mesmo equipamento físico. Um hipervisor pode distribuir recursos do servidor entre várias máquinas virtuais, cada uma com seu próprio sistema operacional e aplicações.
+
+**Por que isso foi importante para a nuvem?**
+
+- melhora o aproveitamento de servidores físicos;
+- permite criar e remover ambientes de forma mais rápida;
+- facilita isolamento e administração de cargas de trabalho;
+- ajuda a transformar capacidade física em recursos que podem ser provisionados por software.
+
+A virtualização, por si só, não é computação em nuvem. Ela é uma tecnologia que pode ser usada para fornecer recursos de nuvem, mas não garante autosserviço, elasticidade, medição de uso ou provisionamento automatizado.
+
+### 2.4 Computação em nuvem
+
+A nuvem amplia a ideia de recursos virtualizados e compartilhados ao oferecê-los como serviços acessíveis pela rede. O consumidor pode solicitar recursos sem precisar comprar e instalar toda a infraestrutura física, enquanto o provedor opera os equipamentos e a plataforma subjacente conforme o modelo contratado.
+
+Isso não significa que todo recurso seja criado instantaneamente nem que o consumidor deixe de ter responsabilidades. O nível de controle e de administração depende do serviço utilizado.
+
+## 3. O que é computação em nuvem?
+
+**Computação em nuvem** é um modelo de disponibilização e consumo de recursos computacionais por meio da rede, sob demanda, com capacidade de provisionamento e liberação flexíveis, compartilhamento de recursos e medição do uso.
+
+Entre os recursos oferecidos podem estar:
+
+- processamento e máquinas virtuais;
+- redes virtuais e conectividade;
+- armazenamento e bancos de dados;
+- plataformas para executar aplicações;
+- aplicações prontas para uso;
+- monitoramento, identidade, segurança e outros serviços gerenciados.
+
+Uma definição importante para estudos de computação em nuvem é a do NIST, que descreve a nuvem por características essenciais, modelos de serviço e modelos de implantação. Nesta aula, vamos nos concentrar nas características essenciais.
+
+## 4. Características essenciais
+
+### 4.1 Acesso sob demanda
+
+O consumidor pode solicitar recursos quando precisa deles, normalmente por um portal, uma interface de gerenciamento ou um processo automatizado. Em ambientes empresariais, a solicitação pode depender de permissões e políticas internas.
+
+**Exemplo:** uma equipe solicita uma máquina virtual para um ambiente temporário de testes e a remove quando o trabalho termina.
+
+**Atenção:** sob demanda não significa acesso sem autorização. O uso continua sujeito a identidade, permissões, limites e políticas.
+
+### 4.2 Elasticidade
+
+Elasticidade é a capacidade de aumentar ou reduzir recursos conforme a demanda. Essa mudança pode ser manual ou automatizada.
+
+**Exemplo:** durante o período de matrícula, um portal recebe muito mais acessos. A infraestrutura pode ampliar a capacidade e, depois, reduzi-la quando a procura diminuir.
+
+Elasticidade não é ilimitada. Pode haver limites de serviço, demora para ampliar certos recursos e custos associados ao aumento de capacidade. Além disso, aumentar servidores não corrige necessariamente gargalos causados por banco de dados, rede ou decisões de arquitetura.
+
+### 4.3 Compartilhamento de recursos
+
+O provedor organiza recursos físicos para atender vários consumidores. A separação lógica e os controles de segurança buscam manter os ambientes isolados, mesmo quando parte da infraestrutura física é compartilhada.
+
+**Exemplo:** diversas organizações utilizam serviços do mesmo provedor, embora cada uma tenha seus próprios recursos, configurações e controles de acesso.
+
+O compartilhamento não significa que um cliente possa acessar os dados de outro. Isolamento, configuração correta e segurança são requisitos fundamentais.
+
+### 4.4 Medição de uso
+
+O provedor mede aspectos do consumo, como tempo de uso de processamento, espaço armazenado, quantidade de operações ou volume de dados transferidos. A medição pode embasar a cobrança, relatórios, limites e decisões de capacidade.
+
+**Exemplo:** uma organização acompanha quanto armazenamento está usando e quanto tráfego de saída foi transferido em determinado período.
+
+A cobrança pode envolver vários componentes. Por isso, “pagar apenas pelo que usa” não significa automaticamente “pagar pouco”: recursos esquecidos, transferência de dados e serviços complementares também podem gerar custos.
+
+## 5. Hospedar um servidor e consumir um serviço de nuvem
+
+A fronteira nem sempre é absoluta. Um servidor virtual contratado de um provedor pode ser chamado de serviço de nuvem, mas a experiência pode se parecer com a hospedagem tradicional se o cliente precisar administrar quase tudo manualmente. O importante é analisar o que está sendo oferecido e quem administra cada camada.
+
+| Aspecto | Servidor hospedado tradicional | Serviço de nuvem |
+|---|---|---|
+| Aquisição de infraestrutura | O cliente contrata capacidade definida ou uma máquina dedicada/virtual. | O cliente consome recursos disponibilizados por uma plataforma de serviços. |
+| Provisionamento | Pode exigir solicitação e intervenção do provedor. | Pode ser feito sob demanda por interfaces e automação, conforme permissões. |
+| Escala | Frequentemente exige mudança de plano ou solicitação de mais capacidade. | Pode permitir expansão e redução mais flexíveis, dependendo do serviço. |
+| Cobrança | Pode ser mensal e relativamente fixa. | Pode variar conforme capacidade, tempo, armazenamento, tráfego e operações. |
+| Administração | O cliente pode administrar sistema operacional, atualizações e aplicações. | A divisão varia: em alguns serviços, o provedor administra mais componentes. |
+| Responsabilidade | Depende do contrato; é comum o cliente ter maior responsabilidade pelo ambiente. | É compartilhada entre cliente e provedor, de acordo com o serviço contratado. |
+
+**Exemplo comparativo:**
+
+- **Hospedagem:** contratar um servidor virtual com recursos definidos e administrar sistema operacional, servidor web, atualizações e aplicação.
+- **Nuvem:** contratar uma máquina virtual sob demanda, usar armazenamento como serviço, banco de dados gerenciado e ferramentas de monitoramento. O cliente ainda configura a aplicação e as permissões, mas parte da infraestrutura pode ser administrada pelo provedor.
+
+Um servidor virtual em nuvem continua sendo um servidor. A diferença está no modelo de disponibilização, automação, elasticidade, integração com serviços e medição do consumo.
+
+## 6. Benefícios da computação em nuvem
+
+### Agilidade
+
+Novos recursos podem ser disponibilizados em menos tempo do que seria necessário para comprar, instalar e configurar equipamentos próprios. Isso facilita testes, projetos temporários e expansão de serviços.
+
+### Escala e elasticidade
+
+A capacidade pode acompanhar mudanças na demanda, evitando que a infraestrutura precise ser dimensionada apenas para o pico máximo o tempo todo. Isso depende de arquitetura adequada e de limites do serviço.
+
+### Alcance geográfico
+
+Provedores podem oferecer infraestrutura em diferentes regiões. Isso pode aproximar serviços dos usuários e apoiar estratégias de continuidade, observando latência, regulamentação e custos.
+
+### Acesso a serviços gerenciados
+
+Serviços de banco de dados, armazenamento, identidade e monitoramento podem reduzir tarefas operacionais que a organização teria de executar integralmente por conta própria.
+
+### Menor investimento inicial em infraestrutura
+
+A organização pode evitar a compra imediata de todos os equipamentos. Porém, os custos recorrentes precisam ser planejados e comparados ao custo total de uma solução própria.
+
+## 7. Limitações e riscos
+
+### Dependência de conectividade
+
+Os serviços precisam ser alcançados pela rede. Problemas de conexão do usuário ou da organização podem impedir o acesso, mesmo que os recursos do provedor estejam funcionando.
+
+### Custos variáveis e difíceis de prever
+
+O consumo pode crescer sem que a equipe perceba imediatamente. Transferência de dados, armazenamento acumulado, recursos ociosos e configurações inadequadas podem elevar a fatura.
+
+### Dependência do provedor
+
+Serviços e interfaces específicos podem dificultar a migração para outro provedor ou para uma infraestrutura própria. Esse risco é chamado de dependência ou aprisionamento tecnológico (*vendor lock-in*).
+
+### Responsabilidade compartilhada
+
+O provedor protege e opera determinadas camadas, mas o cliente continua responsável por aspectos como permissões, configuração de recursos, proteção das credenciais e tratamento dos dados, conforme o serviço utilizado.
+
+### Disponibilidade não é automática
+
+A nuvem oferece recursos para projetar resiliência, mas uma aplicação pode ficar indisponível por falhas de configuração, erros de software, problemas de identidade, esgotamento de cotas ou falhas na conectividade do próprio consumidor.
+
+### Privacidade, legislação e localização dos dados
+
+A organização precisa avaliar que dados serão armazenados, quem poderá acessá-los, onde serão processados e quais regras se aplicam. Usar um provedor não transfere toda a responsabilidade sobre os dados.
+
+## 8. Atividade de discussão — “Nuvem ou servidor próprio?”
+
+> Uma instituição de ensino mantém um portal acadêmico usado durante todo o semestre. Nos períodos de matrícula, o volume de acessos aumenta muito. A equipe é pequena, o orçamento é limitado e o portal precisa armazenar documentos e dados pessoais. A conexão com a internet do campus também pode apresentar instabilidade.
+
+Cada grupo deve discutir e registrar respostas para estas perguntas:
+
+1. Que benefícios da nuvem seriam relevantes nesse cenário?
+2. Que limitações e riscos deveriam ser considerados?
+3. Quais recursos poderiam ser consumidos como serviço?
+4. O que precisa ser planejado para controlar custos variáveis?
+5. Como a instabilidade da conexão do campus afetaria usuários dentro e fora da instituição?
+6. Quais responsabilidades continuariam com a instituição, mesmo usando um provedor?
+
+## 9. Questões de revisão
+
+1. Qual é a principal diferença entre computação centralizada e o modelo cliente-servidor?
+2. Por que a virtualização é importante para a computação em nuvem? Ela, isoladamente, é suficiente para caracterizar uma nuvem?
+3. O que significa dizer que um recurso é disponibilizado sob demanda?
+4. Dê um exemplo de elasticidade e explique por que ela não significa capacidade ilimitada.
+5. O que significa compartilhamento de recursos em um provedor de nuvem?
+6. Cite dois exemplos de uso que podem ser medidos para fins de acompanhamento ou cobrança.
+7. Um servidor virtual contratado na internet é necessariamente diferente de um servidor hospedado? Explique.
+8. Cite dois benefícios e duas limitações da computação em nuvem.
+9. Por que a nuvem não elimina a responsabilidade do cliente pela segurança?
+10. Por que o uso de nuvem pode gerar uma conta maior do que a esperada?
+
+## Conceitos-chave
+
+- A nuvem usa recursos físicos reais organizados e disponibilizados como serviços pela rede.
+- Virtualização contribui para a nuvem, mas não é sinônimo de nuvem.
+- Recursos sob demanda podem ser provisionados e liberados conforme necessidade e autorização.
+- Elasticidade, compartilhamento e medição ajudam a distinguir o modelo de nuvem.
+- A nuvem pode oferecer agilidade, escala e alcance, mas exige atenção a conectividade, custos, segurança e dependência do provedor.
+- A responsabilidade é compartilhada e varia conforme o serviço contratado.
+
+## Referência introdutória
+
+- MELL, Peter; GRANCE, Timothy. *The NIST Definition of Cloud Computing*. NIST Special Publication 800-145. National Institute of Standards and Technology, 2011.
