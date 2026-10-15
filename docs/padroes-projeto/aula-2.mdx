@@ -1,0 +1,357 @@
+---
+id: aula-02-solid-srp-ocp-lsp
+title: "Aula 2 — SOLID: SRP, OCP e LSP"
+sidebar_label: "Aula 2 — SOLID (parte 1)"
+description: "Introdução aos princípios SOLID: responsabilidade única, aberto/fechado e substituição de Liskov, com exemplos e exercícios em Java."
+---
+
+# Princípios SOLID — Parte 1
+
+## 1. Por que estudar SOLID?
+
+Um sistema pode funcionar e, ainda assim, ser difícil de modificar.
+
+**Problemas frequentes:**
+
+- Alterar uma funcionalidade quebra outra.
+- Uma classe concentra muitas responsabilidades.
+- Adicionar uma opção exige editar vários `if/else`.
+- Uma subclasse não se comporta como o tipo que representa.
+
+> O que acontece com a manutenção quando o software cresce?
+
+---
+
+## 2. O que significa SOLID?
+
+SOLID reúne cinco princípios de projeto orientado a objetos.
+
+| Letra | Princípio | Ideia central |
+|---|---|---|
+| **S** | Single Responsibility | Uma razão para mudar |
+| **O** | Open/Closed | Estender sem alterar o código estável |
+| **L** | Liskov Substitution | Subtipos respeitam o contrato do tipo-base |
+| **I** | Interface Segregation | Interfaces específicas |
+| **D** | Dependency Inversion | Depender de abstrações |
+
+**Hoje:** S, O e L. **Próxima aula:** I e D.
+
+:::tip Importante
+SOLID orienta decisões de projeto. Não é uma lista de regras mecânicas.
+:::
+
+---
+
+## 3. SRP — Single Responsibility Principle
+
+### Princípio da Responsabilidade Única
+
+> Uma classe deve ter **uma única razão para mudar**.
+
+**Exemplo:** regras de cálculo e envio de mensagens mudam por motivos diferentes.
+
+- Cálculo: mudança de regra de negócio.
+- E-mail: mudança de canal ou tecnologia de notificação.
+
+**Pergunta:** essas responsabilidades deveriam ficar na mesma classe?
+
+---
+
+## 4. SRP — Exemplo com problema
+
+```java
+public class PedidoService {
+    public double calcularTotal(double preco, int quantidade) {
+        return preco * quantidade;
+    }
+
+    public void enviarEmail(String destinatario) {
+        System.out.println("E-mail para: " + destinatario);
+    }
+
+    public void salvarPedido() {
+        System.out.println("Salvando pedido...");
+    }
+}
+```
+
+**O que observar?**
+
+- Regras de cálculo, comunicação e persistência na mesma classe.
+- Mudanças independentes podem atingir `PedidoService`.
+
+---
+
+## 5. SRP — Separando responsabilidades
+
+```java
+public class CalculadoraPedido {
+    public double calcularTotal(double preco, int quantidade) {
+        return preco * quantidade;
+    }
+}
+
+public class EmailService {
+    public void enviar(String destinatario) {
+        System.out.println("E-mail para: " + destinatario);
+    }
+}
+
+public class PedidoRepository {
+    public void salvar() {
+        System.out.println("Salvando pedido...");
+    }
+}
+```
+
+**Resultado:** cada classe reúne responsabilidades relacionadas.
+
+:::note Observe
+SRP não significa “uma classe com um único método”. O importante é a **razão para mudar**.
+:::
+
+---
+
+## 6. SRP — Discussão rápida
+
+**Uma classe `Funcionario` possui:**
+
+- `calcularSalario()`
+- `gerarHoleritePdf()`
+- `salvarNoBanco()`
+
+**Perguntas:**
+
+1. Quais são as diferentes razões para mudança?
+2. Que classes poderiam receber essas responsabilidades?
+3. Separar responsabilidades elimina todas as dependências?
+
+---
+
+## 7. OCP — Open/Closed Principle
+
+### Princípio Aberto/Fechado
+
+> Componentes devem estar **abertos para extensão** e **fechados para modificação**.
+
+**Na prática:** novas variações de comportamento deveriam exigir poucas ou nenhuma alteração no código já estável.
+
+**Exemplo:** adicionar um novo tipo de desconto sem editar continuamente a classe que calcula o preço final.
+
+---
+
+## 8. OCP — Exemplo com problema
+
+```java
+public class CalculadoraDesconto {
+    public double aplicar(double valor, String tipo) {
+        if (tipo.equals("COMUM")) {
+            return valor;
+        } else if (tipo.equals("VIP")) {
+            return valor * 0.90;
+        } else if (tipo.equals("FUNCIONARIO")) {
+            return valor * 0.80;
+        }
+        throw new IllegalArgumentException("Tipo inválido");
+    }
+}
+```
+
+**Problema:** cada nova categoria exige alterar o método `aplicar()`.
+
+**Pergunta:** como adicionar novos descontos sem modificar a calculadora?
+
+---
+
+## 9. OCP — Usando polimorfismo
+
+```java
+public interface Desconto {
+    double aplicar(double valor);
+}
+
+public class DescontoVip implements Desconto {
+    public double aplicar(double valor) {
+        return valor * 0.90;
+    }
+}
+
+public class DescontoFuncionario implements Desconto {
+    public double aplicar(double valor) {
+        return valor * 0.80;
+    }
+}
+```
+
+**Ideia:** cada regra de desconto é uma implementação do mesmo contrato.
+
+---
+
+## 10. OCP — Uma calculadora extensível
+
+```java
+public class CalculadoraDesconto {
+    public double calcular(double valor, Desconto desconto) {
+        return desconto.aplicar(valor);
+    }
+}
+```
+
+**Uso:**
+
+```java
+CalculadoraDesconto calculadora = new CalculadoraDesconto();
+
+double valorFinal = calculadora.calcular(
+    100.0, new DescontoVip()
+);
+```
+
+**Nova categoria?** Implemente `Desconto`; não é necessário alterar `CalculadoraDesconto`.
+
+:::tip Conexão com padrões
+Essa organização prepara o terreno para o padrão **Strategy**.
+:::
+
+---
+
+## 11. OCP — Quando aplicar?
+
+**Faz sentido quando:**
+
+- Existem variações conhecidas de uma regra.
+- Novas implementações são adicionadas com frequência.
+- Uma sequência de condicionais cresce a cada mudança.
+
+**Não significa:** criar interfaces para qualquer classe ou proibir todas as alterações.
+
+**Pergunta:** três linhas simples que nunca mudam precisam de uma hierarquia de classes?
+
+---
+
+## 12. LSP — Liskov Substitution Principle
+
+### Princípio da Substituição de Liskov
+
+> Um objeto de uma subclasse deve poder substituir um objeto do tipo-base **sem quebrar as expectativas do código cliente**.
+
+**Atenção:** herdar de uma classe não garante que o subtipo respeite seu contrato.
+
+**Pergunta:** se um método recebe um `Passaro`, ele pode assumir que todo pássaro voa?
+
+---
+
+## 13. LSP — Exemplo com problema
+
+```java
+public class Passaro {
+    public void voar() {
+        System.out.println("Voando...");
+    }
+}
+
+public class Pinguim extends Passaro {
+    @Override
+    public void voar() {
+        throw new UnsupportedOperationException("Não voa");
+    }
+}
+```
+
+**Código cliente:**
+
+```java
+public void iniciarVoo(Passaro passaro) {
+    passaro.voar();
+}
+```
+
+**Problema:** `iniciarVoo(new Pinguim())` falha, embora `Pinguim` seja um `Passaro`.
+
+---
+
+## 14. LSP — Modelagem mais adequada
+
+```java
+public abstract class Passaro {
+    public abstract void seAlimentar();
+}
+
+public interface Voador {
+    void voar();
+}
+
+public class Aguia extends Passaro implements Voador {
+    public void seAlimentar() { /* ... */ }
+    public void voar() { System.out.println("Voando"); }
+}
+
+public class Pinguim extends Passaro {
+    public void seAlimentar() { /* ... */ }
+}
+```
+
+**Resultado:** o código que necessita de voo recebe um `Voador`, não qualquer `Passaro`.
+
+---
+
+## 15. LSP — O que observar em uma substituição?
+
+Uma subclasse não deveria surpreender quem utiliza o tipo-base.
+
+**Sinais de alerta:**
+
+- Lançar exceções para operações prometidas pelo contrato.
+- Exigir condições mais restritivas do que o tipo-base.
+- Deixar de garantir resultados esperados pelo cliente.
+
+:::caution Atenção
+LSP é sobre **comportamento e contratos**, não apenas sobre compilar ou ter a mesma assinatura de método.
+:::
+
+---
+
+## 16. Comparando SRP, OCP e LSP
+
+| Princípio | Pergunta de revisão |
+|---|---|
+| **SRP** | Esta classe possui razões independentes para mudar? |
+| **OCP** | Consigo adicionar uma variação sem alterar repetidamente o código central? |
+| **LSP** | Uma implementação pode substituir outra sem violar o contrato? |
+
+**Relação com a aula anterior:**
+
+- SRP favorece **coesão**.
+- OCP pode reduzir o **acoplamento com regras concretas**.
+- LSP torna o **polimorfismo confiável**.
+
+---
+
+## 17. Atividade prática — Refatoração
+
+**Cenário:** sistema de cálculo de frete.
+
+```java
+public class FreteService {
+    public double calcular(String modalidade, double peso) {
+        if (modalidade.equals("NORMAL")) {
+            return peso * 5;
+        }
+        if (modalidade.equals("EXPRESSO")) {
+            return peso * 10;
+        }
+        throw new IllegalArgumentException("Modalidade inválida");
+    }
+
+    public void enviarEmailConfirmacao() {
+        System.out.println("Frete calculado!");
+    }
+}
+```
+
+1. Identifique o problema relacionado ao **SRP**.
+2. Refatore os cálculos usando uma interface `Frete` (**OCP**).
+3. Crie as implementações `FreteNormal` e `FreteExpresso`.
+4. Acrescente `FreteRetirada`, com custo zero, sem alterar a calculadora.
+5. Explique como as implementações respeitam o contrato (**LSP**).
+

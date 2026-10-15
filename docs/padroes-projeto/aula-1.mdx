@@ -1,0 +1,292 @@
+---
+id: aula-01-poo-coesao-acoplamento
+title: "Aula 1 — POO, Coesão e Acoplamento"
+sidebar_label: "Aula 1 — POO e Qualidade de Código"
+description: "Revisão de orientação a objetos, interfaces, herança, composição, coesão, acoplamento e reutilização com exemplos em Java."
+---
+
+# Revisão de POO e Qualidade de Código
+
+## 1. Por que revisar POO?
+
+Padrões de projeto utilizam conceitos da **Programação Orientada a Objetos** para resolver problemas recorrentes.
+
+**Pergunta para a turma:**
+
+> Um código que funciona necessariamente possui um bom projeto?
+
+**Ideia-chave:** funcionar é importante; **facilidade de manutenção e evolução** também.
+
+---
+
+## 2. Os quatro pilares da POO
+
+| Pilar | Ideia principal |
+|---|---|
+| **Abstração** | Representar apenas o que importa para o problema |
+| **Encapsulamento** | Proteger o estado e controlar seu acesso |
+| **Herança** | Especializar comportamentos de uma classe |
+| **Polimorfismo** | Usar diferentes implementações por um contrato comum |
+
+:::tip Para lembrar
+Um bom projeto orientado a objetos distribui **responsabilidades**, não apenas atributos e métodos.
+:::
+
+---
+
+## 3. Encapsulamento na prática
+
+```java
+public class Conta {
+    private double saldo;
+
+    public void depositar(double valor) {
+        if (valor <= 0) {
+            throw new IllegalArgumentException("Valor inválido");
+        }
+        saldo += valor;
+    }
+
+    public double getSaldo() {
+        return saldo;
+    }
+}
+```
+
+**Observe:** o saldo não pode ser alterado diretamente por outra classe.
+
+**Pergunta:** por que um `setSaldo()` público poderia ser problemático?
+
+---
+
+## 4. Interfaces: contratos entre objetos
+
+Uma **interface** define operações que diferentes classes podem implementar.
+
+```java
+public interface Notificador {
+    void enviar(String mensagem);
+}
+
+public class NotificadorEmail implements Notificador {
+    @Override
+    public void enviar(String mensagem) {
+        System.out.println("E-mail: " + mensagem);
+    }
+}
+
+public class NotificadorSms implements Notificador {
+    @Override
+    public void enviar(String mensagem) {
+        System.out.println("SMS: " + mensagem);
+    }
+}
+```
+
+**Vantagem:** diferentes notificadores seguem o mesmo contrato.
+
+---
+
+## 5. Polimorfismo: mesmo contrato, comportamentos diferentes
+
+```java
+public class AvisoService {
+    private final Notificador notificador;
+
+    public AvisoService(Notificador notificador) {
+        this.notificador = notificador;
+    }
+
+    public void avisar() {
+        notificador.enviar("Pedido aprovado!");
+    }
+}
+```
+
+```java
+AvisoService email = new AvisoService(new NotificadorEmail());
+AvisoService sms = new AvisoService(new NotificadorSms());
+
+email.avisar();
+sms.avisar();
+```
+
+**Ideia-chave:** `AvisoService` depende do contrato `Notificador`, não de um canal específico.
+
+---
+
+## 6. Herança: relação «é um»
+
+A herança permite que uma classe especialize outra.
+
+```java
+public class Funcionario {
+    public String descricao() {
+        return "Funcionário";
+    }
+}
+
+public class Gerente extends Funcionario {
+    @Override
+    public String descricao() {
+        return "Gerente";
+    }
+}
+```
+
+- `Gerente` **é um** `Funcionario`.
+- O método pode ser especializado pela subclasse.
+
+:::caution Atenção
+Herança cria uma relação entre superclasse e subclasses. Mudanças na superclasse podem afetar suas subclasses.
+:::
+
+---
+
+## 7. Composição: relação «tem um»
+
+Na composição, um objeto utiliza outro para realizar parte do seu trabalho.
+
+```java
+public class PedidoService {
+    private final Notificador notificador;
+
+    public PedidoService(Notificador notificador) {
+        this.notificador = notificador;
+    }
+
+    public void confirmarPedido() {
+        System.out.println("Pedido confirmado!");
+        notificador.enviar("Seu pedido foi confirmado.");
+    }
+}
+```
+
+- `PedidoService` **tem um** `Notificador`.
+- É possível trocar a implementação sem alterar `PedidoService`.
+
+---
+
+## 8. Herança ou composição?
+
+| Herança | Composição |
+|---|---|
+| Relação **é um** | Relação **tem um** |
+| Especializa uma classe | Combina objetos |
+| Pode gerar maior dependência da superclasse | Permite substituir colaboradores |
+| Útil para hierarquias bem definidas | Útil para comportamentos variáveis |
+
+**Regra prática:** prefira composição quando a necessidade é **combinar ou trocar comportamentos**, e herança quando existe uma relação genuína de especialização.
+
+**Pergunta:** `Carro` deve herdar de `Motor` ou possuir um `Motor`?
+
+---
+
+## 9. Coesão: responsabilidades relacionadas
+
+**Coesão** indica o quanto as responsabilidades de uma classe estão relacionadas entre si.
+
+**Baixa coesão:**
+
+```java
+public class PedidoUtils {
+    void calcularTotal() { /* ... */ }
+    void enviarEmail() { /* ... */ }
+    void gerarRelatorio() { /* ... */ }
+    void autenticarUsuario() { /* ... */ }
+}
+```
+
+**Problema:** a classe reúne assuntos diferentes.
+
+**Boa direção:** separar cálculo, notificação, relatório e autenticação em componentes específicos.
+
+---
+
+## 10. Acoplamento: dependência entre classes
+
+**Acoplamento** indica o grau de dependência entre componentes.
+
+**Acoplamento forte:**
+
+```java
+public class PedidoService {
+    private final NotificadorEmail email = new NotificadorEmail();
+
+    public void confirmar() {
+        email.enviar("Pedido confirmado!");
+    }
+}
+```
+
+**Problema:** mudar para SMS exige modificar `PedidoService`.
+
+**Acoplamento mais fraco:** receber um `Notificador` pelo construtor, como nos exemplos anteriores.
+
+**Ideia-chave:** depender de contratos reduz a dependência de implementações específicas.
+
+---
+
+## 11. Coesão ≠ acoplamento
+
+- **Coesão:** como as responsabilidades estão organizadas **dentro** de um componente.
+- **Acoplamento:** como um componente depende de **outros** componentes.
+
+### O que buscamos?
+
+**Alta coesão + baixo acoplamento**, sem criar abstrações desnecessárias.
+
+:::tip Para lembrar
+Uma classe deve ter um propósito claro e depender do mínimo necessário para cumpri-lo.
+:::
+
+---
+
+## 12. Reutilização de código
+
+Reutilizar não é simplesmente copiar e colar.
+
+**Formas comuns de reutilização:**
+
+- **Composição:** reutilizar o comportamento de outro objeto.
+- **Interfaces:** reutilizar código cliente com várias implementações.
+- **Herança:** reutilizar e especializar uma implementação, quando apropriado.
+- **Métodos e classes bem definidos:** centralizar responsabilidades comuns.
+
+**Pergunta:** copiar uma regra de desconto para três classes facilita sua manutenção?
+
+---
+
+## 13. Exemplo: melhorando um projeto
+
+**Antes:** o serviço conhece diretamente o mecanismo de envio.
+
+```java
+public class CadastroService {
+    public void cadastrar() {
+        // Salva o cadastro...
+        new NotificadorEmail().enviar("Cadastro realizado!");
+    }
+}
+```
+
+**Depois:** a dependência é recebida como interface.
+
+```java
+public class CadastroService {
+    private final Notificador notificador;
+
+    public CadastroService(Notificador notificador) {
+        this.notificador = notificador;
+    }
+
+    public void cadastrar() {
+        // Salva o cadastro...
+        notificador.enviar("Cadastro realizado!");
+    }
+}
+```
+
+**Discussão:** o que mudou em termos de acoplamento e reutilização?
+
+
