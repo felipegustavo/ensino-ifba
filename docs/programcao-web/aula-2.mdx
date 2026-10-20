@@ -1,0 +1,338 @@
+---
+id: aula-02-introducao-html
+title: "Aula 2 — Introdução ao HTML"
+sidebar_label: "Aula 2 — HTML"
+sidebar_position: 3
+description: "Hipertexto, estrutura de um documento HTML, tags essenciais e diferenças entre elementos inline e de bloco."
+---
+
+## 1. Objetivos da aula
+
+Ao final desta aula, você deverá ser capaz de:
+
+- Explicar o que são HTML e hipertexto.
+- Identificar elementos, tags e atributos.
+- Criar um documento HTML com sua estrutura básica.
+- Utilizar tags essenciais para organizar textos, links, imagens, listas, tabelas e formulários.
+- Distinguir o comportamento padrão de elementos inline e de bloco.
+
+## 2. O que é HTML?
+
+**HTML** significa *HyperText Markup Language*, ou **Linguagem de Marcação de Hipertexto**. Ele descreve a estrutura e o significado do conteúdo de uma página: títulos, parágrafos, links, imagens e outros elementos.
+
+HTML é uma linguagem de **marcação**. Por si só, não expressa algoritmos com condições e repetições como Java. O navegador interpreta essa marcação para construir a página.
+
+| Tecnologia | Papel na página | Exemplo |
+|---|---|---|
+| HTML | Estrutura e significado do conteúdo | Marcar um título ou um formulário |
+| CSS | Apresentação visual | Definir cores, espaçamentos e layout |
+| JavaScript | Comportamento programável no navegador | Atualizar uma mensagem após uma interação |
+
+Na aula anterior, vimos que uma resposta HTTP pode conter HTML. Nesta aula, vamos construir esse conteúdo. Mais adiante, o Thymeleaf permitirá gerar HTML no servidor com dados da aplicação Spring Boot.
+
+[Material de Referência](https://www.w3schools.com/html/default.asp)
+
+## 3. O que é hipertexto?
+
+**Hipertexto** é um texto que contém conexões, chamadas **hiperlinks**, para outros documentos ou trechos de conteúdo. Esses links permitem uma leitura não linear: o leitor escolhe o caminho que deseja seguir.
+
+Em uma página de uma disciplina, por exemplo, um link pode levar ao material da aula, a um PDF ou a uma seção da própria página.
+
+```html
+<a href="aula-1.html">Revisar a Aula 1</a>
+<a href="#atividade">Ir para a atividade</a>
+
+<h2 id="atividade">Atividade prática</h2>
+```
+
+O atributo `href` indica o destino. No segundo link, `#atividade` aponta para o elemento cujo `id` é `atividade`. Um `id` deve ser único no documento.
+
+**Para discutir:** o que muda na leitura quando um texto possui links em vez de apenas uma sequência de páginas?
+
+## 4. Tags, elementos e atributos
+
+Observe:
+
+```html
+<p class="destaque">Minha primeira página HTML.</p>
+```
+
+- `<p>` é a tag de abertura; neste exemplo, ela também contém o atributo `class`.
+- `Minha primeira página HTML.` é o conteúdo.
+- `</p>` é a tag de fechamento.
+- O conjunto forma um **elemento HTML**.
+- `class="destaque"` é um atributo que permite identificar um grupo de elementos, por exemplo, para aplicar estilos com CSS.
+
+Elementos podem conter outros elementos. A ordem de fechamento deve respeitar esse aninhamento:
+
+```html
+<p>Estudar HTML é <strong>importante</strong>.</p>
+```
+
+Alguns elementos, chamados **vazios**, não possuem conteúdo nem tag de fechamento. É o caso de `img`, `input`, `br`, `hr` e `meta`.
+
+```html
+<img src="imagens/campus.jpg" alt="Entrada principal do campus">
+```
+
+Aqui, `src` informa o caminho da imagem e `alt` fornece uma alternativa textual. Não se escreve `</img>`.
+
+## 5. Estrutura básica de um documento HTML
+
+Crie um arquivo chamado `index.html`:
+
+```html
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minha primeira página</title>
+  </head>
+  <body>
+    <h1>Programação Web</h1>
+    <p>Bem-vindo à minha primeira página HTML!</p>
+  </body>
+</html>
+```
+
+| Marcação | Finalidade |
+|---|---|
+| `<!DOCTYPE html>` | Declara o tipo de documento e faz o navegador utilizar o modo de padrões |
+| `<html lang="pt-BR">` | Elemento raiz; informa que o idioma principal é português do Brasil |
+| `<head>` | Reúne metadados e configurações do documento |
+| `<meta charset="UTF-8">` | Define a codificação dos caracteres |
+| `<meta name="viewport" ...>` | Configura a área de visualização para dispositivos móveis |
+| `<title>` | Define o título do documento, exibido na aba do navegador |
+| `<body>` | Contém o conteúdo da página |
+
+:::tip Título da aba e título do conteúdo
+`title` fica no `head` e identifica o documento na aba. `h1` fica no `body` e marca o título principal do conteúdo. Eles cumprem funções diferentes.
+:::
+
+Salve o arquivo e abra-o no navegador. Altere o texto, salve novamente e recarregue a página para observar o resultado. Para este exemplo estático, não é necessário executar Spring Boot.
+
+## 6. Tags essenciais
+
+### 6.1. Títulos e textos
+
+| Tags | Uso |
+|---|---|
+| `h1` a `h6` | Títulos em diferentes níveis hierárquicos |
+| `p` | Parágrafo |
+| `strong` | Conteúdo de forte importância |
+| `em` | Ênfase no conteúdo |
+| `br` | Quebra de linha dentro de um conteúdo |
+| `hr` | Separação temática entre conteúdos |
+
+```html
+<h1>Programação Web</h1>
+<h2>Introdução ao HTML</h2>
+<p>HTML organiza o <strong>conteúdo</strong> da página.</p>
+<h3>Antes de começar</h3>
+<p>Leia os exemplos com <em>atenção</em>.</p>
+```
+
+Escolha o nível do título pela hierarquia do conteúdo, não pelo tamanho da fonte. Nesta atividade, use um `h1` como título principal e `h2` para as seções. Não utilize vários `br` para criar espaçamento: a apresentação será tratada com CSS.
+
+### 6.2. Links e imagens
+
+```html
+<a href="https://www.ifba.edu.br/">Acessar o site do IFBA</a>
+<a href="sobre.html">Sobre a disciplina</a>
+<img src="imagens/laboratorio.jpg" alt="Laboratório com computadores organizados em bancadas">
+```
+
+O primeiro link usa uma URL absoluta. O segundo usa um caminho relativo ao documento atual. O caminho da imagem também é relativo e precisa corresponder a um arquivo existente.
+
+Use textos de link que expliquem o destino. Em imagens informativas, escreva um `alt` que comunique a informação relevante; para imagens puramente decorativas, utilize `alt=""`.
+
+### 6.3. Listas
+
+`ul` representa uma lista sem ordem significativa; `ol`, uma lista em que a ordem importa. Cada item é marcado com `li`.
+
+```html
+<h2>Tecnologias da disciplina</h2>
+<ul>
+  <li>HTML</li>
+  <li>CSS</li>
+  <li>Java e Spring Boot</li>
+</ul>
+
+<h2>Como executar o exemplo</h2>
+<ol>
+  <li>Criar o arquivo index.html.</li>
+  <li>Salvar o conteúdo.</li>
+  <li>Abrir o arquivo no navegador.</li>
+</ol>
+```
+
+### 6.4. Organização semântica
+
+**Semântica** é o significado da marcação. Tags apropriadas ajudam a comunicar a organização do documento, inclusive para tecnologias assistivas.
+
+| Tag | Finalidade |
+|---|---|
+| `header` | Conteúdo introdutório de uma página ou seção |
+| `nav` | Conjunto de links de navegação |
+| `main` | Conteúdo principal da página |
+| `section` | Seção temática, normalmente identificada por um título |
+| `article` | Conteúdo independente, como uma notícia |
+| `footer` | Informações de rodapé de uma página ou seção |
+| `div` | Contêiner genérico, quando não há uma opção semântica adequada |
+| `span` | Contêiner genérico para um trecho de conteúdo, como parte de um texto |
+
+```html
+<header>
+  <h1>Portal da disciplina</h1>
+  <nav>
+    <a href="#conteudos">Conteúdos</a>
+  </nav>
+</header>
+<main>
+  <section id="conteudos">
+    <h2>Conteúdos da semana</h2>
+    <p>Introdução ao HTML e à estrutura de páginas.</p>
+  </section>
+</main>
+<footer>
+  <p>Material de estudo de Programação Web.</p>
+</footer>
+```
+
+### 6.5. Tabelas
+
+Utilize tabelas para **dados tabulares**, e não para organizar o layout da página.
+
+```html
+<table>
+  <caption>Aulas da disciplina</caption>
+  <thead>
+    <tr>
+      <th scope="col">Aula</th>
+      <th scope="col">Tema</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>Web e HTTP</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>HTML</td>
+    </tr>
+  </tbody>
+</table>
+```
+
+`tr` define uma linha; `th`, uma célula de cabeçalho; e `td`, uma célula de dados. `caption` identifica a tabela, enquanto `thead` e `tbody` agrupam suas partes. O atributo `scope="col"` indica que o cabeçalho se refere à coluna.
+
+### 6.6. Formulários
+
+Formulários permitem coletar dados do usuário. As principais tags são `form`, `label`, `input`, `textarea`, `select`, `option` e `button`.
+
+```html
+<form action="/contato" method="post">
+  <p>
+    <label for="nome">Nome:</label>
+    <input type="text" id="nome" name="nome" required>
+  </p>
+  <p>
+    <label for="email">E-mail:</label>
+    <input type="email" id="email" name="email" required>
+  </p>
+  <p>
+    <label for="assunto">Assunto:</label>
+    <select id="assunto" name="assunto">
+      <option value="duvida">Dúvida</option>
+      <option value="sugestao">Sugestão</option>
+    </select>
+  </p>
+  <p>
+    <label for="mensagem">Mensagem:</label>
+    <textarea id="mensagem" name="mensagem" rows="4"></textarea>
+  </p>
+  <button type="submit">Enviar</button>
+</form>
+```
+
+- `action` indica o destino do envio e `method` define o método HTTP.
+- `for` associa o rótulo ao `id` do campo.
+- `name` identifica o campo nos dados enviados; `id` identifica o elemento no documento.
+- `type` define o tipo de entrada e `required` indica preenchimento obrigatório.
+
+Este exemplo apresenta a marcação. O envio para `/contato` só funcionará quando houver um servidor preparado para receber a requisição. A validação no navegador também não substitui a validação no servidor.
+
+## 7. Elementos inline e de bloco
+
+Ao falar em “tags inline e de bloco”, estamos descrevendo o **comportamento visual padrão dos elementos**, no fluxo normal da página e sem alterações de CSS.
+
+| Comportamento | Elementos de bloco | Elementos inline |
+|---|---|---|
+| Fluxo | Iniciam um novo bloco, normalmente em uma nova linha | Participam da linha junto ao texto |
+| Espaço horizontal | Em geral, com largura automática, ocupam a largura disponível do contêiner | Em geral, ocupam o espaço necessário ao conteúdo e podem se distribuir por várias linhas |
+| Exemplos | `div`, `p`, `h1`, `section`, `ul` | `span`, `a`, `strong`, `em` |
+
+Compare no navegador:
+
+```html
+<div>Primeiro bloco</div>
+<div>Segundo bloco</div>
+
+<p>
+  Um texto com <span>um trecho genérico</span>,
+  <strong>uma informação importante</strong> e
+  <a href="#atividade">um link para a atividade</a>.
+</p>
+```
+
+Os dois `div` aparecem um abaixo do outro. Dentro do parágrafo, `span`, `strong` e `a` acompanham o texto na mesma linha enquanto houver espaço. O próprio `p` forma um bloco.
+
+:::tip Comportamento visual e significado são coisas diferentes
+A propriedade CSS `display` pode alterar a forma como um elemento participa do layout. Isso não muda seu significado nem suas regras de conteúdo. Por exemplo, um `p` não deve conter um `div`, mesmo que seu comportamento visual seja alterado por CSS. Inline e bloco também não são as únicas formas de exibição: existem, por exemplo, `inline-block`, flex e grid, que serão estudadas com CSS.
+:::
+
+**Pergunta para a turma:** para marcar uma palavra dentro de um parágrafo, qual contêiner genérico faz mais sentido: `div` ou `span`? Por quê?
+
+## 8. Atividade prática
+
+Crie uma página de apresentação de uma disciplina fictícia ou de Programação Web. Organize os arquivos assim:
+
+```text
+minha-pagina/
+  index.html
+  imagens/
+    estudo.jpg
+```
+
+Use uma imagem disponível em seu computador, salvando-a com o nome indicado ou ajustando o caminho no HTML.
+
+A página deve conter:
+
+1. Estrutura completa com `doctype`, idioma, codificação, `head`, `title` e `body`.
+2. `header`, `main` e `footer` para organizar o conteúdo.
+3. Um título principal e pelo menos duas seções com títulos de segundo nível.
+4. Parágrafos que usem `strong` e `em` de acordo com seu significado.
+5. Uma lista de conteúdos e uma lista ordenada com etapas de estudo.
+6. Um link externo e um link interno para uma seção com `id="atividade"`.
+7. Uma imagem com alternativa textual adequada.
+8. Uma tabela simples relacionando aulas e temas.
+9. Um exemplo com dois `div` consecutivos e um `span` dentro de um parágrafo, para comparar o comportamento visual.
+
+Abra a página no navegador e explique onde aparecem os blocos e onde o conteúdo continua na mesma linha. Reduza a largura da janela e observe como o texto se reorganiza.
+
+**Desafio:** acrescente um formulário com nome, e-mail e mensagem. Nesta etapa, o objetivo é organizar e identificar os campos; o processamento no servidor será abordado posteriormente.
+
+## 9. Questões de revisão
+
+1. Por que HTML é uma linguagem de marcação?
+2. Qual é a relação entre hipertexto e links?
+3. Qual é a diferença entre tag, elemento e atributo?
+4. O que pertence ao `head` e o que pertence ao `body`?
+5. Qual é a diferença entre `title` e `h1`?
+6. Quando utilizar `ul` e quando utilizar `ol`?
+7. Para que servem `alt`, `href` e `src`?
+8. Como `label`, `id` e `name` participam de um formulário?
+9. Qual é a diferença entre o comportamento padrão de `div` e `span`?
+10. Alterar a aparência de um elemento muda seu significado no HTML?

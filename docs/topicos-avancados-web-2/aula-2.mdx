@@ -1,0 +1,304 @@
+---
+id: aula-2
+title: Aula 2 — Características, modelos de serviço e implantação
+sidebar_position: 3
+description: Características essenciais da nuvem, modelos IaaS, PaaS e SaaS, modelos de implantação e responsabilidade compartilhada.
+---
+
+## 1. Retomada: o que estamos contratando?
+
+Na aula anterior, vimos que a nuvem utiliza infraestrutura física real, acessada pela rede e disponibilizada como serviço. Nesta aula, vamos comparar o que o consumidor recebe e quais tarefas continuam sob sua responsabilidade.
+
+Considere três formas de disponibilizar um sistema de ensino:
+
+1. Contratar máquinas virtuais e instalar o sistema operacional, o servidor web e a aplicação.
+2. Enviar o código de uma aplicação própria para uma plataforma que administra o ambiente de execução.
+3. Assinar uma aplicação pronta e cadastrar professores, estudantes e turmas.
+
+As três alternativas podem envolver nuvem, mas exigem trabalhos diferentes da equipe. Para analisá-las, precisamos separar duas perguntas:
+
+- **Modelo de serviço:** o que é oferecido ao consumidor e quais camadas ele administra?
+- **Modelo de implantação:** para quem a infraestrutura de nuvem é disponibilizada e como os ambientes são organizados?
+
+## 2. As cinco características essenciais
+
+O NIST organiza a definição de computação em nuvem em cinco características essenciais, três modelos de serviço e quatro modelos de implantação. As características devem ser consideradas em conjunto: disponibilizar uma aplicação pela internet ou criar máquinas virtuais, isoladamente, não caracteriza todo o modelo de nuvem.
+
+### 2.1 Autosserviço sob demanda
+
+O consumidor pode provisionar recursos quando precisa, usando interfaces como um portal ou uma API, sem exigir intervenção humana do provedor a cada solicitação.
+
+**Exemplo:** uma pessoa autorizada cria uma máquina virtual para testar uma aplicação e a remove ao encerrar os testes.
+
+Autosserviço não significa ausência de controle. A organização pode estabelecer permissões, cotas e políticas para limitar o que cada usuário consegue contratar.
+
+### 2.2 Amplo acesso à rede
+
+Os serviços são acessíveis pela rede por mecanismos padronizados, permitindo o uso por diferentes tipos de dispositivos, como computadores, celulares e tablets, conforme os requisitos do serviço.
+
+**Exemplo:** estudantes acessam uma plataforma de ensino pelo navegador de um computador ou de um celular.
+
+Amplo acesso não significa acesso público ou anônimo. O serviço pode exigir autenticação ou ser acessível apenas por uma rede privada. A conectividade continua sendo necessária.
+
+### 2.3 Agrupamento de recursos
+
+O provedor reúne recursos de processamento, armazenamento e rede para atender vários consumidores, distribuindo e redistribuindo capacidade conforme a demanda. O consumidor normalmente não escolhe o equipamento físico exato que executará seu serviço, embora possa selecionar uma localização em nível mais amplo, como uma região.
+
+**Exemplo:** diferentes organizações utilizam capacidade de um mesmo conjunto de servidores, com isolamento entre seus ambientes.
+
+Compartilhar infraestrutura não significa compartilhar livremente os dados. A separação entre consumidores depende de mecanismos de isolamento e controles de acesso. Em uma nuvem privada, os consumidores podem ser setores de uma mesma organização.
+
+### 2.4 Elasticidade rápida
+
+Recursos podem ser provisionados e liberados rapidamente para acompanhar a demanda. Em alguns casos, esse ajuste ocorre automaticamente, de acordo com regras e métricas configuradas.
+
+**Exemplo:** um portal amplia sua capacidade durante as matrículas e a reduz depois do período de maior movimento.
+
+Elasticidade envolve tanto aumentar quanto reduzir recursos. Não significa capacidade infinita: existem cotas, limites de disponibilidade, tempo de provisionamento e restrições da própria aplicação.
+
+### 2.5 Serviço mensurado
+
+O uso dos recursos é medido, permitindo acompanhamento, controle e transparência para consumidor e provedor. As unidades dependem do serviço: tempo de processamento, espaço armazenado, tráfego ou contas de usuário ativas, por exemplo.
+
+**Exemplo:** uma instituição acompanha o volume de arquivos armazenados e identifica quais setores utilizam mais espaço.
+
+A medição pode apoiar a cobrança, mas não exige que todo contrato cobre exclusivamente por uso. Também pode existir em serviços por assinatura e em nuvens privadas para acompanhamento interno.
+
+## 3. Modelos de serviço: IaaS, PaaS e SaaS
+
+Os modelos de serviço indicam o nível de abstração oferecido ao consumidor. Quanto mais camadas o provedor administra, menor tende a ser o trabalho operacional do cliente e menor o controle direto sobre essas camadas.
+
+### 3.1 IaaS — Infraestrutura como Serviço
+
+Em **IaaS** (*Infrastructure as a Service*), o consumidor recebe recursos como máquinas virtuais, armazenamento e redes. O provedor administra a infraestrutura física e a camada de virtualização; o cliente administra o sistema operacional das suas máquinas e os softwares instalados nelas.
+
+**Exemplo:** uma instituição contrata máquinas virtuais e instala nelas um sistema acadêmico que exige uma versão específica do sistema operacional e configurações próprias de servidor web.
+
+- **Cliente:** instala e atualiza o sistema operacional, configura aplicações, permissões e regras da rede virtual sob seu controle.
+- **Provedor:** opera servidores físicos, equipamentos de rede, armazenamento físico e virtualização.
+- **Vantagem:** maior liberdade para escolher e configurar o ambiente.
+- **Contrapartida:** maior esforço de administração e manutenção.
+
+Contratar uma máquina virtual não transfere automaticamente ao provedor a atualização dos programas instalados pelo cliente.
+
+### 3.2 PaaS — Plataforma como Serviço
+
+Em **PaaS** (*Platform as a Service*), o consumidor implanta aplicações próprias em uma plataforma gerenciada. O provedor administra a infraestrutura, o sistema operacional e o ambiente de execução oferecido pelo serviço.
+
+**Exemplo:** uma equipe desenvolve um portal de inscrições e envia seu código a uma plataforma compatível com a linguagem e a versão utilizadas. A plataforma cuida dos servidores e do ambiente necessário para executar o código.
+
+- **Cliente:** desenvolve e mantém o código, administra suas dependências, configura a aplicação e define o acesso aos dados.
+- **Provedor:** mantém a plataforma e as camadas de infraestrutura que a sustentam.
+- **Vantagem:** a equipe concentra mais esforço na aplicação.
+- **Contrapartida:** precisa respeitar linguagens, versões, configurações e limites suportados pela plataforma.
+
+A plataforma gerenciada não corrige automaticamente erros de programação nem substitui a configuração adequada das permissões da aplicação.
+
+### 3.3 SaaS — Software como Serviço
+
+Em **SaaS** (*Software as a Service*), o consumidor utiliza uma aplicação pronta operada pelo provedor. O acesso pode ocorrer pelo navegador, por um aplicativo ou por outra interface disponibilizada pelo serviço.
+
+**Exemplo:** uma escola assina um sistema de videoconferência e passa a criar contas, organizar reuniões e configurar quem pode participar delas.
+
+- **Cliente:** administra usuários, permissões, configurações disponíveis e o uso dos dados inseridos no sistema.
+- **Provedor:** opera e atualiza a aplicação e a infraestrutura subjacente.
+- **Vantagem:** uso rápido de funcionalidades prontas, com menor esforço de manutenção técnica.
+- **Contrapartida:** personalização e integração limitadas ao que o produto oferece.
+
+Mesmo em SaaS, uma conta com permissões excessivas ou um documento compartilhado incorretamente pode expor informações.
+
+### 3.4 Comparando os modelos
+
+| Aspecto | IaaS | PaaS | SaaS |
+|---|---|---|---|
+| O que o cliente recebe | Infraestrutura computacional | Plataforma para executar aplicações | Aplicação pronta |
+| Principal trabalho do cliente | Administrar o ambiente e a aplicação | Desenvolver e configurar a aplicação | Configurar e utilizar o produto |
+| Controle do sistema operacional | Normalmente disponível nas máquinas do cliente | Administrado pelo provedor | Administrado pelo provedor |
+| Aplicação | Instalada ou desenvolvida pelo cliente | Implantada pelo cliente | Fornecida e operada pelo provedor |
+| Exemplo conceitual | Máquina virtual para um sistema legado | Plataforma para publicar um portal próprio | Sistema de reuniões por assinatura |
+
+**Atenção:** classifique o serviço consumido, não a empresa que o fornece. Um mesmo provedor pode oferecer serviços em diferentes modelos. Uma solução também pode combinar uma aplicação em PaaS, máquinas em IaaS e ferramentas de colaboração em SaaS.
+
+## 4. Modelos de implantação
+
+O modelo de implantação é uma dimensão diferente do modelo de serviço. Uma nuvem privada pode oferecer IaaS, por exemplo; contratar IaaS não determina se a nuvem é pública ou privada.
+
+### 4.1 Nuvem pública
+
+A infraestrutura é disponibilizada para uso do público em geral, conforme as condições de contratação do provedor. Diferentes clientes podem consumir serviços dessa infraestrutura.
+
+**Exemplo:** uma empresa contrata recursos de um provedor que oferece serviços de nuvem a diversas organizações e pessoas.
+
+“Pública” não significa que os dados dos clientes sejam públicos. Recursos podem ter acesso restrito, endereços privados e autenticação.
+
+### 4.2 Nuvem privada
+
+A infraestrutura é destinada ao uso exclusivo de uma organização, que pode reunir diferentes unidades ou setores consumidores. Ela pode ser operada pela própria organização, por terceiros ou por uma combinação deles, dentro ou fora de suas instalações.
+
+**Exemplo:** uma instituição mantém uma nuvem exclusiva para seus departamentos, com portal de autosserviço, recursos agrupados, elasticidade e medição interna.
+
+Ter servidores próprios ou uma rede local não basta para caracterizar uma nuvem privada. O ambiente deve apresentar as características do modelo de nuvem. Da mesma forma, criar uma rede virtual isolada dentro de um provedor público não transforma, por si só, o serviço em uma nuvem privada.
+
+### 4.3 Nuvem comunitária
+
+A infraestrutura é destinada ao uso exclusivo de uma comunidade de organizações com interesses ou requisitos comuns, como missão, políticas de segurança ou necessidades de operação.
+
+**Exemplo:** instituições de pesquisa compartilham uma nuvem destinada exclusivamente ao consórcio, com regras comuns de acesso e administração.
+
+O ponto central é a comunidade definida de consumidores e seus requisitos compartilhados. Várias empresas contratarem o mesmo provedor público, por coincidência, não caracteriza uma nuvem comunitária.
+
+### 4.4 Nuvem híbrida
+
+A nuvem híbrida combina duas ou mais infraestruturas de nuvem distintas, como privada e pública, que permanecem separadas, mas são integradas por tecnologias que permitem a portabilidade de dados e aplicações.
+
+**Exemplo:** uma organização mantém uma nuvem privada e integra uma nuvem pública para executar parte de uma aplicação durante picos de demanda, com mecanismos planejados de comunicação e movimentação de dados.
+
+Apenas usar um computador local para acessar um serviço público de nuvem não caracteriza nuvem híbrida. Também é preciso distinguir uma nuvem híbrida de uma simples conexão entre servidores tradicionais e um serviço externo.
+
+### 4.5 Comparando as implantações
+
+| Modelo | Quem utiliza a infraestrutura | Aspecto central |
+|---|---|---|
+| Pública | Público em geral, mediante condições de uso | Oferta de serviços a diferentes consumidores |
+| Privada | Uma organização | Uso exclusivo da organização |
+| Comunitária | Uma comunidade específica de organizações | Requisitos e interesses compartilhados |
+| Híbrida | Consumidores das nuvens integradas | Integração entre infraestruturas de nuvem distintas |
+
+## 5. Responsabilidade compartilhada
+
+A responsabilidade compartilhada define quais tarefas cabem ao provedor e quais continuam com o cliente. Essa divisão depende do serviço e do contrato. Em uma nuvem privada operada internamente, o papel de provedor pode ser desempenhado pela própria equipe de infraestrutura da organização.
+
+A tabela apresenta uma divisão didática típica. Serviços específicos podem distribuir algumas tarefas de outra forma.
+
+| Camada ou tarefa | IaaS | PaaS | SaaS |
+|---|---|---|---|
+| Instalações, energia e equipamentos físicos | Provedor | Provedor | Provedor |
+| Virtualização e infraestrutura subjacente | Provedor | Provedor | Provedor |
+| Atualizações do sistema operacional do ambiente contratado | Cliente | Provedor | Provedor |
+| Manutenção do ambiente de execução oferecido | Cliente | Provedor | Provedor |
+| Correção do código da aplicação utilizada | Cliente | Cliente | Provedor |
+| Configuração das permissões disponíveis ao cliente | Cliente | Cliente | Cliente |
+| Proteção das credenciais dos usuários do cliente | Cliente | Cliente | Cliente |
+
+Algumas responsabilidades precisam ser analisadas em conjunto. O provedor pode oferecer mecanismos de autenticação e backup, enquanto o cliente configura acessos, verifica o alcance das cópias e define suas necessidades de recuperação conforme as opções contratadas. Operar o armazenamento não dá ao provedor a tarefa de decidir quem, na organização cliente, deve acessar cada documento.
+
+### Exemplo: um arquivo compartilhado indevidamente
+
+Uma instituição utiliza um sistema SaaS de documentos. Um usuário configura um arquivo interno para acesso por qualquer pessoa com o link.
+
+- O provedor opera a aplicação e deve implementar corretamente seus mecanismos de acesso.
+- A instituição administra suas contas e as configurações de compartilhamento disponíveis.
+- Se o mecanismo funcionou conforme configurado, a exposição pode decorrer da decisão de compartilhamento do cliente, mesmo sem falha na infraestrutura do provedor.
+
+**Pergunta para discussão:** que mudança nas permissões e nas práticas da instituição poderia reduzir a chance de esse problema se repetir?
+
+## 6. Controle versus conveniência
+
+Uma equipe precisa considerar o que realmente necessita administrar. Maior controle pode ser necessário para sistemas com requisitos específicos, mas exige conhecimento, tempo e manutenção. Uma aplicação pronta reduz tarefas operacionais, mas pode não oferecer todas as personalizações desejadas.
+
+Antes de escolher, discuta:
+
+1. Precisamos de uma aplicação própria ou uma aplicação pronta atende?
+2. Precisamos controlar o sistema operacional ou apenas publicar código?
+3. A equipe tem condições de manter e atualizar as camadas sob sua responsabilidade?
+4. Quais restrições de integração e personalização são aceitáveis?
+5. Que tarefas de acesso, configuração e proteção de dados continuarão conosco?
+
+**Situação para debate:** uma equipe pequena deseja contratar máquinas virtuais para oferecer e-mail institucional. Outra equipe propõe uma aplicação pronta por assinatura. Que requisito justificaria assumir a administração das máquinas? Que tarefas permaneceriam com a instituição em cada opção?
+
+## 7. Atividade sem laboratório — classificação de cenários
+
+Em grupos, analisem os cenários abaixo. Para cada um, registrem:
+
+1. O modelo de serviço mais adequado e a justificativa baseada nos requisitos.
+2. O modelo de implantação indicado pelas informações do cenário.
+3. Uma responsabilidade do cliente e uma do provedor.
+4. Uma vantagem e uma limitação da escolha.
+
+### Cenário A — Sistema legado
+
+Uma empresa precisa executar uma aplicação que exige acesso administrativo ao sistema operacional e instalação de componentes específicos. Ela pretende contratar máquinas virtuais de um provedor de nuvem que atende o público em geral.
+
+### Cenário B — Portal de inscrições
+
+Uma instituição desenvolve um portal próprio em uma linguagem suportada por uma plataforma de nuvem pública. A equipe quer publicar o código e configurar a aplicação sem administrar o sistema operacional dos servidores.
+
+### Cenário C — Reuniões e colaboração
+
+Uma escola precisa de videoconferência pronta para uso, sem desenvolver uma aplicação. O produto é oferecido por assinatura em infraestrutura de nuvem pública, e a escola deve administrar contas e regras de participação.
+
+### Cenário D — Ambientes exclusivos
+
+Uma organização possui uma nuvem exclusiva para seus setores, com autosserviço, agrupamento de recursos, elasticidade e medição. Os setores precisam criar máquinas virtuais e escolher os sistemas operacionais. A equipe central de infraestrutura opera essa nuvem.
+
+### Cenário E — Consórcio de pesquisa
+
+Instituições de pesquisa utilizam uma nuvem exclusiva do consórcio, com requisitos de operação compartilhados. Os pesquisadores precisam enviar o código de aplicações próprias para uma plataforma que administra o sistema operacional e o ambiente de execução.
+
+### Cenário F — Capacidade para matrículas
+
+Uma instituição utiliza uma plataforma para executar seu portal próprio sem administrar sistemas operacionais. A solução integra uma nuvem privada e uma pública, com mecanismos de portabilidade de dados e aplicações, permitindo executar parte da carga na nuvem pública durante as matrículas.
+
+### Quadro para registro
+
+| Cenário | Serviço e justificativa | Implantação | Responsabilidade do cliente | Responsabilidade do provedor |
+|---|---|---|---|---|
+| A | | | | |
+| B | | | | |
+| C | | | | |
+| D | | | | |
+| E | | | | |
+| F | | | | |
+
+<details>
+<summary>Respostas comentadas — consultar após a discussão</summary>
+
+| Cenário | Classificação esperada | Exemplo de responsabilidade do cliente | Exemplo de responsabilidade do provedor |
+|---|---|---|---|
+| A | IaaS em nuvem pública: exige controle do sistema operacional | Atualizar o sistema operacional da máquina virtual | Manter os servidores físicos e a virtualização |
+| B | PaaS em nuvem pública: a equipe publica código próprio | Corrigir falhas no código do portal | Manter o ambiente de execução oferecido |
+| C | SaaS em nuvem pública: aplicação pronta | Administrar contas e permissões de reunião | Atualizar a aplicação de videoconferência |
+| D | IaaS em nuvem privada: infraestrutura exclusiva com escolha de sistema operacional | Manter o sistema operacional instalado pelo setor | Operar a infraestrutura física e a virtualização |
+| E | PaaS em nuvem comunitária: plataforma para código em infraestrutura exclusiva do consórcio | Manter o código e as dependências da aplicação | Manter a plataforma e o sistema operacional |
+| F | PaaS em nuvem híbrida: plataforma gerenciada com integração entre nuvens distintas | Configurar a aplicação e seus acessos aos dados | Operar as camadas gerenciadas da plataforma conforme o contrato |
+
+As classificações dependem das informações fornecidas. Na prática, é necessário verificar as funções oferecidas e a divisão de tarefas de cada serviço. No cenário F, a solução pode envolver mais de um provedor, exigindo atenção às responsabilidades de integração.
+
+</details>
+
+## 8. Questões de revisão
+
+1. Quais são as cinco características essenciais da computação em nuvem? Dê um exemplo de cada uma.
+2. Por que amplo acesso à rede não significa acesso sem autenticação?
+3. Qual é a diferença entre receber uma máquina virtual e receber uma plataforma para publicar código?
+4. Em qual modelo o consumidor utiliza uma aplicação pronta? Quais responsabilidades ainda permanecem com ele?
+5. Por que uma rede virtual isolada em um provedor público não caracteriza automaticamente uma nuvem privada?
+6. O que distingue uma nuvem comunitária de uma nuvem pública utilizada por várias instituições?
+7. O que é necessário para caracterizar uma nuvem híbrida?
+8. Quem normalmente atualiza o sistema operacional de uma máquina virtual em IaaS? Como essa tarefa muda em PaaS?
+9. Um serviço mensurado precisa cobrar exclusivamente pelo consumo? Explique.
+10. Por que o modelo com mais controle nem sempre é o mais adequado para uma equipe pequena?
+
+## 9. Roteiro da aula — 2 horas
+
+| Etapa | Tempo | Proposta |
+|---|---|---|
+| Retomada | 10 min | Comparar as três formas de disponibilizar um sistema de ensino |
+| Exposição com exemplos | 50 min | Estudar características, serviços, implantações e responsabilidades |
+| Classificação de situações | 35 min | Resolver os cenários em grupos e discutir as justificativas |
+| Debate sobre controle versus conveniência | 15 min | Comparar as alternativas para o e-mail institucional |
+| Fechamento | 10 min | Retomar os conceitos e responder questões de revisão selecionadas |
+| **Total** | **120 min** | **2 horas** |
+
+## Conceitos-chave
+
+- As cinco características são autosserviço sob demanda, amplo acesso à rede, agrupamento de recursos, elasticidade rápida e serviço mensurado.
+- IaaS oferece infraestrutura; PaaS oferece uma plataforma para aplicações; SaaS oferece uma aplicação pronta.
+- Modelos de serviço e de implantação respondem a perguntas diferentes e podem ser combinados.
+- Nuvens podem ser públicas, privadas, comunitárias ou híbridas.
+- A responsabilidade compartilhada depende do serviço contratado; o cliente continua administrando seus acessos e configurações disponíveis.
+- A escolha exige equilibrar requisitos, controle e capacidade da equipe de assumir tarefas operacionais.
+
+## Referência introdutória
+
+- MELL, Peter; GRANCE, Timothy. *The NIST Definition of Cloud Computing*. NIST Special Publication 800-145. National Institute of Standards and Technology, 2011.

@@ -1,0 +1,173 @@
+---
+id: aula-01-introducao-web-http
+title: "Aula 1 — Introdução à Web e ao HTTP"
+sidebar_label: "Aula 1 — Web e HTTP"
+sidebar_position: 2
+description: "Conceitos básicos de Web, programação web, comunicação cliente-servidor, HTTP e HTTPS."
+---
+
+## Materiais da aula
+
+- [Acessar os slides da Aula 1](https://docs.google.com/presentation/d/1rbSI3YWvLEMNUxajgaXBtNwkgV7bN_RKJ-Z17rPl4rE/edit?usp=sharing).
+- [Vídeo: Transport Layer Security (TLS) — Computerphile](https://www.youtube.com/watch?v=0TLDTodL7Lc) — em inglês; explica o protocolo de segurança utilizado pelo HTTPS.
+- [Vídeo complementar: Navegação Segura — NIC.br](https://www.youtube.com/watch?v=JRH3TdPAMMw) — em português; introduz a proteção oferecida pelo HTTPS na navegação.
+
+## 1. Objetivos da aula
+
+Ao final desta aula, você deverá ser capaz de:
+
+- Distinguir Internet e Web.
+- Identificar os papéis do cliente e do servidor.
+- Explicar o ciclo de requisição e resposta HTTP.
+- Reconhecer métodos, códigos de status e a finalidade do HTTPS.
+
+## 2. Internet e Web
+
+A **Internet** é a infraestrutura que conecta redes e dispositivos. A **Web** é um sistema de páginas e recursos interligados que utiliza essa infraestrutura. Outros serviços, como o correio eletrônico, também utilizam a Internet.
+
+Um **navegador** interpreta conteúdos e permite interagir com páginas. Uma **URL** identifica um recurso e informa como acessá-lo. O **DNS** ajuda a localizar o servidor a partir de seu nome de domínio.
+
+Considere esta URL fictícia:
+
+```text
+https://exemplo.com/disciplinas?semestre=4
+```
+
+| Parte | Significado |
+|---|---|
+| `https` | Esquema de acesso com proteção TLS |
+| `exemplo.com` | Nome do domínio |
+| `/disciplinas` | Caminho do recurso |
+| `semestre=4` | Parâmetro de consulta |
+
+**Para discutir:** acessar uma página e enviar um e-mail são a mesma forma de usar a Internet?
+
+## 3. O que é programação web?
+
+Programação web envolve construir aplicações acessadas por meio da Web. Um sistema acadêmico, por exemplo, pode apresentar disciplinas, receber uma solicitação de matrícula e consultar vagas no banco de dados.
+
+| Camada | Responsabilidade | Tecnologias na disciplina |
+|---|---|---|
+| Cliente | Apresentar a interface e permitir interação no navegador | HTML, CSS e JavaScript |
+| Servidor | Processar requisições e executar regras de negócio | Java e Spring Boot |
+| Persistência | Armazenar e consultar dados | Banco de dados |
+
+O **Thymeleaf** será utilizado no servidor para gerar HTML a partir de templates e dados. O navegador recebe o HTML resultante para exibição.
+
+Uma página estática pode ser entregue como foi armazenada. Uma página dinâmica pode ser produzida conforme os dados solicitados: a mesma tela de disciplinas, por exemplo, pode mostrar resultados diferentes para cada semestre.
+
+## 4. Comunicação cliente-servidor
+
+O navegador atua como **cliente**, solicitando recursos. O **servidor** recebe a solicitação, processa o que for necessário e devolve uma resposta.
+
+```text
+Navegador  --- requisição HTTP --->  Servidor
+Navegador  <--- resposta HTTP ----  Servidor
+```
+
+Ao abrir uma página, o navegador pode precisar solicitar também imagens, arquivos CSS e scripts. Portanto, uma página pode gerar várias requisições.
+
+No exemplo do sistema acadêmico:
+
+1. O aluno solicita a lista de disciplinas.
+2. O servidor consulta os dados necessários.
+3. O servidor gera uma resposta com a página.
+4. O navegador interpreta o HTML e apresenta o resultado.
+
+Leitura de apoio: [Visão geral do cliente-servidor — MDN](https://developer.mozilla.org/pt-BR/docs/Learn_web_development/Extensions/Server-side/First_steps/Client-Server_overview).
+
+## 5. Conceitos básicos de HTTP
+
+**HTTP** significa *Hypertext Transfer Protocol*. É o protocolo que define a comunicação por requisições e respostas usada para acessar recursos na Web.
+
+Uma requisição informa o método, o recurso desejado e cabeçalhos; também pode conter um corpo. A resposta informa um código de status, cabeçalhos e, quando aplicável, um corpo com o conteúdo retornado.
+
+### Métodos e códigos de status
+
+| Método | Finalidade típica |
+|---|---|
+| `GET` | Consultar um recurso |
+| `POST` | Enviar dados para processamento, como um cadastro |
+| `PUT` | Criar ou substituir o estado de um recurso no endereço indicado |
+| `PATCH` | Aplicar alterações parciais |
+| `DELETE` | Solicitar a remoção de um recurso |
+
+| Status | Significado |
+|---|---|
+| `200 OK` | Requisição bem-sucedida |
+| `201 Created` | Recurso criado |
+| `302 Found` | Redirecionamento temporário |
+| `400 Bad Request` | Problema na requisição enviada |
+| `404 Not Found` | Recurso não encontrado |
+| `500 Internal Server Error` | Erro inesperado no servidor |
+
+### Exemplo de troca de mensagens
+
+Exemplo didático simplificado em HTTP/1.1:
+
+```http
+GET /disciplinas HTTP/1.1
+Host: exemplo.com
+Accept: text/html
+```
+
+Uma possível resposta:
+
+```http
+HTTP/1.1 200 OK
+Content-Type: text/html; charset=utf-8
+Content-Length: 28
+
+<h1>Lista de disciplinas</h1>
+```
+
+O cabeçalho `Content-Type` identifica o formato do conteúdo. Aqui, o corpo contém HTML.
+
+:::tip HTTP e estado
+HTTP é um protocolo sem estado: uma requisição não depende, por definição, de uma conversa anterior. Aplicações podem usar mecanismos como cookies e sessões para manter informações entre requisições, como a identificação de um usuário autenticado.
+:::
+
+Leitura de apoio: [HTTP — MDN](https://developer.mozilla.org/pt-BR/docs/Web/HTTP) e [Mensagens HTTP — MDN](https://developer.mozilla.org/pt-BR/docs/Web/HTTP/Guides/Messages).
+
+## 6. Como funciona o HTTPS?
+
+**HTTPS é HTTP protegido por TLS.** Ele mantém o modelo de requisição e resposta, acrescentando proteção à comunicação entre cliente e servidor.
+
+De forma simplificada:
+
+1. Cliente e servidor negociam parâmetros de segurança.
+2. O servidor apresenta um certificado digital, que o cliente verifica, inclusive quanto ao domínio acessado.
+3. O processo de negociação estabelece chaves para proteger a comunicação.
+4. As mensagens HTTP trafegam criptografadas, com mecanismos que permitem detectar alterações.
+
+Essa proteção oferece **confidencialidade**, **integridade** e **autenticação do servidor**. Ela protege os dados em trânsito, mas não garante que o conteúdo de um site seja confiável.
+
+Assista ao [vídeo sobre TLS do Computerphile](https://www.youtube.com/watch?v=0TLDTodL7Lc) e identifique o papel do certificado e da criptografia. Para uma introdução em português, veja [Navegação Segura, do NIC.br](https://www.youtube.com/watch?v=JRH3TdPAMMw).
+
+Leitura de apoio: [O que é HTTPS? — Cloudflare](https://www.cloudflare.com/pt-br/learning/ssl/what-is-https/).
+
+## 7. Atividade: observando uma requisição
+
+1. Abra uma página pública no navegador.
+2. Abra as ferramentas de desenvolvedor com `F12` e selecione a aba **Rede (Network)**.
+3. Recarregue a página e selecione a requisição do documento HTML.
+4. Localize a URL, o método, o status e o cabeçalho de resposta `Content-Type`.
+5. Observe outras requisições e identifique uma imagem, um arquivo CSS ou um script, se houver.
+
+Registre os resultados e explique por que uma única página pode precisar de vários recursos. Mesmo com HTTPS, o navegador consegue mostrar o conteúdo na ferramenta: ele é uma das pontas da comunicação e consegue descriptografá-lo.
+
+## 8. Questões de revisão
+
+1. Qual é a diferença entre Internet e Web?
+2. Quais tarefas pertencem ao cliente e quais pertencem ao servidor?
+3. Qual é a diferença entre uma requisição e uma resposta?
+4. Em que situação você utilizaria `GET`? E `POST`?
+5. O que diferencia uma resposta `404` de uma resposta `500`?
+6. Qual é a função do TLS no HTTPS?
+7. Na aplicação com Spring Boot e Thymeleaf, onde o HTML dinâmico será gerado?
+
+## Referências
+
+- [Como a Web funciona — MDN](https://developer.mozilla.org/pt-BR/docs/Learn_web_development/Getting_started/Web_standards/How_the_web_works).
+- [Uma visão geral do HTTP — MDN](https://developer.mozilla.org/pt-BR/docs/Web/HTTP/Guides/Overview).
+- [Navegação Segura — NIC.br](https://nic.br/videos/ver/cidadao-na-rede-navegacao-segura/).

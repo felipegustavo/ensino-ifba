@@ -1,0 +1,307 @@
+---
+id: extra-configuracao-ambiente
+title: "Material extra — Configuração do ambiente"
+sidebar_label: "Extra — Configuração do ambiente"
+sidebar_position: 100
+description: "Instalação e configuração de Java, Maven e editor no Windows para desenvolver aplicações com Spring Boot e Thymeleaf."
+---
+
+Este guia prepara o ambiente Windows para as atividades de Programação Web, desde a edição de HTML até a execução de uma aplicação Java com Spring Boot e Thymeleaf.
+
+## 1. Ferramentas utilizadas
+
+| Ferramenta | Finalidade |
+|---|---|
+| Navegador | Exibir páginas e inspecionar requisições HTTP |
+| Editor ou IDE | Editar HTML, CSS e Java |
+| JDK | Compilar e executar programas Java |
+| Maven | Gerenciar dependências e executar etapas de construção do projeto |
+| Spring Initializr | Gerar a estrutura inicial da aplicação Spring Boot |
+
+**Versão de referência deste guia: JDK 21.** Em um projeto fornecido pelo professor, confira a versão exigida no `pom.xml` e utilize um JDK compatível. A versão selecionada no projeto, a utilizada pelo Maven e a configurada na IDE devem estar alinhadas.
+
+Os comandos deste material são destinados ao **PowerShell**. Para as primeiras atividades com arquivos HTML, basta o editor e o navegador; Java e Maven serão usados nas aplicações de servidor.
+
+## 2. Instalar o Java no Windows
+
+O **JDK** inclui ferramentas de desenvolvimento, como o compilador `javac`. Instale o JDK, pois somente um ambiente de execução não atende às atividades de compilação.
+
+1. Acesse os [downloads do Eclipse Temurin](https://adoptium.net/temurin/releases/).
+2. Selecione Java **21**, sistema **Windows** e pacote **JDK**.
+3. Escolha a arquitetura da máquina, normalmente **x64**. Confira em **Configurações → Sistema → Sobre**.
+4. Baixe e execute o instalador `.msi` correspondente.
+5. Nas opções de instalação, habilite a inclusão no `PATH` e a definição de `JAVA_HOME`, quando disponíveis.
+6. Anote a pasta de instalação e abra um novo PowerShell após concluir.
+
+Referência: [instalação do Temurin no Windows — Adoptium](https://adoptium.net/installation/windows/).
+
+### Configurar JAVA_HOME e Path manualmente
+
+Se o instalador não configurou as variáveis:
+
+1. Pesquise **Editar as variáveis de ambiente da sua conta** no menu Iniciar.
+2. Nas variáveis do usuário, crie ou edite `JAVA_HOME`.
+3. Informe a pasta real do JDK, por exemplo `C:\Program Files\Eclipse Adoptium\jdk-21.0.x-hotspot`. Esse caminho é ilustrativo: substitua-o pelo diretório instalado.
+4. Edite a variável `Path` e adicione uma entrada com `%JAVA_HOME%\bin`.
+5. Confirme as janelas e reabra o terminal e o editor.
+
+`JAVA_HOME` aponta para a **raiz do JDK**, sem `\bin` e sem aspas. O `Path` contém o caminho até `bin`. Preserve as outras entradas do `Path`.
+
+### Conferir a instalação
+
+```powershell
+java -version
+javac -version
+$env:JAVA_HOME
+Test-Path "$env:JAVA_HOME\bin\javac.exe"
+where.exe java
+where.exe javac
+```
+
+Os dois comandos de versão devem indicar Java 21, e `Test-Path` deve retornar `True`. `where.exe` ajuda a identificar instalações concorrentes: se aparecerem vários caminhos, confira qual executável está sendo encontrado primeiro.
+
+### Testar a compilação de um programa
+
+Em uma pasta de estudos, crie `Ola.java`:
+
+```java
+public class Ola {
+    public static void main(String[] args) {
+        System.out.println("Ambiente Java configurado!");
+    }
+}
+```
+
+Abra o terminal nessa pasta e execute:
+
+```powershell
+javac -encoding UTF-8 Ola.java
+java Ola
+```
+
+O primeiro comando gera `Ola.class`; o segundo deve exibir `Ambiente Java configurado!`.
+
+## 3. Instalar e configurar o Maven
+
+1. Abra a [página oficial de downloads do Maven](https://maven.apache.org/download.cgi).
+2. Baixe a distribuição estável **Binary zip archive** da linha Maven 3.9.x. Não escolha o pacote de código-fonte.
+3. Extraia o ZIP para uma pasta permanente, por exemplo `C:\Ferramentas`.
+4. Localize a pasta extraída que contém `bin\mvn.cmd`.
+5. Nas variáveis de ambiente do usuário, adicione ao `Path` o caminho completo dessa pasta `bin`, como `C:\Ferramentas\apache-maven-3.9.x\bin`, substituindo a versão pela instalada.
+6. Reabra o PowerShell.
+
+Não é necessário criar `MAVEN_HOME` ou `M2_HOME` para essa configuração. O essencial é ter o JDK configurado e o diretório `bin` do Maven acessível pelo `Path`. Veja a [documentação de instalação do Maven](https://maven.apache.org/install.html).
+
+### Verificar Maven e Java em conjunto
+
+```powershell
+mvn -v
+where.exe mvn
+```
+
+A saída deve mostrar a versão do Maven, sua pasta de instalação e a versão do Java utilizada. Confira se o Java indicado é o JDK escolhido para as atividades.
+
+O Maven lê o arquivo `pom.xml` do projeto. Na primeira execução, pode precisar de Internet para baixar dependências e plugins. O repositório local padrão fica em `.m2\repository`, dentro da pasta do usuário.
+
+## 4. Configurar o editor
+
+Uma opção para acompanhar as atividades é o **Visual Studio Code**:
+
+1. Instale o editor pelo [site oficial do VS Code](https://code.visualstudio.com/).
+2. Na área de extensões, instale **Extension Pack for Java**, publicado pela Microsoft.
+3. Abra a pasta completa do projeto, aquela que contém o `pom.xml`.
+4. Aguarde a importação das dependências e a inicialização das ferramentas Java.
+5. Use **Java: Configure Java Runtime** na paleta de comandos para conferir o JDK do projeto.
+
+O pacote de extensões oferece ferramentas para editar, depurar e trabalhar com projetos Java. Consulte o [guia Java do VS Code](https://code.visualstudio.com/docs/java/java-tutorial).
+
+Também é possível utilizar outra IDE adotada nas aulas. Em qualquer editor, confirme o JDK e importe o projeto como Maven.
+
+### Extensões para as atividades
+
+| Extensão                   | ID no VS Code                       | Finalidade                                             |
+| -------------------------- | ----------------------------------- | ------------------------------------------------------ |
+| Extension Pack for Java    | `vscjava.vscode-java-pack`          | Autocomplete Java, Maven, testes, debug e refatoração. |
+| Spring Boot Extension Pack | `vmware.vscode-boot-dev-pack`       | Suporte ao Spring Boot, Spring Initializr e dashboard. |
+| Prettier                   | `esbenp.prettier-vscode`            | Formatação de HTML, CSS, JavaScript e JSON.            |
+| ESLint                     | `dbaeumer.vscode-eslint`            | Identificação de problemas no JavaScript.              |
+| HTML CSS Support           | `ecmel.vscode-html-css`             | Autocomplete de classes CSS em arquivos HTML.          |
+| Thymeleaf Language Support | `jungho.thymeleaf-language-support` | Suporte a templates e expressões Thymeleaf.            |
+| EditorConfig               | `EditorConfig.EditorConfig`         | Padronização de indentação e formatação.               |
+
+Comece pelos pacotes Java e Spring Boot e pelo Prettier. Adicione as demais extensões conforme as atividades. O ESLint depende da configuração de análise JavaScript do projeto; instalar a extensão não define automaticamente as regras da disciplina. O EditorConfig utiliza um arquivo `.editorconfig` para compartilhar convenções de edição.
+
+Links de consulta: [Spring Boot Extension Pack](https://marketplace.visualstudio.com/items?itemName=vmware.vscode-boot-dev-pack) e [Thymeleaf Language Support](https://marketplace.visualstudio.com/items?itemName=jungho.thymeleaf-language-support).
+
+Antes de instalar a extensão de Thymeleaf indicada no documento-base, confira sua disponibilidade e a versão mínima do VS Code na página da extensão. Se houver incompatibilidade, atualize o editor. O suporte adicional da extensão é opcional: os templates continuam sendo arquivos HTML processados pela aplicação.
+
+### Extensões complementares
+
+| Extensão          | ID no VS Code                        | Finalidade                                   |
+| ----------------- | ------------------------------------ | -------------------------------------------- |
+| Error Lens        | `usernamehw.errorlens`               | Mostra erros e avisos diretamente no editor. |
+| GitLens           | `eamodio.gitlens`                    | Histórico Git e identificação de alterações. |
+| REST Client       | `humao.rest-client`                  | Executar requisições HTTP no VS Code.        |
+| Path Intellisense | `christian-kohler.path-intellisense` | Autocomplete de caminhos de arquivos.        |
+
+### Instalação das extensões pelo PowerShell
+
+Confira primeiro se o comando `code` está disponível:
+
+```powershell
+code --version
+```
+Se não for reconhecido, reabra o terminal após instalar o VS Code e verifique a opção de adicioná-lo ao `Path` no instalador. Também é possível instalar cada extensão pela interface, usando `Ctrl+Shift+X` e pesquisando seu ID.
+
+Execute no PowerShell os comandos das extensões desejadas:
+```powershell
+
+# Java e Spring Boot
+code --install-extension vscjava.vscode-java-pack
+code --install-extension vmware.vscode-boot-dev-pack
+
+# HTML, CSS e JavaScript
+code --install-extension esbenp.prettier-vscode
+code --install-extension dbaeumer.vscode-eslint
+code --install-extension ecmel.vscode-html-css
+
+# Thymeleaf
+code --install-extension jungho.thymeleaf-language-support
+
+# Padronizacao
+code --install-extension EditorConfig.EditorConfig
+
+# Produtividade
+code --install-extension usernamehw.errorlens
+code --install-extension eamodio.gitlens
+code --install-extension humao.rest-client
+code --install-extension christian-kohler.path-intellisense
+
+```
+Para verificar as extensões instaladas:
+```powershell
+code --list-extensions
+```
+### Configurações do VS Code
+
+No VS Code, pressione `Ctrl + Shift + P`, procure `Preferences: Open User Settings (JSON)` e adicione estas propriedades ao JSON existente:
+```json
+{
+  "editor.formatOnSave": true,
+  "editor.bracketPairColorization.enabled": true,
+  "editor.linkedEditing": true,
+
+  "java.configuration.updateBuildConfiguration": "automatic",
+  "java.jdt.ls.lombokSupport.enabled": true,
+
+  "[java]": {
+    "editor.defaultFormatter": "redhat.java"
+  },
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[css]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+
+  "emmet.triggerExpansionOnTab": true
+}
+```
+
+Ao editar o JSON, mantenha um único objeto externo e incorpore as propriedades às configurações já existentes. Se uma chave já existir, ajuste seu valor sem duplicá-la. Para aplicar as preferências somente ao projeto, use **Preferences: Open Workspace Settings (JSON)**, que grava as configurações em `.vscode/settings.json`.
+
+O formatador de Java é o da Red Hat; o Prettier fica responsável pelos tipos de arquivo indicados no exemplo. Se um template não estiver sendo reconhecido como HTML, confira o modo de linguagem na barra inferior do editor.
+
+## 5. Maven instalado e Maven Wrapper
+
+Projetos podem incluir `mvnw`, `mvnw.cmd` e a pasta `.mvn`. Esses arquivos compõem o **Maven Wrapper**, que utiliza a versão do Maven definida pelo projeto e pode baixá-la na primeira execução.
+
+| Situação | Comando no PowerShell |
+|---|---|
+| Conferir o Maven instalado no Windows | `mvn -v` |
+| Conferir o Maven definido pelo projeto | `.\mvnw.cmd -v` |
+| Executar testes com o Wrapper | `.\mvnw.cmd test` |
+| Gerar o pacote com o Wrapper | `.\mvnw.cmd clean package` |
+
+Execute os comandos do Wrapper na pasta que contém `mvnw.cmd` e `pom.xml`. O prefixo `.\` indica um arquivo da pasta atual. Se o projeto oferece o Wrapper, prefira utilizá-lo para acompanhar a versão definida no projeto. Ele dispensa a instalação global do Maven para esse projeto, mas continua precisando de Java.
+
+Referência: [Apache Maven Wrapper](https://maven.apache.org/tools/wrapper/).
+
+## 6. Criar um projeto de verificação com Spring Boot
+
+No [Spring Initializr](https://start.spring.io/), configure:
+
+| Campo | Valor para o exercício |
+|---|---|
+| Project | Maven |
+| Language | Java |
+| Spring Boot | Uma versão estável compatível com Java 21; evite SNAPSHOT e milestone |
+| Group | `br.edu.ifba` |
+| Artifact | `ambiente-web` |
+| Package name | `br.edu.ifba.ambienteweb` |
+| Packaging | Jar |
+| Java | 21 |
+| Dependencies | Spring Web e Thymeleaf |
+
+Selecione **Generate**, extraia o ZIP e abra a pasta que contém `pom.xml`. Essa organização segue o fluxo do [guia de aplicações web do Spring](https://spring.io/guides/gs/serving-web-content/).
+
+### Criar uma página para conferir o servidor
+
+Crie `src/main/resources/static/index.html`:
+
+```html
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8">
+    <title>Verificação do ambiente</title>
+  </head>
+  <body>
+    <h1>Ambiente Web funcionando!</h1>
+    <p>Esta página foi entregue pela aplicação Spring Boot.</p>
+  </body>
+</html>
+```
+
+Execute na raiz do projeto:
+
+```powershell
+.\mvnw.cmd -v
+.\mvnw.cmd test
+.\mvnw.cmd spring-boot:run
+```
+
+Após a inicialização, acesse `http://localhost:8080/` no navegador. A página deve mostrar **Ambiente Web funcionando!**. Encerre a aplicação com `Ctrl+C` no terminal.
+
+Esse teste verifica a execução do servidor e a entrega de HTML estático. A dependência Thymeleaf já estará no projeto; páginas dinâmicas serão construídas nas aulas, usando controllers e arquivos em `src/main/resources/templates`.
+
+## 7. Problemas frequentes
+
+| Sintoma | O que verificar |
+|---|---|
+| `java` ou `javac` não é reconhecido | Instalação do JDK, entrada `bin` no `Path` e abertura de um novo terminal |
+| `JAVA_HOME` inválido | A variável deve apontar para uma pasta existente do JDK, sem `bin` |
+| Java do Maven diferente do terminal | Compare `mvn -v`, `java -version`, `JAVA_HOME` e `where.exe java` |
+| `mvn` não é reconhecido | Confirme a entrada do Maven no `Path` e a existência de `bin\mvn.cmd` |
+| `mvnw.cmd` não é encontrado | Entre na raiz do projeto e confira se o Wrapper está presente |
+| Maven informa que não há projeto | Execute o comando na pasta que contém `pom.xml` |
+| `release version ... not supported` | O JDK de compilação é mais antigo que a versão solicitada pelo projeto |
+| Falha no download de dependências | Verifique conexão, proxy da instituição e a mensagem de erro; solicite apoio para configurar o acesso |
+| Porta 8080 ocupada | Pare a outra aplicação ou configure `server.port=8081` em `src/main/resources/application.properties` e use a nova porta |
+| Página inicial retorna 404 | Confira o arquivo `src/main/resources/static/index.html` e reinicie a aplicação |
+
+## 8. Conferência final
+
+- `java -version` e `javac -version` mostram o JDK esperado.
+- O programa `Ola.java` compila e executa.
+- `mvn -v` informa o Java correto.
+- O editor reconhece o projeto Maven e seu JDK.
+- `code --list-extensions` lista as extensões escolhidas.
+- Salvar arquivos Java e HTML aplica os formatadores configurados.
+- `.\mvnw.cmd test` termina com `BUILD SUCCESS` no projeto gerado.
+- A aplicação inicia e entrega a página em `http://localhost:8080/`.
+
+Com essas verificações, o ambiente está preparado para as atividades com HTML, Java, Spring Boot e Thymeleaf.

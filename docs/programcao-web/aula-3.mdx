@@ -1,0 +1,1239 @@
+---
+id: aula-03-html-formularios
+title: "Aula 3 — HTML: tags, formulários e validação"
+sidebar_label: "Aula 3 — HTML e Formulários"
+sidebar_position: 4
+description: "Revisão de tags HTML, estrutura semântica, tabelas, formulários, validação nativa e envio de dados ao servidor."
+---
+
+Na [Aula 2](./aula-2.mdx), estudamos a estrutura básica do HTML. Nesta aula, vamos ampliar nosso repertório de tags e aprofundar os **formulários**, conectando a interface ao envio de dados por HTTP.
+
+## Objetivos da aula
+
+- Organizar páginas com elementos semânticos, listas e tabelas.
+- Escolher controles adequados para cada tipo de informação.
+- Associar rótulos aos campos e agrupar controles relacionados.
+- Diferenciar `id`, `name` e `value`, compreendendo os dados enviados.
+- Configurar validações nativas e distinguir GET de POST.
+- Construir uma página de cadastro como preparação para Spring Boot e Thymeleaf.
+
+## Roteiro de estudo
+
+As seções 1 a 6 revisam e ampliam as tags da aula anterior. O foco da prática está nas seções 7 e 8, sobre formulários e validação, e no cadastro completo da seção 10. A seção 9 reúne recursos complementares para consulta.
+
+Os exemplos são códigos para copiar em arquivos HTML. Recursos como imagens, CSS, scripts e vídeos precisam existir nos caminhos informados. Os formulários podem ser testados localmente quanto ao preenchimento e à validação; o envio efetivo depende de um servidor com a rota correspondente.
+
+## 1. Estrutura básica de um documento HTML
+
+Retomando a Aula 2, vamos usar uma estrutura explícita para organizar o documento. O exemplo também mostra como vincular CSS e JavaScript; esses arquivos precisam existir nos caminhos indicados para serem carregados.
+
+```html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+    <title>Minha primeira página</title>
+    <link rel="stylesheet" href="estilo.css">
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <h1>Olá, mundo!</h1>
+    <p>Minha primeira página HTML.</p>
+</body>
+</html>
+```
+
+| Elemento          | Descrição                                                  |
+| ----------------- | ---------------------------------------------------------- |
+| `<!DOCTYPE html>` | Declara o tipo de documento e ativa o modo de padrões. Não é uma tag HTML. |
+| `<html>`          | Elemento raiz do documento.                                |
+| `<head>`          | Contém configurações e metadados.                          |
+| `<meta>`          | Define informações sobre a página.                         |
+| `<title>`         | Define o título exibido na aba.                            |
+| `<link>`          | Vincula recursos externos, como CSS.                       |
+| `<script>`        | Inclui ou referencia JavaScript.                           |
+| `<style>`         | Define CSS diretamente no HTML.                            |
+| `<body>`          | Contém o conteúdo visível da página.                       |
+
+Exemplo de CSS interno utilizando `<style>`:
+
+```html
+<style>
+    h1 {
+        color: blue;
+    }
+</style>
+```
+
+## 2. Tags para textos e conteúdos
+
+### 2.1. Títulos — `<h1>` até `<h6>`
+
+Representam diferentes níveis hierárquicos de títulos.
+
+```html
+<h1>Título principal</h1>
+<h2>Seção principal</h2>
+<h3>Subseção</h3>
+<h4>Título nível 4</h4>
+<h5>Título nível 5</h5>
+<h6>Título nível 6</h6>
+```
+
+Os títulos devem seguir uma hierarquia lógica, não sendo escolhidos apenas pelo tamanho da fonte.
+
+### 2.2. Parágrafos — `<p>`
+
+```html
+<p>Este é um parágrafo.</p>
+<p>Este é outro parágrafo.</p>
+```
+
+### 2.3. Destaque e ênfase — `<strong>` e `<em>`
+
+```html
+<p>
+    Este conteúdo é
+    <strong>muito importante</strong>.
+</p>
+
+<p>
+    Você <em>realmente</em> precisa estudar HTML.
+</p>
+```
+
+`<strong>` indica forte importância e `<em>` indica ênfase. Por padrão, navegadores normalmente os exibem em negrito e itálico, respectivamente.
+
+### 2.4. Quebras e separadores — `<br>` e `<hr>`
+
+```html
+<p>
+    Primeira linha<br>
+    Segunda linha
+</p>
+
+<hr>
+
+<p>Outra seção do conteúdo.</p>
+```
+
+`<br>` insere uma quebra de linha, enquanto `<hr>` indica uma separação temática.
+
+### 2.5. Contêineres — `<div>` e `<span>`
+
+```html
+<div class="produto">
+    <h2>Notebook</h2>
+    <p>Preço: <span class="preco">R$ 3.000</span></p>
+</div>
+```
+
+- `<div>`: contêiner genérico, normalmente exibido como bloco.
+- `<span>`: contêiner genérico em linha, útil para trechos de texto.
+
+Eles não possuem significado semântico próprio.
+
+### 2.6. Código e texto pré-formatado — `<code>` e `<pre>`
+
+```html
+<p>Utilize a função <code>console.log()</code>.</p>
+
+<pre><code>function saudacao() {
+    console.log("Olá!");
+}</code></pre>
+```
+
+`<code>` representa código de computador e `<pre>` preserva espaços e quebras de linha.
+
+## 3. Links e imagens
+
+### 3.1. Links — `<a>`
+
+```html
+<a href="https://www.google.com">
+    Acessar Google
+</a>
+
+<a href="contato.html">
+    Página de contato
+</a>
+
+<a href="#sobre">
+    Ir para Sobre
+</a>
+
+<a href="mailto:contato@exemplo.com">
+    Enviar e-mail
+</a>
+```
+
+Atributos importantes:
+
+| Atributo          | Função                                          |
+| ----------------- | ----------------------------------------------- |
+| `href`            | Define o destino do link.                       |
+| `target="_blank"` | Abre o destino em outra aba ou janela.          |
+| `rel`             | Define a relação entre o documento e o destino. |
+| `download`        | Indica a intenção de baixar o recurso.          |
+
+### 3.2. Imagens — `<img>`
+
+```html
+<img
+    src="foto.jpg"
+    alt="Estudantes em uma sala de aula"
+    width="300"
+>
+```
+
+O atributo `alt` é importante para a acessibilidade e deve transmitir a função ou o conteúdo relevante da imagem.
+
+## 4. Listas
+
+### 4.1. Lista não ordenada — `<ul>` e `<li>`
+
+```html
+<ul>
+    <li>HTML</li>
+    <li>CSS</li>
+    <li>JavaScript</li>
+</ul>
+```
+
+### 4.2. Lista ordenada — `<ol>` e `<li>`
+
+```html
+<ol>
+    <li>Criar o HTML</li>
+    <li>Adicionar CSS</li>
+    <li>Adicionar JavaScript</li>
+</ol>
+```
+
+## 5. Tags semânticas
+
+As tags semânticas permitem identificar o papel de cada parte do documento.
+
+| Tag            | Finalidade                                |
+| -------------- | ----------------------------------------- |
+| `<header>`     | Cabeçalho da página ou de uma seção.      |
+| `<nav>`        | Conjunto de links de navegação.           |
+| `<main>`       | Conteúdo principal do documento.          |
+| `<section>`    | Seção temática do conteúdo.               |
+| `<article>`    | Conteúdo independente.                    |
+| `<aside>`      | Conteúdo complementar.                    |
+| `<footer>`     | Rodapé da página ou de uma seção.         |
+| `<figure>`     | Agrupa conteúdo ilustrativo.              |
+| `<figcaption>` | Legenda associada a uma figura.           |
+| `<details>`    | Área que pode ser expandida ou recolhida. |
+| `<summary>`    | Identificação visível de um `<details>`.  |
+
+Exemplo:
+
+```html
+<header>
+    <h1>Portal Acadêmico</h1>
+
+    <nav>
+        <a href="/">Início</a>
+        <a href="/cursos">Cursos</a>
+        <a href="/contato">Contato</a>
+    </nav>
+</header>
+
+<main>
+    <section>
+        <h2>Notícias</h2>
+
+        <article>
+            <h3>Inscrições abertas</h3>
+            <p>Confira os cursos disponíveis.</p>
+        </article>
+    </section>
+
+    <aside>
+        <h2>Links úteis</h2>
+        <a href="/calendario">Calendário acadêmico</a>
+    </aside>
+</main>
+
+<footer>
+    <p>Portal Acadêmico - 2026</p>
+</footer>
+```
+
+### 5.1. Figuras e legendas
+
+```html
+<figure>
+    <img src="laboratorio.jpg"
+         alt="Laboratório de informática">
+
+    <figcaption>
+        Laboratório de informática do campus.
+    </figcaption>
+</figure>
+```
+
+### 5.2. Conteúdo expansível
+
+```html
+<details>
+    <summary>O que é HTML?</summary>
+    <p>
+        HTML é uma linguagem de marcação
+        utilizada para estruturar páginas web.
+    </p>
+</details>
+```
+
+## 6. Tabelas HTML
+
+| Tag          | Finalidade                                             |
+| ------------ | ------------------------------------------------------ |
+| `<table>`    | Cria uma tabela.                                       |
+| `<caption>`  | Define a legenda ou o título da tabela.                |
+| `<thead>`    | Agrupa as linhas de cabeçalho.                         |
+| `<tbody>`    | Agrupa as linhas de dados.                             |
+| `<tfoot>`    | Agrupa as linhas finais ou de resumo.                  |
+| `<tr>`       | Cria uma linha.                                        |
+| `<th>`       | Cria uma célula de cabeçalho.                          |
+| `<td>`       | Cria uma célula de dados.                              |
+| `<colgroup>` | Agrupa colunas para configuração.                      |
+| `<col>`      | Representa uma ou mais colunas dentro de `<colgroup>`. |
+
+Exemplo completo:
+
+```html
+<table>
+    <caption>Notas dos estudantes</caption>
+
+    <colgroup>
+        <col>
+        <col span="2">
+    </colgroup>
+
+    <thead>
+        <tr>
+            <th scope="col">Nome</th>
+            <th scope="col">Nota 1</th>
+            <th scope="col">Nota 2</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <tr>
+            <td>Ana</td>
+            <td>8.0</td>
+            <td>9.0</td>
+        </tr>
+        <tr>
+            <td>João</td>
+            <td>7.0</td>
+            <td>8.0</td>
+        </tr>
+    </tbody>
+
+    <tfoot>
+        <tr>
+            <th scope="row">Média geral</th>
+            <td>7.5</td>
+            <td>8.5</td>
+        </tr>
+    </tfoot>
+</table>
+```
+
+Resultado aproximado:
+
+| Nome        | Nota 1 | Nota 2 |
+| ----------- | ------ | ------ |
+| Ana         | 8.0    | 9.0    |
+| João        | 7.0    | 8.0    |
+| Média geral | 7.5    | 8.5    |
+
+O atributo `scope` indica se uma célula de cabeçalho identifica uma coluna ou linha. Os atributos `colspan` e `rowspan` permitem mesclar células.
+
+## 7. Formulários HTML
+
+Formulários estão entre os recursos mais importantes do HTML, pois permitem a entrada e o envio de dados para aplicações web.
+
+### 7.1. Estrutura de um formulário — `<form>`
+
+```html
+<form action="/usuarios" method="post">
+
+    <label for="nome">Nome:</label>
+    <input
+        type="text"
+        id="nome"
+        name="nome"
+        required
+    >
+
+    <button type="submit">Cadastrar</button>
+
+</form>
+```
+
+Os principais atributos de `<form>` são:
+
+| Atributo       | Descrição                                                   |
+| -------------- | ----------------------------------------------------------- |
+| `action`       | Define o endereço que receberá os dados.                    |
+| `method`       | Define o método de envio, normalmente GET ou POST.          |
+| `enctype`      | Define a codificação usada no envio dos dados.              |
+| `autocomplete` | Controla sugestões de preenchimento automático.             |
+| `novalidate`   | Desativa a validação automática de restrições do navegador. |
+| `target`       | Define onde a resposta será aberta.                         |
+
+#### Diferença entre GET e POST
+
+GET envia os campos como parâmetros na URL. É utilizado frequentemente em consultas, buscas e filtros.
+
+```html
+<form action="/buscar" method="get">
+    <input type="search" name="termo">
+    <button type="submit">Pesquisar</button>
+</form>
+```
+
+Exemplo de URL produzida:
+
+```text
+/buscar?termo=html
+```
+
+POST envia os dados no corpo da requisição. É utilizado normalmente em operações de cadastro e envio de informações.
+
+```html
+<form action="/usuarios" method="post">
+    <input type="text" name="nome">
+    <button type="submit">Cadastrar</button>
+</form>
+```
+
+POST não criptografa os dados por si só. A proteção durante o transporte depende, principalmente, do uso de HTTPS.
+
+### 7.2. `<label>` — Identificação dos campos
+
+O `<label>` fornece uma identificação textual para um controle do formulário.
+
+```html
+<label for="email">E-mail:</label>
+<input type="email" id="email" name="email">
+```
+
+O atributo `for` deve corresponder ao `id` do controle.
+
+Essa associação melhora a acessibilidade e permite que o usuário clique no texto do rótulo para interagir com o campo.
+
+### 7.3. Tipos de `<input>`
+
+A tag `<input>` permite diferentes formas de entrada de dados através do atributo `type`.
+
+#### Entrada de textos
+
+`type="text"` — Texto simples
+
+```html
+<label for="nome">Nome:</label>
+<input type="text" id="nome" name="nome">
+```
+
+`type="password"` — Senhas
+
+```html
+<label for="senha">Senha:</label>
+<input type="password" id="senha" name="senha">
+```
+
+Oculta visualmente os caracteres digitados, mas não criptografa os dados por si só.
+
+`type="email"` — Endereço de e-mail
+
+```html
+<label for="email">E-mail:</label>
+<input type="email" id="email" name="email" required>
+```
+
+O navegador verifica o formato básico de e-mail durante a validação do formulário.
+
+`type="search"` — Campo de busca
+
+```html
+<label for="busca">Buscar:</label>
+<input type="search" id="busca" name="busca">
+```
+
+`type="tel"` — Telefone
+
+```html
+<label for="telefone">Telefone:</label>
+<input type="tel" id="telefone" name="telefone">
+```
+
+Não realiza uma validação universal do formato de telefone. Para impor um formato, pode-se usar `pattern` e validação complementar.
+
+`type="url"` — Endereço web
+
+```html
+<label for="site">Site:</label>
+<input type="url" id="site" name="site">
+```
+
+#### Entrada de números
+
+`type="number"` — Valores numéricos
+
+```html
+<label for="idade">Idade:</label>
+
+<input
+    type="number"
+    id="idade"
+    name="idade"
+    min="0"
+    max="120"
+    step="1"
+>
+```
+
+`type="range"` — Controle deslizante
+
+```html
+<label for="volume">Volume:</label>
+
+<input
+    type="range"
+    id="volume"
+    name="volume"
+    min="0"
+    max="100"
+    value="50"
+>
+```
+
+#### Datas e horários
+
+`type="date"` — Data
+
+```html
+<label for="nascimento">Nascimento:</label>
+<input type="date" id="nascimento" name="nascimento">
+```
+
+`type="time"` — Horário
+
+```html
+<label for="horario">Horário:</label>
+<input type="time" id="horario" name="horario">
+```
+
+`type="datetime-local"` — Data e hora
+
+```html
+<label for="agendamento">Agendamento:</label>
+<input
+    type="datetime-local"
+    id="agendamento"
+    name="agendamento"
+>
+```
+
+`type="month"` — Mês e ano
+
+```html
+<label for="mes">Mês de referência:</label>
+<input type="month" id="mes" name="mes">
+```
+
+`type="week"` — Semana
+
+```html
+<label for="semana">Semana:</label>
+<input type="week" id="semana" name="semana">
+```
+
+#### Seleção de opções
+
+`type="radio"` — Seleção única dentro de um grupo
+
+```html
+<fieldset>
+    <legend>Turno de estudo</legend>
+
+    <input type="radio"
+           id="matutino"
+           name="turno"
+           value="matutino">
+
+    <label for="matutino">Matutino</label>
+
+    <input type="radio"
+           id="noturno"
+           name="turno"
+           value="noturno">
+
+    <label for="noturno">Noturno</label>
+</fieldset>
+```
+
+Todos os radios do mesmo grupo devem compartilhar o mesmo atributo `name`, mas possuir valores `value` diferentes.
+
+`type="checkbox"` — Seleção independente ou múltipla
+
+```html
+<fieldset>
+    <legend>Tecnologias conhecidas</legend>
+
+    <input type="checkbox"
+           id="html"
+           name="tecnologias"
+           value="html">
+    <label for="html">HTML</label>
+
+    <input type="checkbox"
+           id="css"
+           name="tecnologias"
+           value="css">
+    <label for="css">CSS</label>
+
+    <input type="checkbox"
+           id="js"
+           name="tecnologias"
+           value="javascript">
+    <label for="js">JavaScript</label>
+</fieldset>
+```
+
+Checkboxes permitem múltiplas seleções. Em um formulário tradicional, os marcados são enviados por seus respectivos pares `name=value`; os desmarcados normalmente não são enviados.
+
+#### Arquivos e cores
+
+`type="file"` — Envio de arquivos
+
+```html
+<label for="documento">Documento:</label>
+
+<input
+    type="file"
+    id="documento"
+    name="documento"
+    accept=".pdf,.jpg,.png"
+>
+```
+
+Para enviar arquivos ao servidor, normalmente usa-se:
+
+```html
+<form action="/upload"
+      method="post"
+      enctype="multipart/form-data">
+
+    <label for="arquivo">Arquivo:</label>
+    <input type="file" id="arquivo" name="arquivo">
+    <button type="submit">Enviar</button>
+
+</form>
+```
+
+`type="color"` — Seleção de cores
+
+```html
+<label for="cor">Cor favorita:</label>
+<input type="color" id="cor" name="cor" value="#3366ff">
+```
+
+#### Campos auxiliares e botões
+
+`type="hidden"` — Campo oculto
+
+```html
+<input type="hidden" name="usuarioId" value="123">
+```
+
+Não aparece visualmente, mas seu valor pode ser inspecionado e modificado pelo usuário. Portanto, não deve ser considerado seguro ou confiável por estar oculto.
+
+`type="submit"` — Enviar formulário
+
+```html
+<input type="submit" value="Cadastrar">
+```
+
+`type="reset"` — Restaurar valores iniciais
+
+```html
+<input type="reset" value="Limpar">
+```
+
+`type="button"` — Botão sem comportamento padrão
+
+```html
+<input type="button" value="Clique aqui">
+```
+
+`type="image"` — Botão de envio com imagem
+
+```html
+<input
+    type="image"
+    src="enviar.png"
+    alt="Enviar formulário"
+    width="100"
+>
+```
+
+Esse último tipo é menos comum; geralmente é preferível usar `<button>`.
+
+### 7.4. `<select>` e `<option>` — Lista suspensa
+
+O elemento `<select>` permite escolher uma ou mais opções predefinidas.
+
+```html
+<label for="curso">Curso:</label>
+
+<select id="curso" name="curso" required>
+    <option value="">Selecione um curso</option>
+    <option value="ads">ADS</option>
+    <option value="redes">Redes de Computadores</option>
+    <option value="informatica">Informática</option>
+</select>
+```
+
+O atributo `value` de cada opção é o valor enviado ao servidor. O texto entre as tags `<option>` é o que o usuário vê.
+
+#### `<optgroup>` — Agrupamento de opções
+
+```html
+<label for="disciplina">Disciplina:</label>
+<select id="disciplina" name="disciplina">
+    <optgroup label="Desenvolvimento Web">
+        <option value="html">HTML</option>
+        <option value="css">CSS</option>
+    </optgroup>
+
+    <optgroup label="Programação">
+        <option value="java">Java</option>
+        <option value="python">Python</option>
+    </optgroup>
+</select>
+```
+
+#### Seleção múltipla
+
+```html
+<label for="linguagens">Linguagens:</label>
+
+<select id="linguagens"
+        name="linguagens"
+        multiple
+        size="3">
+    <option value="java">Java</option>
+    <option value="python">Python</option>
+    <option value="js">JavaScript</option>
+</select>
+```
+
+### 7.5. `<textarea>` — Texto com múltiplas linhas
+
+```html
+<label for="observacoes">Observações:</label>
+
+<textarea
+    id="observacoes"
+    name="observacoes"
+    rows="5"
+    cols="40"
+    maxlength="500"
+    placeholder="Digite suas observações..."
+></textarea>
+```
+
+É utilizado para comentários, descrições, mensagens e textos maiores.
+
+Diferentemente de `<input>`, o valor inicial de `<textarea>` é definido pelo conteúdo entre a abertura e o fechamento da tag.
+
+### 7.6. `<button>` — Botões
+
+O elemento `<button>` aceita três tipos principais:
+
+```html
+<button type="submit">Salvar</button>
+
+<button type="reset">Limpar</button>
+
+<button type="button" id="ajuda">
+    Mostrar ajuda
+</button>
+```
+
+| Tipo     | Comportamento                                             |
+| -------- | --------------------------------------------------------- |
+| `submit` | Envia o formulário.                                       |
+| `reset`  | Restaura os valores iniciais.                             |
+| `button` | Não possui ação padrão; pode ser associado ao JavaScript. |
+
+Dentro de um formulário, um `<button>` sem `type` geralmente funciona como `submit`. Por isso, é recomendável definir o tipo explicitamente.
+
+### 7.7. `<fieldset>` e `<legend>` — Agrupamento de campos
+
+```html
+<fieldset>
+    <legend>Dados pessoais</legend>
+
+    <label for="nomeCompleto">Nome:</label>
+    <input type="text"
+           id="nomeCompleto"
+           name="nome">
+
+    <label for="idade">Idade:</label>
+    <input type="number"
+           id="idade"
+           name="idade">
+</fieldset>
+```
+
+Esse agrupamento melhora a organização semântica e pode facilitar a compreensão dos formulários por tecnologias assistivas.
+
+### 7.8. `<datalist>` — Sugestões de preenchimento
+
+```html
+<label for="cidade">Cidade:</label>
+
+<input
+    type="text"
+    id="cidade"
+    name="cidade"
+    list="cidades"
+>
+
+<datalist id="cidades">
+    <option value="Salvador">
+    <option value="Feira de Santana">
+    <option value="Santo Antônio de Jesus">
+</datalist>
+```
+
+A diferença principal é que o `<datalist>` oferece sugestões, mas normalmente permite digitar valores que não estejam na lista.
+
+### 7.9. `<output>` — Exibição de resultados
+
+```html
+<form oninput="resultado.value =
+    Number(n1.value) + Number(n2.value)">
+
+    <label for="n1">Primeiro número:</label>
+    <input type="number" id="n1" name="n1" value="0">
+    +
+    <label for="n2">Segundo número:</label>
+    <input type="number" id="n2" name="n2" value="0">
+    =
+    <output name="resultado" for="n1 n2">0</output>
+
+</form>
+```
+
+O `<output>` representa o resultado de uma operação ou cálculo. Neste exemplo, o atributo `oninput` contém JavaScript para atualizar a soma; o HTML sozinho não realiza o cálculo.
+
+## 8. Atributos importantes em formulários
+
+Além de conhecer as tags, é fundamental compreender seus atributos, pois eles controlam o comportamento dos campos.
+
+| Atributo       | Descrição                                        | Exemplo                         |
+| -------------- | ------------------------------------------------ | ------------------------------- |
+| `id`           | Identifica unicamente um elemento.               | `id="nome"`                     |
+| `name`         | Define o nome usado no envio do campo.           | `name="email"`                  |
+| `value`        | Define o valor do controle.                      | `value="Brasil"`                |
+| `placeholder`  | Exibe uma dica de preenchimento.                 | `placeholder="Digite seu nome"` |
+| `required`     | Torna o preenchimento obrigatório.               | `required`                      |
+| `readonly`     | Impede a edição de determinados campos.          | `readonly`                      |
+| `disabled`     | Desabilita o controle.                           | `disabled`                      |
+| `min`          | Define o menor valor permitido.                  | `min="0"`                       |
+| `max`          | Define o maior valor permitido.                  | `max="100"`                     |
+| `step`         | Define incrementos permitidos.                   | `step="0.5"`                    |
+| `minlength`    | Define a quantidade mínima de caracteres.        | `minlength="3"`                 |
+| `maxlength`    | Limita a quantidade de caracteres.               | `maxlength="100"`               |
+| `pattern`      | Define um padrão de validação.                   | `pattern="[0-9]{5}"`            |
+| `checked`      | Marca inicialmente um radio ou checkbox.         | `checked`                       |
+| `selected`     | Seleciona inicialmente uma opção.                | `selected`                      |
+| `multiple`     | Permite múltiplos valores.                       | `multiple`                      |
+| `accept`       | Indica os tipos de arquivo aceitos.              | `accept=".pdf,.png"`            |
+| `autocomplete` | Oferece orientações de preenchimento automático. | `autocomplete="email"`          |
+
+### 8.1. Exemplos de validação nativa
+
+Campo obrigatório com tamanho mínimo:
+
+```html
+<input
+    type="text"
+    name="usuario"
+    required
+    minlength="3"
+    maxlength="30"
+>
+```
+
+Número entre 18 e 100:
+
+```html
+<input
+    type="number"
+    name="idade"
+    min="18"
+    max="100"
+    required
+>
+```
+
+Código contendo exatamente cinco dígitos:
+
+```html
+<input
+    type="text"
+    name="codigo"
+    pattern="[0-9]{5}"
+    title="Digite exatamente 5 números"
+    required
+>
+```
+
+Campo desabilitado:
+
+```html
+<input
+    type="text"
+    name="situacao"
+    value="Ativo"
+    disabled
+>
+```
+
+Campo somente leitura:
+
+```html
+<input
+    type="text"
+    name="matricula"
+    value="20260001"
+    readonly
+>
+```
+
+Uma diferença importante: campos `disabled` não são enviados normalmente com o formulário. Campos `readonly`, quando possuem `name`, são enviados.
+
+:::tip Validação e envio
+As validações nativas melhoram a experiência do usuário, mas não substituem a validação no servidor. `accept` orienta a seleção de arquivos; o servidor ainda precisa verificar seu tipo e tamanho. `placeholder` fornece uma dica e não substitui um `label`.
+
+Nos campos aplicáveis, `readonly` impede edição pela interface, mas não torna o valor confiável. Controles sem `name` e controles desabilitados não participam normalmente do envio. Radios e checkboxes só enviam seus valores quando selecionados.
+:::
+
+## 9. Multimídia e tags complementares
+
+### 9.1. `<audio>` e `<source>`
+
+```html
+<audio controls>
+    <source src="audio.mp3" type="audio/mpeg">
+    Seu navegador não suporta áudio.
+</audio>
+```
+
+### 9.2. `<video>` e `<track>`
+
+```html
+<video controls width="500">
+    <source src="aula.mp4" type="video/mp4">
+
+    <track
+        src="legendas.vtt"
+        kind="subtitles"
+        srclang="pt-BR"
+        label="Português"
+    >
+
+    Seu navegador não suporta vídeo.
+</video>
+```
+
+### 9.3. `<iframe>`
+
+Permite incorporar documentos ou conteúdos externos.
+
+```html
+<iframe
+    src="https://www.example.com"
+    title="Conteúdo incorporado"
+    width="600"
+    height="400">
+</iframe>
+```
+
+O site de destino precisa permitir a incorporação.
+
+### 9.4. `<picture>`
+
+Permite definir diferentes imagens conforme condições do dispositivo.
+
+```html
+<picture>
+    <source
+        media="(max-width: 600px)"
+        srcset="foto-mobile.jpg"
+    >
+
+    <img
+        src="foto-desktop.jpg"
+        alt="Paisagem"
+    >
+</picture>
+```
+
+### 9.5. `<dialog>`
+
+Representa uma caixa de diálogo. Neste exemplo, JavaScript abre e fecha o diálogo; esse comportamento será aprofundado em aulas posteriores.
+
+```html
+<dialog id="aviso">
+    <p>Deseja continuar?</p>
+
+    <button type="button" id="fechar">
+        Fechar
+    </button>
+</dialog>
+
+<button type="button" id="abrir">
+    Abrir diálogo
+</button>
+
+<script>
+    const aviso = document.getElementById("aviso");
+
+    document.getElementById("abrir")
+        .addEventListener("click", () => aviso.showModal());
+
+    document.getElementById("fechar")
+        .addEventListener("click", () => aviso.close());
+</script>
+```
+
+### 9.6. `<template>`
+
+Armazena uma estrutura HTML que não é renderizada imediatamente.
+
+```html
+<template id="modeloProduto">
+    <article>
+        <h2>Produto</h2>
+        <p>Descrição do produto</p>
+    </article>
+</template>
+
+<script>
+function showContent() {
+  let temp = document.getElementsByTagName("template")[0];
+  let clon = temp.content.cloneNode(true);
+  document.body.appendChild(clon);
+}
+
+showContent();
+</script>
+```
+
+O conteúdo pode ser clonado e inserido na página posteriormente utilizando JavaScript.
+
+## 10. Exemplo prático — Formulário de cadastro completo
+
+O exemplo abaixo reúne diversos conceitos apresentados: estrutura semântica, atributos, tipos de input, select, radio, checkbox, textarea, agrupamento de campos e botões.
+
+Salve o exemplo como `cadastro.html` para experimentar os controles no navegador:
+
+```html
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+    <title>Cadastro Acadêmico</title>
+</head>
+<body>
+    <header>
+        <h1>Sistema Acadêmico</h1>
+        <nav>
+            <a href="/">Início</a>
+            <a href="/usuarios">Usuários</a>
+        </nav>
+    </header>
+
+    <main>
+        <h2>Cadastro de usuário</h2>
+
+        <form action="/usuarios" method="post"
+              enctype="multipart/form-data">
+
+            <fieldset>
+                <legend>Dados pessoais</legend>
+
+                <label for="nome">Nome completo:</label>
+                <input type="text"
+                       id="nome"
+                       name="nome"
+                       required
+                       minlength="3">
+
+                <label for="email">E-mail:</label>
+                <input type="email"
+                       id="email"
+                       name="email"
+                       required>
+
+                <label for="senha">Senha:</label>
+                <input type="password"
+                       id="senha"
+                       name="senha"
+                       minlength="8"
+                       required>
+
+                <label for="nascimento">
+                    Data de nascimento:
+                </label>
+                <input type="date"
+                       id="nascimento"
+                       name="nascimento">
+            </fieldset>
+
+            <fieldset>
+                <legend>Informações acadêmicas</legend>
+
+                <label for="curso">Curso:</label>
+                <select id="curso" name="curso" required>
+                    <option value="">
+                        Selecione
+                    </option>
+                    <option value="ads">ADS</option>
+                    <option value="redes">Redes</option>
+                </select>
+
+                <fieldset>
+                    <legend>Perfil</legend>
+
+                    <input type="radio"
+                           id="aluno"
+                           name="perfil"
+                           value="aluno"
+                           required>
+                    <label for="aluno">Aluno</label>
+
+                    <input type="radio"
+                           id="professor"
+                           name="perfil"
+                           value="professor">
+                    <label for="professor">Professor</label>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Interesses</legend>
+
+                    <input type="checkbox"
+                           id="java"
+                           name="interesses"
+                           value="java">
+                    <label for="java">Java</label>
+
+                    <input type="checkbox"
+                           id="web"
+                           name="interesses"
+                           value="web">
+                    <label for="web">
+                        Desenvolvimento Web
+                    </label>
+                </fieldset>
+            </fieldset>
+
+            <fieldset>
+                <legend>Informações adicionais</legend>
+
+                <label for="foto">Foto:</label>
+                <input type="file"
+                       id="foto"
+                       name="foto"
+                       accept="image/*">
+
+                <label for="observacoes">
+                    Observações:
+                </label>
+                <textarea id="observacoes"
+                          name="observacoes"
+                          rows="4"
+                          maxlength="500"></textarea>
+            </fieldset>
+
+            <label>
+                <input type="checkbox"
+                       name="confirmacao"
+                       value="sim"
+                       required>
+                Confirmo que os dados estão corretos.
+            </label>
+
+            <button type="submit">Cadastrar</button>
+            <button type="reset">Limpar</button>
+        </form>
+    </main>
+
+    <footer>
+        <p>Sistema Acadêmico - 2026</p>
+    </footer>
+</body>
+</html>
+
+```
+
+Esse exemplo pode ser salvo como `cadastro.html` e aberto diretamente no navegador para testar os campos e as validações nativas. O envio efetivo dos dados exige um servidor com uma rota `/usuarios` que aceite a requisição.
+
+## 11. Exercícios propostos
+
+Realize as atividades em sequência. As três primeiras retomam a Aula 2; as duas últimas integram os conteúdos desta aula.
+
+1. Página pessoal: criar uma página com cabeçalho, menu, títulos, parágrafos, imagem, links e listas.
+2. Página de notícias: construir uma página com `header`, `nav`, `main`, `section`, `article`, `aside` e `footer`.
+3. Tabela de alunos: criar uma tabela com nome, matrícula, curso e situação, utilizando `thead`, `tbody` e `tfoot`.
+4. Formulário de cadastro: implementar um formulário com nome, e-mail, senha, data de nascimento, curso, turno, interesses e observações, incluindo validações HTML.
+5. Sistema acadêmico estático: integrar tudo em uma interface com menu de navegação, formulário de cadastro e tabela de alunos cadastrados (com dados inicialmente fixos).
+
+Resultado esperado: após essas atividades, o aluno deverá conseguir estruturar páginas HTML semanticamente corretas, criar formulários acessíveis, configurar validações nativas e compreender como os dados são organizados para envio a um servidor.
+
+Esse material também serve como preparação para aulas de CSS e JavaScript, especialmente manipulação do DOM, eventos, validação de formulários e implementação de operações CRUD.
+
+## 12. Roteiro de verificação do cadastro
+
+Use apenas dados fictícios nesta prática.
+
+1. Abra `cadastro.html` e tente enviar o formulário vazio. Identifique os campos obrigatórios.
+2. Digite um e-mail em formato inválido e uma senha com menos de oito caracteres. Observe a validação ao tentar enviar.
+3. Selecione um perfil e depois outro: explique por que apenas um radio permanece marcado.
+4. Marque dois interesses: identifique os pares `name=value` que representam essas escolhas.
+5. Preencha alguns campos e utilize o botão de reset. Verifique que ele restaura os valores iniciais, que nem sempre são vazios.
+6. Compare os exemplos de campo `disabled` e `readonly`. Explique qual deles participa do envio.
+
+Quando todos os campos forem válidos, o navegador tentará enviar a requisição para `/usuarios`. Sem um servidor que aceite POST nessa rota, não haverá cadastro. O HTML também não atualiza sozinho a tabela de alunos da atividade final: nesta etapa, os registros são fixos.
+
+Em aulas posteriores, o Spring Boot receberá as requisições, validará os dados e executará as regras de negócio. O Thymeleaf permitirá gerar páginas com os dados retornados pela aplicação.
+
+## 13. Questões de revisão
+
+1. Quando utilizar `section`, `article` e `div`?
+2. Qual é a função de `caption`, `th` e `scope` em uma tabela?
+3. Como `label` e `fieldset` ajudam a compreender um formulário?
+4. Qual é a diferença entre `id`, `name` e `value`?
+5. Por que os radios de um grupo compartilham o mesmo `name`?
+6. Qual é a diferença entre `select` e `datalist`?
+7. Como os dados de um formulário são enviados com GET e com POST?
+8. Por que POST e `type="password"` não substituem HTTPS?
+9. Quando é necessário utilizar `multipart/form-data`?
+10. Por que validar dados no navegador não elimina a validação no servidor?

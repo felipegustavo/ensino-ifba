@@ -1,0 +1,385 @@
+---
+id: aula-03-solid-isp-dip
+title: "Aula 3 — SOLID: ISP e DIP"
+sidebar_label: "Aula 3 — SOLID (parte 2)"
+description: "Continuação dos princípios SOLID: segregação de interfaces e inversão de dependência, com exemplos e exercícios em Java."
+---
+
+# Princípios SOLID — Parte 2
+
+**Padrões de Projeto — ADS**
+
+**Nesta aula:**
+
+- ISP — Interface Segregation Principle
+- DIP — Dependency Inversion Principle
+- Diferença entre DIP e injeção de dependência
+- Revisão dos cinco princípios SOLID
+- Exercícios de análise e refatoração em Java
+
+## 1. Relembrando a aula anterior
+
+Na parte 1, estudamos:
+
+| Princípio | Ideia principal |
+|---|---|
+| **SRP** | Uma classe deve ter uma razão para mudar |
+| **OCP** | Facilitar extensões sem modificar código estável |
+| **LSP** | Subtipos devem respeitar os contratos dos tipos-base |
+
+**Pergunta para a turma:**
+
+> Uma classe pode respeitar SRP e ainda depender de uma interface mal projetada?
+
+---
+
+## 2. ISP — Interface Segregation Principle
+
+### Princípio da Segregação de Interfaces
+
+> Clientes não devem ser obrigados a depender de métodos que não utilizam.
+
+**Ideia central:** prefira interfaces **pequenas e específicas** a uma interface muito abrangente.
+
+**Exemplo:** nem todo dispositivo que imprime documentos também digitaliza.
+
+---
+
+## 3. ISP — Interface com responsabilidades demais
+
+```java
+public interface Multifuncional {
+    void imprimir();
+    void digitalizar();
+    void enviarFax();
+}
+
+public class ImpressoraSimples implements Multifuncional {
+    public void imprimir() {
+        System.out.println("Imprimindo...");
+    }
+
+    public void digitalizar() {
+        throw new UnsupportedOperationException();
+    }
+
+    public void enviarFax() {
+        throw new UnsupportedOperationException();
+    }
+}
+```
+
+**Qual é o problema?**
+
+- `ImpressoraSimples` precisa implementar operações que não suporta.
+- A interface mistura capacidades diferentes.
+
+---
+
+## 4. ISP — Separando as capacidades
+
+```java
+public interface Imprimivel {
+    void imprimir();
+}
+
+public interface Digitalizavel {
+    void digitalizar();
+}
+
+public interface EnviadorFax {
+    void enviarFax();
+}
+```
+
+Cada classe implementa apenas as capacidades que realmente possui.
+
+```java
+public class ImpressoraSimples implements Imprimivel {
+    public void imprimir() {
+        System.out.println("Imprimindo...");
+    }
+}
+```
+
+---
+
+## 5. ISP — Combinando interfaces
+
+Uma impressora multifuncional pode implementar mais de uma interface:
+
+```java
+public class ImpressoraCompleta
+        implements Imprimivel, Digitalizavel, EnviadorFax {
+
+    public void imprimir() {
+        System.out.println("Imprimindo...");
+    }
+
+    public void digitalizar() {
+        System.out.println("Digitalizando...");
+    }
+
+    public void enviarFax() {
+        System.out.println("Enviando fax...");
+    }
+}
+```
+
+**Benefícios:**
+
+- Contratos menores.
+- Menos dependências desnecessárias.
+- Implementações mais coerentes.
+
+:::tip Atenção
+ISP não significa criar uma interface para **cada método**. A divisão deve acompanhar as responsabilidades reais dos clientes.
+:::
+
+---
+
+## 6. ISP — Pergunta para a turma
+
+Considere uma interface:
+
+```java
+public interface UsuarioOperacoes {
+    void visualizarRelatorio();
+    void cadastrarUsuario();
+    void excluirUsuario();
+}
+```
+
+Um usuário comum só pode visualizar relatórios.
+
+**Discuta:**
+
+1. Qual dificuldade surge se ele precisar implementar essa interface?
+2. Como dividir os contratos sem duplicar comportamentos?
+
+---
+
+## 7. DIP — Dependency Inversion Principle
+
+### Princípio da Inversão de Dependência
+
+> Módulos de alto nível não devem depender de módulos de baixo nível. Ambos devem depender de abstrações.
+
+**Em outras palavras:**
+
+- Regras de negócio não deveriam estar presas a uma implementação técnica específica.
+- As abstrações devem representar o que o sistema precisa, não como uma tecnologia executa a tarefa.
+
+**Exemplo:** um serviço de pedidos precisa notificar clientes, mas não deveria exigir e-mail como único canal.
+
+---
+
+## 8. DIP — Exemplo com alto acoplamento
+
+```java
+public class EmailNotificador {
+    public void enviar(String mensagem) {
+        System.out.println("E-mail: " + mensagem);
+    }
+}
+
+public class PedidoService {
+    private final EmailNotificador notificador =
+            new EmailNotificador();
+
+    public void concluirPedido() {
+        System.out.println("Pedido concluído!");
+        notificador.enviar("Seu pedido foi concluído.");
+    }
+}
+```
+
+**Problema:** `PedidoService` cria e conhece uma implementação concreta.
+
+**Pergunta:** o que muda se a empresa passar a notificar por SMS?
+
+---
+
+## 9. DIP — Criando uma abstração
+
+```java
+public interface Notificador {
+    void enviar(String mensagem);
+}
+
+public class EmailNotificador implements Notificador {
+    public void enviar(String mensagem) {
+        System.out.println("E-mail: " + mensagem);
+    }
+}
+
+public class SmsNotificador implements Notificador {
+    public void enviar(String mensagem) {
+        System.out.println("SMS: " + mensagem);
+    }
+}
+```
+
+Agora o contrato de notificação é independente do canal usado.
+
+---
+
+## 10. DIP — Serviço dependente da abstração
+
+```java
+public class PedidoService {
+    private final Notificador notificador;
+
+    public PedidoService(Notificador notificador) {
+        this.notificador = notificador;
+    }
+
+    public void concluirPedido() {
+        System.out.println("Pedido concluído!");
+        notificador.enviar("Seu pedido foi concluído.");
+    }
+}
+```
+
+**O que mudou?**
+
+- `PedidoService` depende de `Notificador`.
+- O serviço não escolhe diretamente a implementação.
+- Um novo canal pode ser adicionado sem editar a lógica do pedido.
+
+---
+
+## 11. DIP — Utilizando as implementações
+
+```java
+public class Main {
+    public static void main(String[] args) {
+        Notificador email = new EmailNotificador();
+        PedidoService pedido1 = new PedidoService(email);
+        pedido1.concluirPedido();
+
+        Notificador sms = new SmsNotificador();
+        PedidoService pedido2 = new PedidoService(sms);
+        pedido2.concluirPedido();
+    }
+}
+```
+
+**Observe:** a escolha da implementação acontece no `main`, não dentro de `PedidoService`.
+
+**Pergunta:** como testaríamos `PedidoService` sem realmente enviar mensagens?
+
+---
+
+## 12. DIP não é a mesma coisa que injeção de dependência
+
+| Conceito | O que significa? |
+|---|---|
+| **DIP** | Princípio de projeto: depender de abstrações |
+| **Injeção de dependência (DI)** | Técnica para fornecer dependências de fora da classe |
+
+No exemplo anterior:
+
+```java
+public PedidoService(Notificador notificador) {
+    this.notificador = notificador;
+}
+```
+
+Usamos **injeção por construtor**, que ajuda a implementar DIP.
+
+:::note Importante
+É possível usar injeção de dependência e ainda depender de uma classe concreta. **DI não garante DIP automaticamente.**
+:::
+
+---
+
+## 13. Visualizando as dependências
+
+**Antes:**
+
+```text
+PedidoService ---> EmailNotificador
+```
+
+**Depois:**
+
+```text
+PedidoService ---> Notificador <--- EmailNotificador
+                        ^
+                        |
+                   SmsNotificador
+```
+
+O serviço de negócio passa a conhecer o **contrato**, não os detalhes de envio.
+
+---
+
+## 14. ISP e DIP: qual a diferença?
+
+| ISP | DIP |
+|---|---|
+| Define contratos mais específicos | Reduz dependência de implementações concretas |
+| Evita métodos desnecessários | Facilita trocar implementações |
+| Foco na estrutura das interfaces | Foco na direção das dependências |
+
+**Conexão:** uma abstração bem projetada pode ajudar a aplicar **os dois princípios**.
+
+---
+
+## 15. Revisão dos cinco princípios SOLID
+
+| Princípio | Pergunta para analisar o código |
+|---|---|
+| **S — SRP** | Esta classe tem responsabilidades que mudam por motivos diferentes? |
+| **O — OCP** | Consigo acrescentar um comportamento sem editar várias classes existentes? |
+| **L — LSP** | Posso substituir o tipo-base por um subtipo sem violar seu contrato? |
+| **I — ISP** | Algum cliente é obrigado a depender de operações que não usa? |
+| **D — DIP** | A regra de negócio está acoplada a uma implementação concreta? |
+
+:::tip Lembre-se
+SOLID serve para orientar boas decisões — não para aumentar a quantidade de classes e interfaces sem necessidade.
+:::
+
+---
+
+## 16. Exercício rápido — Encontre os problemas
+
+```java
+public interface Exportador {
+    void exportarPdf();
+    void exportarCsv();
+}
+
+public class ExportadorCsv implements Exportador {
+    public void exportarPdf() {
+        throw new UnsupportedOperationException();
+    }
+
+    public void exportarCsv() {
+        System.out.println("Exportando CSV...");
+    }
+}
+```
+
+**Responda:**
+
+1. Qual princípio está sendo desrespeitado?
+2. Como você redesenharia essa interface?
+3. Que vantagem a mudança traz para os clientes da classe?
+
+---
+
+## 17. Atividade prática — Sistema de notificações
+
+**Cenário:** um sistema de pedidos precisa enviar notificações por e-mail e SMS.
+
+**Sua tarefa:**
+
+1. Crie uma interface `Notificador` com o método `enviar(String mensagem)`.
+2. Implemente `EmailNotificador` e `SmsNotificador`.
+3. Crie `PedidoService`, recebendo `Notificador` pelo construtor.
+4. No `main`, execute o serviço com as duas implementações.
+5. Explique onde o código aplica **DIP**.
+
+**Desafio extra:** implemente `NotificadorTeste`, que armazena a última mensagem recebida em vez de enviá-la.
