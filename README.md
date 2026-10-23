@@ -38,6 +38,7 @@ Not using SSH:
 
 ```bash
 $env:GIT_USER = "felipegustavo" npm run deploy
+set -x GIT_USER felipegustavo; npm run deploy
 ```
 
 If you are using GitHub Pages for hosting, this command is a convenient way to build the website and push to the `gh-pages` branch.
