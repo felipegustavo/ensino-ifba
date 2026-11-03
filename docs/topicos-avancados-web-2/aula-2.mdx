@@ -192,81 +192,7 @@ Uma instituição utiliza um sistema SaaS de documentos. Um usuário configura u
 
 **Pergunta para discussão:** que mudança nas permissões e nas práticas da instituição poderia reduzir a chance de esse problema se repetir?
 
-## 6. Controle versus conveniência
-
-Uma equipe precisa considerar o que realmente necessita administrar. Maior controle pode ser necessário para sistemas com requisitos específicos, mas exige conhecimento, tempo e manutenção. Uma aplicação pronta reduz tarefas operacionais, mas pode não oferecer todas as personalizações desejadas.
-
-Antes de escolher, discuta:
-
-1. Precisamos de uma aplicação própria ou uma aplicação pronta atende?
-2. Precisamos controlar o sistema operacional ou apenas publicar código?
-3. A equipe tem condições de manter e atualizar as camadas sob sua responsabilidade?
-4. Quais restrições de integração e personalização são aceitáveis?
-5. Que tarefas de acesso, configuração e proteção de dados continuarão conosco?
-
-**Situação para debate:** uma equipe pequena deseja contratar máquinas virtuais para oferecer e-mail institucional. Outra equipe propõe uma aplicação pronta por assinatura. Que requisito justificaria assumir a administração das máquinas? Que tarefas permaneceriam com a instituição em cada opção?
-
-## 7. Atividade sem laboratório — classificação de cenários
-
-Em grupos, analisem os cenários abaixo. Para cada um, registrem:
-
-1. O modelo de serviço mais adequado e a justificativa baseada nos requisitos.
-2. O modelo de implantação indicado pelas informações do cenário.
-3. Uma responsabilidade do cliente e uma do provedor.
-4. Uma vantagem e uma limitação da escolha.
-
-### Cenário A — Sistema legado
-
-Uma empresa precisa executar uma aplicação que exige acesso administrativo ao sistema operacional e instalação de componentes específicos. Ela pretende contratar máquinas virtuais de um provedor de nuvem que atende o público em geral.
-
-### Cenário B — Portal de inscrições
-
-Uma instituição desenvolve um portal próprio em uma linguagem suportada por uma plataforma de nuvem pública. A equipe quer publicar o código e configurar a aplicação sem administrar o sistema operacional dos servidores.
-
-### Cenário C — Reuniões e colaboração
-
-Uma escola precisa de videoconferência pronta para uso, sem desenvolver uma aplicação. O produto é oferecido por assinatura em infraestrutura de nuvem pública, e a escola deve administrar contas e regras de participação.
-
-### Cenário D — Ambientes exclusivos
-
-Uma organização possui uma nuvem exclusiva para seus setores, com autosserviço, agrupamento de recursos, elasticidade e medição. Os setores precisam criar máquinas virtuais e escolher os sistemas operacionais. A equipe central de infraestrutura opera essa nuvem.
-
-### Cenário E — Consórcio de pesquisa
-
-Instituições de pesquisa utilizam uma nuvem exclusiva do consórcio, com requisitos de operação compartilhados. Os pesquisadores precisam enviar o código de aplicações próprias para uma plataforma que administra o sistema operacional e o ambiente de execução.
-
-### Cenário F — Capacidade para matrículas
-
-Uma instituição utiliza uma plataforma para executar seu portal próprio sem administrar sistemas operacionais. A solução integra uma nuvem privada e uma pública, com mecanismos de portabilidade de dados e aplicações, permitindo executar parte da carga na nuvem pública durante as matrículas.
-
-### Quadro para registro
-
-| Cenário | Serviço e justificativa | Implantação | Responsabilidade do cliente | Responsabilidade do provedor |
-|---|---|---|---|---|
-| A | | | | |
-| B | | | | |
-| C | | | | |
-| D | | | | |
-| E | | | | |
-| F | | | | |
-
-<details>
-<summary>Respostas comentadas — consultar após a discussão</summary>
-
-| Cenário | Classificação esperada | Exemplo de responsabilidade do cliente | Exemplo de responsabilidade do provedor |
-|---|---|---|---|
-| A | IaaS em nuvem pública: exige controle do sistema operacional | Atualizar o sistema operacional da máquina virtual | Manter os servidores físicos e a virtualização |
-| B | PaaS em nuvem pública: a equipe publica código próprio | Corrigir falhas no código do portal | Manter o ambiente de execução oferecido |
-| C | SaaS em nuvem pública: aplicação pronta | Administrar contas e permissões de reunião | Atualizar a aplicação de videoconferência |
-| D | IaaS em nuvem privada: infraestrutura exclusiva com escolha de sistema operacional | Manter o sistema operacional instalado pelo setor | Operar a infraestrutura física e a virtualização |
-| E | PaaS em nuvem comunitária: plataforma para código em infraestrutura exclusiva do consórcio | Manter o código e as dependências da aplicação | Manter a plataforma e o sistema operacional |
-| F | PaaS em nuvem híbrida: plataforma gerenciada com integração entre nuvens distintas | Configurar a aplicação e seus acessos aos dados | Operar as camadas gerenciadas da plataforma conforme o contrato |
-
-As classificações dependem das informações fornecidas. Na prática, é necessário verificar as funções oferecidas e a divisão de tarefas de cada serviço. No cenário F, a solução pode envolver mais de um provedor, exigindo atenção às responsabilidades de integração.
-
-</details>
-
-## 8. Questões de revisão
+## 6. Questões de revisão
 
 1. Quais são as cinco características essenciais da computação em nuvem? Dê um exemplo de cada uma.
 2. Por que amplo acesso à rede não significa acesso sem autenticação?
@@ -278,17 +204,6 @@ As classificações dependem das informações fornecidas. Na prática, é neces
 8. Quem normalmente atualiza o sistema operacional de uma máquina virtual em IaaS? Como essa tarefa muda em PaaS?
 9. Um serviço mensurado precisa cobrar exclusivamente pelo consumo? Explique.
 10. Por que o modelo com mais controle nem sempre é o mais adequado para uma equipe pequena?
-
-## 9. Roteiro da aula — 2 horas
-
-| Etapa | Tempo | Proposta |
-|---|---|---|
-| Retomada | 10 min | Comparar as três formas de disponibilizar um sistema de ensino |
-| Exposição com exemplos | 50 min | Estudar características, serviços, implantações e responsabilidades |
-| Classificação de situações | 35 min | Resolver os cenários em grupos e discutir as justificativas |
-| Debate sobre controle versus conveniência | 15 min | Comparar as alternativas para o e-mail institucional |
-| Fechamento | 10 min | Retomar os conceitos e responder questões de revisão selecionadas |
-| **Total** | **120 min** | **2 horas** |
 
 ## Conceitos-chave
 

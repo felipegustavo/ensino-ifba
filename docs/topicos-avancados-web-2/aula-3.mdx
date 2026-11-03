@@ -1,0 +1,244 @@
+---
+id: aula-3
+title: Aula 3 — Data centers, regiões e zonas de disponibilidade
+sidebar_position: 4
+description: Infraestrutura física da nuvem, localização, latência, domínios de falha, alta disponibilidade e recuperação de desastre.
+---
+
+## Objetivos de aprendizagem
+
+Ao final da aula, o estudante deverá ser capaz de:
+
+- identificar os principais componentes de um data center e suas dependências;
+- distinguir data center, região e zona de disponibilidade;
+- relacionar localização geográfica e latência percebida pelos usuários;
+- explicar como a distribuição de recursos entre domínios de falha contribui para a continuidade;
+- comparar localizações considerando latência, requisitos legais, custo e disponibilidade;
+- diferenciar alta disponibilidade de recuperação de desastre.
+
+## 1. Retomada: em que lugar a aplicação está executando?
+
+Na aula anterior, estudamos modelos de serviço e de implantação e a divisão de responsabilidades entre consumidor e provedor. Mesmo quando contratamos uma aplicação pronta, seu funcionamento depende de equipamentos físicos instalados em algum lugar.
+
+Considere um portal acadêmico utilizado por estudantes na Bahia. A equipe pode escolher onde hospedar a aplicação, mas essa decisão afeta o caminho percorrido pelas solicitações, os serviços disponíveis e as falhas que o sistema consegue suportar.
+
+**Pergunta inicial:** instalar duas cópias do portal em dois servidores no mesmo prédio garante que o sistema continue funcionando se faltar energia em toda a instalação?
+
+As cópias podem proteger contra a falha de um servidor, mas ainda compartilham dependências. Para avaliar a proteção oferecida, precisamos identificar o que pode falhar e quais recursos seriam afetados ao mesmo tempo.
+
+## 2. Componentes de um data center
+
+Um **data center**, ou centro de processamento de dados, é uma instalação preparada para abrigar e operar equipamentos computacionais. Além de computadores, ele reúne sistemas que mantêm esses equipamentos conectados, alimentados e em condições adequadas de funcionamento.
+
+| Componente | Função | Exemplo de impacto de uma falha |
+|---|---|---|
+| Servidores | Executar sistemas operacionais, máquinas virtuais e aplicações | A aplicação executada em um equipamento pode parar. |
+| Armazenamento | Persistir arquivos, bancos de dados e outras informações | Dados podem ficar inacessíveis ou ser perdidos, conforme a proteção existente. |
+| Rede | Conectar equipamentos entre si e com redes externas | Um servidor ligado pode ficar inacessível aos usuários. |
+| Energia | Alimentar equipamentos e sustentar a operação durante interrupções previstas no projeto | Vários equipamentos podem desligar ao mesmo tempo. |
+| Refrigeração | Remover o calor produzido e manter condições adequadas de operação | Superaquecimento pode exigir redução de capacidade ou desligamento. |
+
+### 2.1 Servidores, armazenamento e rede
+
+Servidores oferecem processamento e memória para executar programas. O armazenamento pode estar ligado diretamente a um servidor ou ser acessado pela rede. Switches, roteadores e enlaces permitem a comunicação entre esses componentes e com os usuários.
+
+**Exemplo:** ao enviar um documento ao portal, o usuário depende da rede para transmitir o arquivo, de servidores para verificar sua identidade e processar a solicitação e do armazenamento para preservar o conteúdo.
+
+Ter processamento disponível não resolve uma falha no armazenamento ou na rede. O serviço depende do conjunto.
+
+### 2.2 Energia e refrigeração
+
+A infraestrutura elétrica pode incluir alimentação redundante, nobreaks e geradores. Nobreaks sustentam a alimentação por um período limitado; geradores podem apoiar interrupções mais longas, conforme capacidade, combustível e manutenção.
+
+A refrigeração remove o calor dos equipamentos. Por isso, manter servidores energizados sem resfriamento adequado não garante a continuidade da operação.
+
+Esses mecanismos reduzem riscos, mas têm limites. Manutenção, testes e monitoramento são necessários para verificar se funcionarão quando exigidos.
+
+## 3. Data centers, regiões e zonas de disponibilidade
+
+Esses termos representam níveis diferentes de organização da infraestrutura. Os detalhes variam entre provedores e serviços; não se deve presumir que todos ofereçam a mesma estrutura.
+
+### 3.1 Região
+
+Uma **região** corresponde a uma área geográfica na qual o provedor disponibiliza infraestrutura e serviços. Escolher uma região é uma forma de definir a localização de determinados recursos, sem selecionar o servidor físico exato.
+
+**Exemplo conceitual:** uma equipe compara uma região no Brasil com outra em um país diferente para hospedar seu portal.
+
+Nem todo recurso tem o mesmo alcance. Alguns são vinculados a uma zona, outros a uma região e outros são apresentados como globais. É preciso consultar o serviço para entender onde seus dados são processados e armazenados e quais opções de localização existem.
+
+### 3.2 Zona de disponibilidade
+
+Uma **zona de disponibilidade** é uma divisão da infraestrutura dentro de uma região, projetada para oferecer isolamento de determinadas falhas em relação a outras zonas.
+
+Na AWS, uma zona pode reunir um ou mais data centers separados, com infraestrutura redundante. Portanto, uma zona não corresponde necessariamente a um único prédio. A [documentação de regiões e zonas da AWS](https://docs.aws.amazon.com/global-infrastructure/latest/regions/aws-regions-availability-zones.html) apresenta essa organização.
+
+Zonas distintas permitem distribuir recursos para reduzir o impacto de uma falha localizada. Isso exige que a aplicação e suas dependências estejam preparadas para continuar operando com os recursos restantes.
+
+### 3.3 Visualizando a organização
+
+O esquema é didático e não representa a quantidade de zonas de um provedor específico.
+
+```text
+Região A
+├── Zona A1
+│   └── Um ou mais data centers
+│       └── Servidores, armazenamento, rede, energia e refrigeração
+└── Zona A2
+    └── Um ou mais data centers
+        └── Servidores, armazenamento, rede, energia e refrigeração
+
+Região B
+└── Infraestrutura em outra área geográfica
+```
+
+| Conceito | Pergunta que ajuda a responder |
+|---|---|
+| Data center | Em que instalação física estão os equipamentos? |
+| Zona de disponibilidade | Que divisão da região permite separar determinadas falhas? |
+| Região | Em que área geográfica os recursos serão disponibilizados? |
+
+**Atenção:** escolher uma região com várias zonas não significa que uma máquina virtual será automaticamente executada em todas elas. A distribuição depende do serviço e da configuração contratada.
+
+## 4. Presença geográfica e latência
+
+**Latência** é o tempo necessário para uma comunicação percorrer um caminho. Uma medida comum é o tempo de ida e volta, ou **RTT** (*Round-Trip Time*), entre o envio de uma mensagem e o recebimento de uma resposta.
+
+A distância física influencia esse tempo, mas não é o único fator. Rotas de rede, interconexões, congestionamento e qualidade da conexão também importam. A localização mais próxima no mapa nem sempre oferece o menor tempo de comunicação.
+
+### 4.1 Latência não é largura de banda
+
+- **Latência:** atraso da comunicação.
+- **Largura de banda:** capacidade de transmissão de dados por unidade de tempo.
+
+Uma conexão pode transferir arquivos grandes rapidamente e, ainda assim, apresentar atraso perceptível em interações que exigem muitas trocas sequenciais de mensagens.
+
+**Exemplo didático:** suponha que uma ação no portal exija quatro comunicações sequenciais, cada uma com um RTT de 100 ms. Apenas essas viagens pela rede somariam aproximadamente 400 ms. Com RTT de 25 ms, somariam aproximadamente 100 ms. Esses valores são fictícios e desconsideram processamento, transferência do conteúdo e outras etapas.
+
+### 4.2 Medir a experiência real
+
+O tempo de resposta percebido também depende do processamento da aplicação, das consultas ao banco de dados e do dispositivo do usuário. Por isso, a equipe deve medir operações representativas a partir das localidades onde o público está, em diferentes horários.
+
+Além da distância entre usuário e aplicação, importa a distância entre aplicação e banco de dados. Separar componentes que trocam muitas mensagens pode aumentar o tempo de resposta.
+
+Pontos de presença de uma **CDN** (*Content Delivery Network*) podem aproximar cópias de conteúdo dos usuários, como imagens e arquivos estáticos. Um ponto de presença não equivale necessariamente a uma região completa de nuvem, e o uso de cache não elimina as comunicações necessárias com a aplicação de origem.
+
+## 5. Redundância e domínios de falha
+
+**Redundância** é a existência de recursos adicionais capazes de assumir ou compartilhar uma função. Um **domínio de falha** é um conjunto de recursos que pode ser afetado por uma mesma falha.
+
+Dois processos no mesmo servidor compartilham o equipamento. Dois servidores podem compartilhar um rack, um switch ou a alimentação elétrica. Instalações distintas também podem depender de serviços comuns.
+
+| Distribuição dos recursos | Falha cujo impacto pode ser reduzido | Dependência que ainda precisa ser avaliada |
+|---|---|---|
+| Duas instâncias no mesmo servidor físico | Falha de um processo isolado | Servidor físico e sistema hospedeiro |
+| Servidores físicos distintos na mesma instalação | Falha de um servidor | Energia, refrigeração e rede compartilhadas |
+| Recursos em zonas distintas | Indisponibilidade de uma zona | Dependências regionais e componentes não distribuídos |
+| Recursos em regiões distintas | Indisponibilidade de uma região | Identidade, configuração, replicação e serviços externos |
+
+A proteção depende da falha considerada. A mesma atualização incorreta ou exclusão de dados pode atingir recursos em várias localizações.
+
+### 5.1 Exemplo: duas cópias do portal e um único banco
+
+Uma instituição distribui servidores web entre duas zonas, mas mantém o único banco de dados em uma delas. Se a zona do banco ficar indisponível, as operações que dependem dele podem parar, mesmo com um servidor web funcionando na outra zona.
+
+Para planejar continuidade, a equipe precisa avaliar:
+
+- distribuição da aplicação e das dependências, incluindo banco, arquivos e sessões;
+- verificações de saúde e direcionamento de tráfego para recursos disponíveis;
+- capacidade dos recursos restantes para atender à demanda;
+- replicação de dados e mecanismo de troca para uma réplica;
+- comportamento diante de falhas e testes de recuperação.
+
+A troca para um recurso alternativo é chamada de **failover**. Ela pode ser automática ou manual e não deve ser presumida apenas porque existe uma segunda cópia.
+
+## 6. Como escolher a localização
+
+A escolha deve partir das necessidades do sistema. Não existe uma região ideal para todas as aplicações.
+
+| Critério | O que avaliar |
+|---|---|
+| Latência | Onde estão os usuários e as dependências? Quais tempos foram medidos nas operações importantes? |
+| Requisitos legais e contratuais | Que restrições se aplicam ao processamento, armazenamento, cópias e transferência dos dados? |
+| Custo | Quanto custam processamento, armazenamento, tráfego e replicação nas opções consideradas? |
+| Disponibilidade | Existem zonas, serviços, capacidade e opções de redundância adequadas ao sistema? |
+
+### 6.1 Localização dos dados
+
+A análise precisa incluir dados principais, backups, réplicas e registros de operação. Selecionar uma região para um recurso não descreve necessariamente a localização de todos os dados de uma solução composta por vários serviços.
+
+As exigências aplicáveis devem ser verificadas com os responsáveis institucionais e na documentação e nos contratos dos serviços. Nesta aula, localização é um critério de projeto; não se presume uma obrigação legal universal de manter todos os dados em um país específico.
+
+### 6.2 Custo e disponibilidade
+
+Uma arquitetura distribuída pode exigir mais recursos, armazenamento de cópias, tráfego entre localizações e trabalho operacional. Esses itens devem entrar na comparação, além do preço de uma máquina virtual.
+
+Também é necessário verificar se os serviços e as configurações desejadas existem na localização escolhida. A disponibilidade comercial de um serviço em uma região é diferente da sua disponibilidade operacional, isto é, da capacidade de permanecer acessível ao longo do tempo.
+
+## 7. Alta disponibilidade e recuperação de desastre
+
+As duas práticas contribuem para a continuidade, mas têm focos diferentes.
+
+**Alta disponibilidade**, ou **HA** (*High Availability*), busca manter o serviço acessível, reduzindo interrupções por meio de redundância, detecção de falhas e mecanismos de continuidade.
+
+**Recuperação de desastre**, ou **DR** (*Disaster Recovery*), prepara a restauração do serviço e dos dados após incidentes que ultrapassem a proteção oferecida pela operação normal. Inclui procedimentos, recursos de recuperação e testes. A [documentação da Microsoft sobre continuidade, HA e DR](https://learn.microsoft.com/en-us/azure/reliability/concept-business-continuity-high-availability-disaster-recovery) discute essa distinção.
+
+| Aspecto | Alta disponibilidade | Recuperação de desastre |
+|---|---|---|
+| Foco | Manter o serviço acessível diante das falhas previstas | Restabelecer o serviço após um incidente grave |
+| Exemplo | Outra instância saudável continua atendendo após uma falha | Reconstruir o ambiente e restaurar dados após perda do ambiente principal |
+| Mecanismos | Redundância, verificações de saúde e failover | Backups, replicação, procedimentos de restauração e ambiente alternativo |
+| Verificação | Testar se o serviço continua atendendo ao perder um componente | Testar restauração, tempo de retorno e integridade dos dados |
+
+Usar várias zonas é uma estratégia comum de HA, e outra região pode fazer parte de DR. Porém, os conceitos não são definidos apenas pela geografia: uma exclusão acidental pode exigir recuperação mesmo com todas as instalações funcionando.
+
+### 7.1 RTO e RPO
+
+Dois objetivos ajudam a planejar a recuperação:
+
+- **RTO — objetivo de tempo de recuperação:** tempo máximo aceitável de interrupção até restabelecer o serviço.
+- **RPO — objetivo de ponto de recuperação:** perda máxima aceitável de dados expressa em tempo, indicando quão recente precisa ser o estado recuperado.
+
+Essas definições são apresentadas nas [perguntas frequentes da AWS sobre recuperação de desastre](https://aws.amazon.com/disaster-recovery/faqs/).
+
+**Exemplo didático:** para um portal com RTO de duas horas e RPO de quinze minutos, o plano deve permitir restabelecer o serviço em até duas horas e recuperar um estado com perda de, no máximo, quinze minutos de dados anteriores ao incidente. São requisitos fictícios, não recomendações para qualquer portal.
+
+Objetivos não são garantias: a equipe precisa testar se os mecanismos adotados conseguem atendê-los. Executar um backup a cada quinze minutos, por exemplo, não basta se as cópias falharem ou não puderem ser restauradas.
+
+### 7.2 Replicação não substitui backup
+
+A replicação mantém cópias atualizadas e pode apoiar a continuidade, mas também pode propagar exclusões ou alterações incorretas. Backups com histórico e proteção apropriada permitem recuperar estados anteriores.
+
+Ter backup também não significa ter alta disponibilidade: preparar o ambiente e restaurar uma cópia pode levar tempo. Um plano de DR precisa definir responsáveis, sequência de recuperação, acesso às cópias e validação do serviço antes da retomada.
+
+## 8. Atividade de discussão — Onde hospedar o portal?
+
+> Uma instituição na Bahia vai hospedar um portal de inscrições. A maioria dos usuários está no estado, mas há candidatos em outras localidades. Durante as inscrições, uma interrupção pode impedir o envio de documentos. A equipe é pequena e precisa justificar seus custos e verificar os requisitos aplicáveis aos dados pessoais.
+
+## 9. Questões de revisão
+
+1. Quais são os cinco componentes de um data center estudados nesta aula? Por que servidores ligados podem estar inacessíveis?
+2. Qual é a diferença entre data center, região e zona de disponibilidade?
+3. Uma zona corresponde necessariamente a um único prédio? Explique.
+4. Por que a região mais próxima no mapa pode não apresentar a menor latência?
+5. Qual é a diferença entre latência e largura de banda?
+6. O que é um domínio de falha? Dê um exemplo de dependência compartilhada entre dois servidores.
+7. Por que distribuir servidores web entre zonas pode ser insuficiente para manter o portal disponível?
+8. Que critérios devem orientar a escolha da localização? Como backups e réplicas entram nessa análise?
+9. Qual é a diferença entre alta disponibilidade e recuperação de desastre?
+10. O que representam RTO e RPO? Por que replicação não substitui backup?
+
+## Conceitos-chave
+
+- Serviços de nuvem dependem de servidores, armazenamento, rede, energia e refrigeração.
+- Regiões organizam a presença geográfica; zonas permitem separar determinadas falhas dentro de uma região.
+- Distância influencia a latência, mas rotas, conexão e dependências também precisam ser avaliadas.
+- Redundância exige identificar domínios de falha e preparar os recursos restantes para assumir o serviço.
+- Localização envolve latência, requisitos legais e contratuais, custos e disponibilidade dos serviços.
+- Alta disponibilidade busca manter o serviço acessível; recuperação de desastre prepara sua restauração.
+- RTO e RPO orientam o plano de recuperação, cuja eficácia precisa ser testada.
+
+## Referências introdutórias
+
+- AWS. [AWS Regions and Availability Zones](https://docs.aws.amazon.com/global-infrastructure/latest/regions/aws-regions-availability-zones.html).
+- Microsoft Learn. [What are Business Continuity, High Availability, and Disaster Recovery?](https://learn.microsoft.com/en-us/azure/reliability/concept-business-continuity-high-availability-disaster-recovery).
+- AWS. [Disaster Recovery — AWS Elastic Disaster Recovery FAQs](https://aws.amazon.com/disaster-recovery/faqs/).
