@@ -1,0 +1,151 @@
+---
+id: aula-04-introducao-padroes-projeto
+title: "Aula 4 — Introdução aos Padrões de Projeto"
+sidebar_label: "Aula 4 — Padrões de Projeto"
+description: "Conceito, categorias e aplicação de padrões de projeto, com análise de problemas e exemplos em Java."
+---
+
+## 1. O problema vem antes do padrão
+
+Um sistema acadêmico envia avisos por e-mail. Agora precisa enviar também por SMS e permitir novos canais no futuro.
+
+Imagine que cadastro, matrícula e lançamento de notas possuam, cada um, um `if/else` para escolher o canal.
+
+**Discuta:**
+
+1. Quantos lugares precisarão mudar quando surgir um novo canal?
+2. Como testar o cadastro sem enviar uma mensagem real?
+3. Qual parte do sistema varia e qual pode permanecer estável?
+
+O problema não é a existência de qualquer condicional. É espalhar uma decisão que muda por vários pontos do sistema.
+
+## 2. O que é um padrão de projeto?
+
+Um **padrão de projeto** descreve uma solução recorrente para um problema de projeto em determinado contexto. Ele apresenta responsabilidades e relações entre objetos ou classes, além das consequências dessa organização.
+
+Um padrão não é um trecho de código pronto para copiar. Sua implementação depende da linguagem, dos requisitos e das restrições do sistema.
+
+| Conceito | Exemplo | Papel |
+|---|---|---|
+| Princípio | DIP | Orienta decisões sobre dependências |
+| Padrão | Strategy | Organiza comportamentos intercambiáveis |
+| Algoritmo | Busca binária | Define passos para resolver um problema computacional |
+| Biblioteca | Coleções do Java | Oferece código reutilizável |
+
+**Pergunta:** duas implementações com nomes de classes diferentes podem representar o mesmo padrão? Sim: o que importa é a intenção e a colaboração entre os participantes.
+
+## 3. Como estudar um padrão
+
+Para cada padrão, procure responder:
+
+- **Nome e intenção:** qual solução estamos nomeando?
+- **Contexto e problema:** o que torna a mudança difícil?
+- **Estrutura e participantes:** quem cria, utiliza ou coordena os objetos?
+- **Colaboração:** como os participantes trabalham juntos?
+- **Consequências:** o que melhora e qual complexidade é acrescentada?
+- **Aplicabilidade:** quando essa solução vale a pena?
+
+:::tip Pergunta de projeto
+Antes de perguntar “qual padrão posso usar?”, pergunte “qual mudança meu código precisa acomodar?”.
+:::
+
+## 5. O catálogo GoF
+
+GoF significa **Gang of Four**, nome associado aos autores Erich Gamma, Richard Helm, Ralph Johnson e John Vlissides. Seu catálogo reúne 23 padrões de projeto orientado a objetos em três categorias.
+
+| Categoria | Foco | Exemplos |
+|---|---|---|
+| Criacionais | Como objetos são criados | Singleton, Factory Method, Abstract Factory, Builder, Prototype |
+| Estruturais | Como classes e objetos são combinados | Adapter, Bridge, Composite, Decorator, Facade, Flyweight, Proxy |
+| Comportamentais | Como responsabilidades e interações são organizadas | Chain of Responsibility, Command, Interpreter, Iterator, Mediator, Memento, Observer, State, Strategy, Template Method, Visitor |
+
+**Exemplos de problemas:**
+
+- Criar componentes visuais que pertençam ao mesmo tema: **Abstract Factory**.
+- Adaptar um serviço externo a uma interface existente: **Adapter**.
+- Alternar regras de cálculo sem alterar quem as utiliza: **Strategy**.
+
+## 5. Exemplo guiado: separar o comportamento variável
+
+Vamos retomar a notificação das aulas de SOLID. Neste exemplo, a política de envio é intercambiável, antecipando a intenção de Strategy. Os canais são simulados no console.
+
+Salve o bloco completo em `ExemploPadroes.java`:
+
+```java
+interface Notificador {
+    void enviar(String mensagem);
+}
+
+class EmailNotificador implements Notificador {
+    @Override
+    public void enviar(String mensagem) {
+        System.out.println("E-mail: " + mensagem);
+    }
+}
+
+class SmsNotificador implements Notificador {
+    @Override
+    public void enviar(String mensagem) {
+        System.out.println("SMS: " + mensagem);
+    }
+}
+
+class MatriculaService {
+    private final Notificador notificador;
+
+    MatriculaService(Notificador notificador) {
+        this.notificador = notificador;
+    }
+
+    void confirmar() {
+        notificador.enviar("Matrícula confirmada!");
+    }
+}
+
+public class ExemploPadroes {
+    public static void main(String[] args) {
+        new MatriculaService(new EmailNotificador()).confirmar();
+        new MatriculaService(new SmsNotificador()).confirmar();
+    }
+}
+```
+
+Execute com um JDK 17 ou superior:
+
+```bash
+javac -encoding UTF-8 ExemploPadroes.java
+java ExemploPadroes
+```
+
+Saída esperada:
+
+```text
+E-mail: Matrícula confirmada!
+SMS: Matrícula confirmada!
+```
+
+## 7. O que mudou no projeto?
+
+`MatriculaService` usa o contrato `Notificador`. O `main` escolhe a implementação e a fornece pelo construtor. As dependências podem ser representadas assim:
+
+```text
+MatriculaService --> Notificador
+                         ^
+                         | implementado por
+              +----------+----------+
+              |                     |
+      EmailNotificador       SmsNotificador
+```
+
+- **Composição:** o serviço possui um colaborador.
+- **DIP:** o serviço depende de uma abstração.
+- **OCP:** um novo canal pode ser adicionado sem modificar o serviço.
+- **Custo:** existem mais tipos, e alguém precisa montar os objetos.
+
+Nem toda interface caracteriza Strategy. A intenção de encapsular e intercambiar comportamentos é parte da identificação do padrão.
+
+## 7. Quando não aplicar um padrão
+
+Se uma aplicação pequena só imprime uma mensagem fixa, uma hierarquia de notificadores pode não trazer benefício. Uma possibilidade futura vaga não justifica qualquer abstração.
+
+Antes de aplicar uma solução, avalie se há variação real, repetição de decisões, dificuldade de teste ou mudanças frequentes. Compare o benefício com o custo de compreender e manter os novos tipos.

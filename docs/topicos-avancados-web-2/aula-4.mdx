@@ -1,0 +1,134 @@
+---
+id: aula-4
+title: Aula 4 — Virtualização, máquinas virtuais e contêineres
+sidebar_position: 5
+description: Compartilhamento de recursos físicos, hipervisores, máquinas virtuais, contêineres e sua relação com a nuvem.
+---
+
+## 1. Um servidor, vários ambientes
+
+Um portal acadêmico, uma API e um banco de dados precisam executar no mesmo servidor físico.
+
+**Pergunta inicial:** como separar esses ambientes e controlar os recursos que cada um utiliza?
+
+- **Virtualização:** permite criar ambientes virtuais sobre recursos físicos.
+- **Benefício:** aproveitar um servidor para executar diferentes cargas de trabalho.
+- **Limite:** todos continuam dependendo da capacidade e do funcionamento do equipamento.
+
+## 2. Servidor físico, hipervisor e máquina virtual
+
+| Componente | Papel |
+|---|---|
+| Servidor físico — hospedeiro | Fornece CPU, memória, disco e rede. |
+| Hipervisor | Cria e executa VMs, controlando o acesso aos recursos físicos. |
+| Máquina virtual — VM | Ambiente com hardware virtual e sistema operacional próprio, chamado convidado. |
+
+```text
+        VM 1                   VM 2
+  Portal acadêmico         Banco de dados
+   SO convidado             SO convidado
+  Hardware virtual         Hardware virtual
+          \                    /
+                 Hipervisor
+               Servidor físico
+          CPU • Memória • Disco • Rede
+```
+
+Cada VM possui seu próprio **kernel**, o núcleo do sistema operacional que gerencia recursos e atende aos programas.
+
+## 3. Isolamento e alocação de recursos
+
+| Recurso | O que a VM recebe | O que continua compartilhado |
+|---|---|---|
+| CPU | Processadores virtuais — vCPUs | Tempo de execução nos processadores físicos. |
+| Memória | Quantidade configurada de RAM | Capacidade física do hospedeiro. |
+| Disco | Discos virtuais | Espaço e desempenho do armazenamento. |
+| Rede | Interfaces e conexões virtuais | Interfaces físicas e capacidade de transmissão. |
+
+**Exemplo didático:** um servidor com 32 GiB de RAM pode destinar 8 GiB ao portal e 16 GiB ao banco, mantendo capacidade para o hipervisor e outras necessidades.
+
+- Limites e reservas ajudam a controlar o consumo de recursos.
+- Uma vCPU não significa necessariamente um núcleo físico exclusivo.
+- Cargas concorrentes podem disputar CPU, disco e rede.
+- Uma falha no servidor físico pode interromper todas as suas VMs.
+
+**Isolamento não é redundância:** separar ambientes no mesmo equipamento não protege contra a perda desse equipamento.
+
+## 4. Virtualização completa e tipos de hipervisor
+
+Na **virtualização completa**, a VM recebe uma plataforma de hardware virtual capaz de executar um sistema operacional convidado sem modificar seu núcleo para esse modelo. É comum usar suporte de virtualização do processador.
+
+| Tipo | Organização simplificada | Uso comum |
+|---|---|---|
+| **Tipo 1** | Hardware → hipervisor → VMs | Servidores e data centers. |
+| **Tipo 2** | Hardware → SO hospedeiro → hipervisor → VMs | Estudos, desenvolvimento e testes em computadores pessoais. |
+
+**Exemplo:** um computador com Windows pode executar uma VM Linux, com seu próprio kernel e suas aplicações.
+
+Virtualização completa descreve o ambiente oferecido ao convidado; tipo 1 e tipo 2 descrevem a posição do hipervisor na arquitetura.
+
+## 5. Contêineres
+
+Um **contêiner** executa processos isolados em nível de sistema operacional, compartilhando o kernel do hospedeiro.
+
+```text
+      Contêiner A              Contêiner B
+     API + dependências      Portal + dependências
+             \                  /
+          Kernel compartilhado do hospedeiro
+                Servidor físico ou VM
+```
+
+- **Imagem:** pacote com aplicação, bibliotecas e arquivos necessários à execução.
+- **Contêiner:** instância em execução de uma imagem.
+- **Runtime:** software responsável por executar e gerenciar contêineres.
+- Em Linux, **namespaces** separam a visão de recursos e **cgroups** controlam seu consumo.
+
+Uma imagem pode incluir arquivos de uma distribuição Linux, mas **não leva um kernel próprio em execução**.
+
+## 6. Máquinas virtuais × contêineres
+
+| Aspecto | Máquina virtual | Contêiner |
+|---|---|---|
+| Unidade isolada | Máquina completa. | Processos da aplicação. |
+| Kernel | Próprio em cada VM. | Compartilhado com o hospedeiro. |
+| Isolamento | Fronteira mediada pelo hipervisor. | Depende do kernel compartilhado e das permissões. |
+| Consumo adicional | Inclui um SO completo por VM. | Geralmente menor, sem um kernel por contêiner. |
+| Inicialização | Inclui a inicialização do SO. | Geralmente mais rápida: inicia processos. |
+| Portabilidade | Depende do formato da VM, do hipervisor e da arquitetura. | Depende de kernel, arquitetura e runtime compatíveis. |
+| Gerenciamento | Atualizar SO e aplicações de cada VM. | Atualizar imagens, recriar contêineres e cuidar do hospedeiro. |
+
+**Portabilidade tem condições:** um contêiner Linux precisa de um kernel Linux compatível. Em Windows ou macOS, esse kernel pode ser fornecido por uma VM.
+
+**Isolamento tem limites:** compartilhar o kernel cria uma dependência comum; permissões excessivas e vulnerabilidades podem comprometer a separação.
+
+## 7. Relação com a computação em nuvem
+
+- **IaaS:** o provedor disponibiliza VMs; o cliente administra o SO e as aplicações.
+- **Contêineres gerenciados:** o serviço assume parte da execução e da operação; as responsabilidades variam conforme a oferta.
+- **Elasticidade:** automação cria e remove instâncias conforme a demanda e a configuração.
+
+```text
+Servidor físico do provedor
+└── Hipervisor
+    ├── VM 1
+    │   ├── Contêiner: portal
+    │   └── Contêiner: API
+    └── VM 2
+        └── Contêiner: processamento de tarefas
+```
+
+**VMs e contêineres podem ser combinados.** A VM separa ambientes; os contêineres organizam a execução das aplicações dentro dela.
+
+Virtualização é uma tecnologia de base. A nuvem também envolve acesso sob demanda, automação, medição de uso e gestão dos recursos.
+
+## 8. Qual alternativa faz sentido?
+
+| Cenário | Alternativa a considerar | Motivo |
+|---|---|---|
+| Executar sistemas que exigem kernels diferentes. | VMs. | Cada ambiente possui seu próprio SO. |
+| Distribuir uma API com suas dependências. | Contêineres. | A imagem padroniza o pacote de execução. |
+| Estudar outro SO no computador pessoal. | VM com hipervisor tipo 2. | Permite executar um sistema convidado. |
+| Executar várias aplicações em VMs na nuvem. | VMs + contêineres. | Combina separação de máquinas e empacotamento de aplicações. |
+
+**Para discutir:** duas cópias da API, em contêineres na mesma VM, continuam disponíveis se essa VM parar? Como distribuir essas cópias para reduzir essa dependência?

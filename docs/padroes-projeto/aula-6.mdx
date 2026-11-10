@@ -1,0 +1,191 @@
+---
+id: aula-06-abstract-factory
+title: "Aula 6 — Abstract Factory"
+sidebar_label: "Aula 6 — Abstract Factory"
+description: "Criação de famílias de objetos relacionados com Abstract Factory, exemplo completo em Java e atividade de extensão."
+---
+
+# Abstract Factory
+
+## 1. Problema: componentes de temas diferentes
+
+Um portal acadêmico possui os temas claro e escuro. Cada tela precisa de botões e caixas de seleção do tema escolhido.
+
+Se cada tela criar os componentes diretamente, a decisão de tema se repete. Também pode ocorrer uma combinação indesejada: botão claro com caixa escura.
+
+**Pergunta:** como escolher o tema uma vez e criar os componentes correspondentes sem espalhar o conhecimento das classes concretas pelas telas?
+
+## 2. Intenção do padrão
+
+**Abstract Factory**, ou fábrica abstrata, é um padrão criacional que fornece uma interface para criar **famílias de objetos relacionados**, sem exigir que o cliente conheça suas classes concretas.
+
+| Família / tipo de produto | Botão | Caixa de seleção |
+|---|---|---|
+| Tema claro | `BotaoClaro` | `CaixaSelecaoClara` |
+| Tema escuro | `BotaoEscuro` | `CaixaSelecaoEscura` |
+
+As linhas representam famílias. As colunas representam tipos de produto. A fábrica de cada tema cria os produtos da sua linha.
+
+## 3. Participantes
+
+| Papel | Participante no exemplo |
+|---|---|
+| Fábrica abstrata | `FabricaTema` |
+| Fábricas concretas | `FabricaClara`, `FabricaEscura` |
+| Produtos abstratos | `Botao`, `CaixaSelecao` |
+| Produtos concretos | Implementações claras e escuras |
+| Cliente | `TelaCadastro` |
+
+```text
+TelaCadastro --> FabricaTema
+                 | criarBotao()        --> Botao
+                 | criarCaixaSelecao() --> CaixaSelecao
+                 ^
+                 | implementado por
+          +------+-------+
+          |              |
+    FabricaClara    FabricaEscura
+```
+
+`TelaCadastro` pede os produtos à fábrica recebida. A seleção da fábrica concreta acontece na montagem da aplicação.
+
+## 4. Exemplo completo em Java
+
+O exemplo simula a renderização no console; não exige uma biblioteca gráfica. Salve todo o bloco em `ExemploAbstractFactory.java`:
+
+```java
+interface Botao {
+    void renderizar();
+}
+
+interface CaixaSelecao {
+    void renderizar();
+}
+
+class BotaoClaro implements Botao {
+    public void renderizar() {
+        System.out.println("Botão claro");
+    }
+}
+
+class BotaoEscuro implements Botao {
+    public void renderizar() {
+        System.out.println("Botão escuro");
+    }
+}
+
+class CaixaSelecaoClara implements CaixaSelecao {
+    public void renderizar() {
+        System.out.println("Caixa de seleção clara");
+    }
+}
+
+class CaixaSelecaoEscura implements CaixaSelecao {
+    public void renderizar() {
+        System.out.println("Caixa de seleção escura");
+    }
+}
+
+interface FabricaTema {
+    Botao criarBotao();
+    CaixaSelecao criarCaixaSelecao();
+}
+
+class FabricaClara implements FabricaTema {
+    public Botao criarBotao() {
+        return new BotaoClaro();
+    }
+
+    public CaixaSelecao criarCaixaSelecao() {
+        return new CaixaSelecaoClara();
+    }
+}
+
+class FabricaEscura implements FabricaTema {
+    public Botao criarBotao() {
+        return new BotaoEscuro();
+    }
+
+    public CaixaSelecao criarCaixaSelecao() {
+        return new CaixaSelecaoEscura();
+    }
+}
+
+class TelaCadastro {
+    private final Botao botao;
+    private final CaixaSelecao caixa;
+
+    TelaCadastro(FabricaTema fabrica) {
+        botao = fabrica.criarBotao();
+        caixa = fabrica.criarCaixaSelecao();
+    }
+
+    void renderizar() {
+        botao.renderizar();
+        caixa.renderizar();
+    }
+}
+
+public class ExemploAbstractFactory {
+    public static void main(String[] args) {
+        String tema = args.length == 0 ? "claro" : args[0];
+        FabricaTema fabrica;
+
+        switch (tema) {
+            case "claro":
+                fabrica = new FabricaClara();
+                break;
+            case "escuro":
+                fabrica = new FabricaEscura();
+                break;
+            default:
+                throw new IllegalArgumentException("Tema inválido: " + tema);
+        }
+
+        new TelaCadastro(fabrica).renderizar();
+    }
+}
+```
+
+Execute com um JDK 17 ou superior:
+
+```bash
+javac -encoding UTF-8 ExemploAbstractFactory.java
+java ExemploAbstractFactory claro
+java ExemploAbstractFactory escuro
+```
+
+Saída da primeira execução:
+
+```text
+Botão claro
+Caixa de seleção clara
+```
+
+Saída da segunda execução:
+
+```text
+Botão escuro
+Caixa de seleção escura
+```
+
+## 5. Acompanhe a colaboração
+
+1. O `main` escolhe uma fábrica concreta pelo argumento recebido.
+2. `TelaCadastro` recebe a fábrica por meio da interface.
+3. A tela solicita um botão e uma caixa de seleção.
+4. A fábrica instancia os produtos da família selecionada.
+5. A tela utiliza apenas os contratos dos produtos.
+
+O `switch` continua existindo, mas está concentrado no ponto de montagem. As telas não precisam repetir essa seleção.
+
+:::note Compatibilidade é responsabilidade da fábrica
+As interfaces deste exemplo não impedem uma implementação incorreta de retornar um botão claro e uma caixa escura. A consistência da família depende da implementação da fábrica e deve ser verificada. Clientes também devem evitar criar produtos concretos por fora dela.
+:::
+
+## 6. Quando utilizar?
+
+O padrão faz sentido quando o cliente precisa trabalhar com famílias alternativas, os produtos de cada família devem ser usados em conjunto e a criação concreta não deve se espalhar pelo sistema.
+
+Se existe apenas um objeto simples e nenhuma família de produtos, um construtor ou uma função de criação pode ser suficiente. A estrutura do padrão acrescenta interfaces e classes que precisam ser mantidas.
+ 

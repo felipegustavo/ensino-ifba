@@ -1,0 +1,170 @@
+---
+id: aula-05-singleton
+title: "Aula 5 — Singleton"
+sidebar_label: "Aula 5 — Singleton"
+description: "Intenção, implementação em Java, concorrência, estado global e alternativas ao padrão Singleton."
+---
+
+# Singleton
+
+## 1. Problema inicial
+
+Um programa de console precisa consultar a mesma configuração durante toda a execução. Se cada serviço criar uma configuração independente e mutável, os valores podem divergir.
+
+**Pergunta:** precisamos impedir a criação de outras instâncias ou basta criar um objeto e compartilhá-lo explicitamente?
+
+Essa distinção importa: o compartilhamento, por si só, não exige Singleton.
+
+## 2. Intenção do padrão
+
+**Singleton** é um padrão criacional cuja intenção é garantir uma única instância de uma classe e fornecer um ponto de acesso a ela.
+
+Na implementação Java desta aula, a unicidade se refere à classe carregada por um determinado **class loader**. Outros processos ou carregadores de classes podem ter suas próprias instâncias. Não é uma garantia de unicidade para um sistema distribuído.
+
+| Elemento | Responsabilidade |
+|---|---|
+| Construtor privado | Impedir criação direta por clientes comuns |
+| Campo estático | Guardar a instância compartilhada |
+| Método estático de acesso | Retornar essa instância |
+| Cliente | Obter e utilizar a instância |
+
+```text
+Cliente --> Configuracao.getInstancia()
+                       |
+                       v
+             mesma Configuracao
+```
+
+## 3. Implementação com inicialização antecipada
+
+Salve o bloco completo em `ExemploSingleton.java`:
+
+```java
+final class Configuracao {
+    private static final Configuracao INSTANCIA = new Configuracao();
+
+    private final String nomeSistema;
+
+    private Configuracao() {
+        nomeSistema = "Portal Acadêmico";
+    }
+
+    public static Configuracao getInstancia() {
+        return INSTANCIA;
+    }
+
+    public String getNomeSistema() {
+        return nomeSistema;
+    }
+}
+
+public class ExemploSingleton {
+    public static void main(String[] args) {
+        Configuracao primeira = Configuracao.getInstancia();
+        Configuracao segunda = Configuracao.getInstancia();
+
+        System.out.println(primeira == segunda);
+        System.out.println(primeira.getNomeSistema());
+    }
+}
+```
+
+Execute com um JDK 17 ou superior:
+
+```bash
+javac -encoding UTF-8 ExemploSingleton.java
+java ExemploSingleton
+```
+
+Saída esperada:
+
+```text
+true
+Portal Acadêmico
+```
+
+## 4. Entendendo as decisões
+
+- `private Configuracao()` impede `new Configuracao()` no código cliente.
+- `static` associa a referência à classe, e não a cada objeto cliente.
+- `final` no campo impede trocar a referência armazenada.
+- `getInstancia()` retorna a referência existente em todas as chamadas.
+- `primeira == segunda` compara identidade, isto é, se as referências apontam para o mesmo objeto.
+
+Não confunda `final` com imutabilidade completa: uma referência final pode apontar para um objeto mutável. Neste exemplo, o estado também é imutável porque o único dado é uma `String` final e não há operações de alteração.
+
+## 5. Inicialização e concorrência
+
+A instância é criada durante a inicialização da classe, antes da execução do seu método estático de acesso. O Java coordena essa inicialização entre threads, tornando segura a criação e publicação da instância neste exemplo.
+
+**Isso não torna automaticamente seguros os métodos de qualquer Singleton.** Se adicionarmos um contador mutável com `contador++`, acessos concorrentes poderão perder incrementos.
+
+Considere este trecho alternativo, propositalmente inseguro, para uma classe com inicialização sob demanda:
+
+```java
+// Trecho para análise: não usar como implementação concorrente.
+public static Configuracao getInstancia() {
+    if (instancia == null) {
+        instancia = new Configuracao();
+    }
+    return instancia;
+}
+```
+
+Duas threads podem observar `null` antes de qualquer atribuição e criar objetos diferentes. Nesta aula, usamos a inicialização antecipada para evitar esse problema sem introduzir controle manual de sincronização.
+
+**Discussão:** se criar a configuração fosse muito caro e ela nunca fosse utilizada, qual seria o custo da inicialização antecipada?
+
+## 6. Limites da implementação
+
+O exemplo cobre criação convencional e não implementa serialização nem clonagem. Técnicas como reflexão exigem cuidados adicionais ao discutir garantias de unicidade. Em Java, um `enum` com um único elemento é outra forma de implementar Singleton, com suporte da linguagem para identidade na serialização.
+
+Independentemente da forma de implementação, dois programas Java em execução não passam a compartilhar memória por utilizarem Singleton.
+
+## 8. Vantagens e custos
+
+| Possível benefício | Custo ou limitação |
+|---|---|
+| Controlar a criação em um escopo definido | Vincular criação e acesso à própria classe |
+| Compartilhar uma instância | Espalhar acesso global pelos clientes |
+| Evitar instâncias redundantes | Dificultar substituição em testes |
+| Centralizar um recurso | Exigir cuidado com estado mutável e concorrência |
+
+Se um teste modifica o estado global, outro teste pode receber esse estado alterado. O resultado passa a depender da ordem de execução.
+
+:::caution Decisão de projeto
+Singleton não deve guardar o usuário atual, o carrinho de cada cliente ou dados específicos de uma requisição. Esses dados têm escopos diferentes e não devem ser compartilhados globalmente.
+:::
+
+## 9. Alternativa: compartilhar por injeção
+
+Podemos criar uma configuração comum e passá-la aos serviços. O trecho abaixo é uma alternativa independente: ele não utiliza a classe Singleton anterior.
+
+```java
+record Preferencias(String nomeSistema) {}
+
+class TelaInicial {
+    private final Preferencias preferencias;
+
+    TelaInicial(Preferencias preferencias) {
+        this.preferencias = preferencias;
+    }
+
+    String titulo() {
+        return preferencias.nomeSistema();
+    }
+}
+```
+
+Na montagem da aplicação, uma mesma referência pode ser compartilhada:
+
+```java
+// Dentro de um método main.
+Preferencias preferencias = new Preferencias("Portal Acadêmico");
+TelaInicial tela = new TelaInicial(preferencias);
+System.out.println(tela.titulo());
+```
+
+Em um teste, podemos fornecer `new Preferencias("Sistema de Teste")`. A dependência fica explícita no construtor, e o código não impõe uma instância única de `Preferencias`.
+
+**Próxima aula:** [Abstract Factory](./aula-6.mdx), para criar famílias de objetos relacionados.
