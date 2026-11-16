@@ -1,0 +1,171 @@
+---
+id: aula-07-factory-method
+title: "Aula 7 — Factory Method"
+sidebar_label: "Aula 7 — Factory Method"
+description: "Delegação da criação de objetos com Factory Method, exemplo completo em Java e comparação com Abstract Factory."
+---
+
+# Factory Method
+
+## 1. Problema: emitir documentos em formatos diferentes
+
+Um portal acadêmico emite declarações em PDF e em texto. Nos dois casos, o fluxo é o mesmo: validar o conteúdo, criar o documento e solicitar sua geração.
+
+Se esse fluxo instanciar diretamente `DocumentoPdf`, ficará preso a esse formato. Repetir o fluxo em outra classe para usar `DocumentoTexto` também duplica a validação e a sequência de emissão.
+
+**Pergunta:** como reutilizar o processo de emissão e permitir que subclasses escolham o tipo de documento criado?
+
+## 2. Intenção do padrão
+
+**Factory Method**, ou método fábrica, é um padrão criacional que define uma operação de criação na classe base e permite que subclasses determinem a classe concreta do produto retornado.
+
+A classe base utiliza o produto por meio de uma interface. Assim, seu fluxo de trabalho pode ser reutilizado com produtos diferentes, sem conhecer suas classes concretas.
+
+| Criador concreto | Método fábrica | Produto retornado |
+|---|---|---|
+| `EmissorPdf` | `criarDocumento()` | `DocumentoPdf` |
+| `EmissorTexto` | `criarDocumento()` | `DocumentoTexto` |
+
+Na aula anterior, Abstract Factory criava uma família de componentes relacionados. Aqui, o foco é um ponto de criação que as subclasses especializam dentro de um processo comum.
+
+## 3. Participantes
+
+| Papel | Participante no exemplo |
+|---|---|
+| Produto | `Documento` |
+| Produtos concretos | `DocumentoPdf`, `DocumentoTexto` |
+| Criador | `EmissorDocumento` |
+| Método fábrica | `criarDocumento()` |
+| Criadores concretos | `EmissorPdf`, `EmissorTexto` |
+| Cliente | `main` de `ExemploFactoryMethod` |
+
+```text
+EmissorDocumento
+  | emitir(conteudo)
+  | criarDocumento() --> Documento
+  ^                         ^
+  | estendido por           | implementado por
+  +-- EmissorPdf            +-- DocumentoPdf
+  +-- EmissorTexto          +-- DocumentoTexto
+```
+
+`EmissorDocumento` contém o processo de emissão e declara o método fábrica. Cada subclasse implementa esse método para fornecer um produto concreto.
+
+## 4. Exemplo completo em Java
+
+O exemplo simula a geração dos documentos no console; não cria arquivos nem exige uma biblioteca de PDF. Salve todo o bloco em `ExemploFactoryMethod.java`:
+
+```java
+interface Documento {
+    void gerar(String conteudo);
+}
+
+class DocumentoPdf implements Documento {
+    public void gerar(String conteudo) {
+        System.out.println("Documento PDF (simulação): " + conteudo);
+    }
+}
+
+class DocumentoTexto implements Documento {
+    public void gerar(String conteudo) {
+        System.out.println("Documento de texto (simulação): " + conteudo);
+    }
+}
+
+abstract class EmissorDocumento {
+    protected abstract Documento criarDocumento();
+
+    public void emitir(String conteudo) {
+        if (conteudo == null || conteudo.isBlank()) {
+            throw new IllegalArgumentException("O conteúdo não pode estar vazio.");
+        }
+
+        Documento documento = criarDocumento();
+        documento.gerar(conteudo);
+        System.out.println("Emissão concluída.");
+    }
+}
+
+class EmissorPdf extends EmissorDocumento {
+    @Override
+    protected Documento criarDocumento() {
+        return new DocumentoPdf();
+    }
+}
+
+class EmissorTexto extends EmissorDocumento {
+    @Override
+    protected Documento criarDocumento() {
+        return new DocumentoTexto();
+    }
+}
+
+public class ExemploFactoryMethod {
+    public static void main(String[] args) {
+        String formato = args.length == 0 ? "pdf" : args[0];
+        EmissorDocumento emissor;
+
+        switch (formato) {
+            case "pdf":
+                emissor = new EmissorPdf();
+                break;
+            case "texto":
+                emissor = new EmissorTexto();
+                break;
+            default:
+                throw new IllegalArgumentException("Formato inválido: " + formato);
+        }
+
+        emissor.emitir("Declaração de matrícula");
+    }
+}
+```
+
+Execute com um JDK 17 ou superior:
+
+```bash
+javac -encoding UTF-8 ExemploFactoryMethod.java
+java ExemploFactoryMethod pdf
+java ExemploFactoryMethod texto
+```
+
+Saída da primeira execução:
+
+```text
+Documento PDF (simulação): Declaração de matrícula
+Emissão concluída.
+```
+
+Saída da segunda execução:
+
+```text
+Documento de texto (simulação): Declaração de matrícula
+Emissão concluída.
+```
+
+## 5. Acompanhe a colaboração
+
+1. O `main` escolhe um criador concreto pelo argumento recebido.
+2. O cliente chama `emitir()` por meio do tipo `EmissorDocumento`.
+3. O método herdado valida o conteúdo e chama `criarDocumento()`.
+4. O polimorfismo direciona essa chamada à implementação da subclasse escolhida.
+5. A subclasse instancia o produto concreto, e o fluxo de emissão utiliza o contrato `Documento` para solicitar sua geração.
+
+O `switch` continua existindo, mas está concentrado no ponto de montagem. Para incluir outro formato, podemos adicionar um produto e um criador concretos, mantendo o método `emitir()` da classe base. A seleção no `main` precisa ser atualizada para disponibilizar a nova opção.
+
+:::note Factory Method não é apenas um método que usa `new`
+Neste exemplo, o padrão aparece na operação de criação sobrescrita pelas subclasses e utilizada pelo processo da classe base. Um método estático com um `switch` que retorna produtos pode centralizar a criação, mas essa solução, frequentemente chamada de fábrica simples, não possui a mesma estrutura do Factory Method apresentado aqui.
+:::
+
+## 6. Quando utilizar?
+
+O padrão faz sentido quando uma classe possui um processo que deve trabalhar com diferentes implementações de produto e suas subclasses precisam personalizar a criação. É comum em estruturas extensíveis nas quais a classe base define o fluxo e deixa pontos de especialização.
+
+| Padrão | Foco da criação | Como aparece nos exemplos |
+|---|---|---|
+| Factory Method | Um produto por uma operação que subclasses especializam | `EmissorDocumento` usa `criarDocumento()` no fluxo de emissão |
+| Abstract Factory | Famílias de produtos relacionados | `TelaCadastro` recebe uma `FabricaTema` que cria botões e caixas de seleção |
+
+Os padrões podem ser combinados: uma fábrica abstrata pode ter operações implementadas com Factory Methods. A distinção está na intenção e na colaboração entre os participantes, não apenas na quantidade de métodos.
+
+Se a criação é simples e não existe necessidade de especialização por subclasses, um construtor ou uma função de criação pode ser suficiente. Factory Method acrescenta classes e usa herança; criar uma subclasse para cada variação pode aumentar o custo de manutenção.

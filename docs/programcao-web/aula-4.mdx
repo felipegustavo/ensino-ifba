@@ -1,0 +1,737 @@
+---
+id: aula-04-fundamentos-css
+title: "Aula 4 — Fundamentos do CSS"
+sidebar_label: "Aula 4 — Fundamentos do CSS"
+sidebar_position: 5
+description: "Sintaxe CSS, seletores, cascata, especificidade, cores, unidades, tipografia e propriedades básicas, com exemplo completo e exercícios."
+---
+
+Na [Aula 3](./aula-3.mdx), construímos páginas com textos, tabelas e formulários. Agora vamos usar **CSS** para definir sua apresentação: cores, fontes, dimensões, bordas e espaçamentos.
+
+## 1. Fundamentos do CSS
+
+**CSS (Cascading Style Sheets)** é a linguagem utilizada para definir a apresentação de documentos HTML. O HTML identifica o conteúdo e sua estrutura; o CSS define como os elementos são apresentados.
+
+### 1.1. Sintaxe: seletor, propriedade e valor
+
+```css
+p {
+    color: #1e3a8a;
+    font-size: 18px;
+}
+```
+
+| Parte | Função no exemplo |
+|---|---|
+| `p` | Seletor: identifica os parágrafos que recebem a regra |
+| `{ ... }` | Bloco de declarações |
+| `color` | Propriedade que define a cor do texto |
+| `#1e3a8a` | Valor atribuído à propriedade |
+| `color: #1e3a8a;` | Declaração completa |
+
+Uma regra pode conter várias declarações. Os dois-pontos separam a propriedade do valor; o ponto e vírgula separa as declarações. Mantenha o ponto e vírgula também na última declaração para facilitar futuras edições.
+
+Comentários usam `/* ... */`:
+
+```css
+/* Títulos principais da página */
+h1 {
+    color: darkblue;
+}
+```
+
+Em geral, o navegador ignora uma declaração com propriedade ou valor inválido e continua processando as demais. Uma chave ou um ponto e vírgula ausente pode comprometer mais de uma declaração.
+
+### 1.2. CSS inline
+
+É escrito no atributo `style` do próprio elemento, sem seletor e sem chaves:
+
+```html
+<p style="color: darkblue; font-weight: bold;">Inscrições abertas.</p>
+```
+
+Aplica-se àquele elemento. Repetir esse código em vários elementos dificulta a manutenção.
+
+### 1.3. CSS interno
+
+É escrito em um elemento `<style>` no `<head>` do documento:
+
+```html
+<head>
+    <meta charset="UTF-8">
+    <title>Portal Acadêmico</title>
+    <style>
+        p {
+            color: darkblue;
+        }
+    </style>
+</head>
+```
+
+Permite reunir as regras de uma página no próprio HTML, sendo útil em experimentos pequenos.
+
+### 1.4. CSS externo
+
+É escrito em um arquivo separado, vinculado por `<link>` dentro de `<head>`:
+
+```html
+<link rel="stylesheet" href="estilo.css">
+```
+
+Conteúdo de `estilo.css`:
+
+```css
+p {
+    color: darkblue;
+}
+```
+
+O arquivo CSS não contém tags `<style>`. No exemplo, `estilo.css` deve estar na mesma pasta do HTML. Se estiver em uma subpasta `css`, use `href="css/estilo.css"`.
+
+| Forma | Local | Uso típico |
+|---|---|---|
+| Inline | Atributo `style` | Ajuste pontual em um elemento |
+| Interno | `<style>` no HTML | Experimento ou página isolada |
+| Externo | Arquivo `.css` | Organização e reutilização entre páginas |
+
+CSS interno não tem prioridade automática sobre CSS externo. Ambos participam da cascata; em condições equivalentes, a ordem em que aparecem no documento pode desempatar suas regras.
+
+## 2. Seletores
+
+Seletores determinam **quais elementos** recebem as declarações de uma regra.
+
+### 2.1. Elemento, classe e ID
+
+```html
+<h1 id="titulo-principal">Portal Acadêmico</h1>
+<p class="aviso">Inscrições abertas.</p>
+<p class="aviso destaque">Últimos dias para participar.</p>
+```
+
+```css
+/* Todos os parágrafos */
+p {
+    line-height: 1.6;
+}
+
+/* Todos os elementos que possuem a classe aviso */
+.aviso {
+    background-color: #fef3c7;
+}
+
+/* O elemento com esse ID */
+#titulo-principal {
+    color: #1e3a8a;
+}
+
+/* Elementos que possuem as duas classes ao mesmo tempo */
+.aviso.destaque {
+    font-weight: bold;
+}
+```
+
+Uma classe pode ser reutilizada em vários elementos. Um elemento pode ter várias classes, separadas por espaços no HTML. O `id` deve ser único no documento. Para estilos reutilizáveis, classes costumam ser mais convenientes.
+
+### 2.2. Descendência e filho direto
+
+Considere esta estrutura:
+
+```html
+<section class="painel">
+    <p>Parágrafo A: filho direto da seção.</p>
+    <div>
+        <p>Parágrafo B: está dentro de uma div.</p>
+    </div>
+</section>
+```
+
+```css
+/* Seleciona A e B: qualquer parágrafo dentro de .painel */
+.painel p {
+    color: #1e3a8a;
+}
+
+/* Seleciona apenas A: o pai imediato precisa ser .painel */
+.painel > p {
+    font-weight: bold;
+}
+```
+
+O espaço representa descendência em qualquer profundidade. O combinador `>` exige uma relação de filho direto. Nos dois casos, o elemento selecionado é o parágrafo, não o painel.
+
+### 2.3. Atributos
+
+```css
+/* Inputs cujo atributo type tem o valor email */
+input[type="email"] {
+    background-color: #eff6ff;
+}
+
+/* Elementos que possuem o atributo required */
+[required] {
+    border-left: 4px solid #1e3a8a;
+}
+
+/* Links cujo href começa com https:// */
+a[href^="https://"] {
+    font-weight: bold;
+}
+```
+
+Esses seletores usam atributos existentes no HTML. A regra `[required]` modifica a apresentação, enquanto o atributo HTML `required` participa da validação do formulário.
+
+### 2.4. Agrupamento
+
+Use vírgulas para aplicar o mesmo bloco a vários seletores:
+
+```css
+h1, h2, h3 {
+    font-family: Arial, sans-serif;
+    color: #1e3a8a;
+}
+```
+
+`h1, h2` seleciona títulos de ambos os tipos. Já `.painel p` seleciona parágrafos descendentes de `.painel`. Vírgula e espaço têm funções diferentes.
+
+### 2.5. Dois recursos de apoio
+
+O seletor universal `*` seleciona todos os elementos. Pseudoclasses como `:hover` e `:focus-visible` selecionam elementos em determinados estados:
+
+```css
+* {
+    box-sizing: border-box;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+a:focus-visible {
+    outline: 3px solid #1e3a8a;
+    outline-offset: 3px;
+}
+```
+
+`:hover` corresponde ao elemento sob o ponteiro. `:focus-visible` permite destacar o foco quando o navegador considera necessário, como na navegação por teclado. Não remova o contorno de foco sem fornecer uma indicação visível equivalente.
+
+## 3. Cascata e especificidade
+
+Um elemento pode corresponder a vários seletores. A **cascata** resolve os conflitos para cada propriedade: a regra que define a cor vencedora pode ser diferente da regra que define o tamanho da fonte.
+
+### 3.1. Herança
+
+Algumas propriedades são transmitidas do elemento pai aos filhos quando estes não possuem um valor definido por suas próprias regras. `color` e propriedades de fonte são exemplos comuns.
+
+```css
+body {
+    color: #334155;
+    font-family: Arial, sans-serif;
+}
+
+p {
+    color: #1e3a8a;
+}
+```
+
+Os parágrafos recebem sua própria cor e podem herdar a fonte do `body`. Uma declaração aplicada diretamente ao elemento prevalece sobre um valor que ele apenas herdaria, mesmo que o seletor do ancestral tenha maior especificidade.
+
+Propriedades como `margin`, `padding` e `border` não são herdadas normalmente. Podemos solicitar herança explicitamente com `inherit`:
+
+```css
+input, button {
+    font: inherit;
+}
+```
+
+Isso é útil porque controles de formulário podem possuir fontes definidas pelos estilos do navegador.
+
+### 3.2. Como decidir qual declaração vence?
+
+Para os exemplos desta aula, consideramos regras do autor da página, sem camadas de cascata, animações, transições ou escopos CSS. Nesse contexto:
+
+1. Verifique quais declarações válidas se aplicam ao elemento e à propriedade.
+2. Declarações com `!important` têm precedência sobre declarações normais.
+3. Entre declarações normais, o estilo inline prevalece sobre regras em folhas de estilo.
+4. Entre regras de mesma importância em folhas de estilo, compare a especificidade.
+5. Se a especificidade empatar, vence a declaração que aparece por último.
+
+:::note A cascata considera mais do que especificidade
+O navegador também distingue estilos do navegador, do usuário e do autor, além de camadas e outros mecanismos. Por exemplo, declarações importantes do usuário prevalecem sobre declarações importantes do autor. A sequência acima é um recorte para analisar os exemplos introdutórios desta aula.
+:::
+
+### 3.3. Especificidade dos seletores
+
+Para os seletores estudados, conte três grupos e compare da esquerda para a direita:
+
+| Grupo | O que conta |
+|---|---|
+| A | IDs |
+| B | Classes, atributos e pseudoclasses |
+| C | Elementos e pseudoelementos |
+
+| Seletor | Especificidade `(A, B, C)` |
+|---|---|
+| `p` | `(0, 0, 1)` |
+| `.aviso` | `(0, 1, 0)` |
+| `[required]` | `(0, 1, 0)` |
+| `.painel p` | `(0, 1, 1)` |
+| `.painel > p` | `(0, 1, 1)` |
+| `.aviso.destaque` | `(0, 2, 0)` |
+| `#mensagem` | `(1, 0, 0)` |
+
+O seletor universal e os combinadores não acrescentam especificidade. Em um agrupamento, cada seletor é avaliado separadamente; suas contagens não são somadas.
+
+Essas contagens não formam um número decimal: muitas classes não superam um ID. Primeiro comparamos A; somente se houver empate comparamos B, e depois C.
+
+```html
+<p id="mensagem" class="aviso">Inscrições abertas.</p>
+```
+
+```css
+#mensagem { color: darkgreen; }
+.aviso { color: darkorange; }
+p { color: darkblue; }
+```
+
+O texto fica **verde-escuro**: o seletor de ID é mais específico, mesmo aparecendo antes dos demais.
+
+No exemplo abaixo, as especificidades empatam:
+
+```css
+.aviso { color: darkorange; }
+.aviso { color: darkblue; }
+```
+
+O texto fica **azul-escuro**, pois a segunda declaração aparece depois.
+
+### 3.4. O papel de `!important`
+
+```css
+#mensagem {
+    color: darkgreen;
+}
+
+.aviso {
+    color: darkblue !important;
+}
+```
+
+Agora a cor é **azul-escuro**. `!important` altera a importância daquela declaração; não aumenta a especificidade do seletor e não se aplica automaticamente ao restante do bloco.
+
+Uma declaração importante do autor também pode superar um estilo inline normal. Se ambas as declarações concorrentes em folhas de estilo forem importantes, no contexto simplificado desta aula voltamos a comparar especificidade e ordem.
+
+Evite usar `!important` para corrigir todo conflito. Antes, confira o seletor, a ordem das regras e a necessidade de IDs ou estilos inline. Seu uso frequente dificulta sobrescritas futuras.
+
+## 4. Cores e unidades
+
+### 4.1. Hexadecimal, RGB e HSL
+
+As três declarações abaixo representam o mesmo vermelho:
+
+```css
+.hexadecimal { color: #ff0000; }
+.rgb { color: rgb(255, 0, 0); }
+.hsl { color: hsl(0, 100%, 50%); }
+```
+
+| Formato | Como interpretar | Exemplo |
+|---|---|---|
+| Hexadecimal | `#RRGGBB`: dois dígitos por canal, de `00` a `ff` | `#1e3a8a` |
+| RGB | Intensidades de vermelho, verde e azul, aqui de 0 a 255 | `rgb(30, 58, 138)` |
+| HSL | Matiz, saturação e luminosidade | `hsl(224, 64%, 33%)` |
+
+No HSL, a matiz percorre o círculo de cores: 0° corresponde ao vermelho, 120° ao verde e 240° ao azul. Saturação de 0% produz tons de cinza. Luminosidade de 0% produz preto; de 100%, branco.
+
+Hexadecimais com pares repetidos permitem abreviação: `#ffffff` equivale a `#fff`. Para transparência, podemos usar um canal alfa:
+
+```css
+.aviso {
+    background-color: rgb(30 58 138 / 10%);
+}
+```
+
+Nesse caso, o fundo tem 10% de opacidade, sem tornar o texto transparente. Já a propriedade `opacity` afeta visualmente o elemento inteiro, incluindo seu conteúdo.
+
+Use cores de texto e fundo com contraste suficiente. Uma informação como “campo obrigatório” deve ter indicação textual, e não depender apenas de uma cor.
+
+### 4.2. Unidades essenciais
+
+| Unidade | Referência | Exemplo de uso |
+|---|---|---|
+| `px` | Pixel CSS, uma unidade de referência que não corresponde necessariamente a um pixel físico | `border: 1px solid` |
+| `%` | Depende da propriedade; em `width`, geralmente se baseia na largura do bloco que contém o elemento | `width: 80%` |
+| `em` | Em `font-size`, usa o tamanho da fonte do pai; em propriedades como `padding`, usa a fonte do próprio elemento | `padding: 1em` |
+| `rem` | Tamanho da fonte do elemento raiz, normalmente `<html>` | `font-size: 1.5rem` |
+| `vw` | 1% da largura da viewport | `width: 80vw` |
+| `vh` | 1% da altura da viewport | `min-height: 100vh` |
+
+**Viewport** é a área de visualização da página. Em dispositivos móveis, barras do navegador podem afetar a área efetivamente visível; unidades como `dvh` tratam variações dinâmicas, mas serão aprofundadas em responsividade.
+
+### 4.3. Comparando `em` e `rem`
+
+Considere o tamanho de fonte da raiz igual a 16px e o do pai igual a 20px:
+
+```css
+.filho {
+    font-size: 1.5em; /* 1,5 × 20px = 30px */
+    padding: 1em;   /* usa a própria fonte: 30px */
+    margin-top: 1rem; /* usa a raiz: 16px */
+}
+```
+
+Com `font-size: 1.5rem`, a fonte seria 24px, independentemente da fonte do pai. Valores de fonte em `em` podem se multiplicar em elementos aninhados; `rem` mantém uma referência comum na raiz.
+
+Não presuma que `1rem` sempre vale 16px: isso depende dos estilos e das preferências do usuário.
+
+### 4.4. Porcentagens e dimensões
+
+Se o bloco de referência tem 800px de largura, `width: 50%` resulta em 400px. Se a viewport tem 1000px de largura, `50vw` corresponde a 500px, mesmo quando o elemento está dentro daquele bloco.
+
+Porcentagens não usam uma referência única para todas as propriedades. `font-size: 120%` se baseia na fonte do pai, e `height: 100%` depende das condições de dimensionamento do bloco de referência; não significa automaticamente a altura da tela.
+
+## 5. Texto e fontes
+
+```css
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.6;
+    text-align: left;
+}
+
+h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1.2;
+    text-align: center;
+}
+```
+
+| Propriedade | Função | Valores comuns |
+|---|---|---|
+| `font-family` | Lista de fontes em ordem de preferência | `Arial, sans-serif` |
+| `font-size` | Tamanho da fonte | `1rem`, `20px`, `120%` |
+| `font-weight` | Peso da fonte | `normal`, `bold`, `400`, `700` |
+| `line-height` | Altura das linhas | `1.5`, `1.6` |
+| `text-align` | Alinhamento do conteúdo em linha dentro do bloco | `left`, `right`, `center`, `justify` |
+| `text-decoration` | Decoração do texto | `underline`, `none` |
+| `font-style` | Estilo da fonte | `normal`, `italic` |
+
+O navegador tenta usar a primeira fonte disponível. Nomes com espaços podem ser escritos entre aspas, como `"Times New Roman"`. Termine a lista com uma família genérica, como `serif`, `sans-serif` ou `monospace`. Escrever o nome de uma fonte não faz o navegador baixá-la.
+
+Pesos disponíveis dependem da fonte. Os valores `400` e `700` correspondem normalmente a regular e negrito.
+
+Uma altura de linha sem unidade, como `1.6`, funciona como multiplicador do tamanho da fonte. Para uma fonte de 20px, resulta em uma altura de linha de 32px. Essa forma também se adapta bem à herança entre elementos com fontes diferentes.
+
+`text-align: center` centraliza o conteúdo em linha dentro do bloco; não centraliza o próprio bloco na página. Evite texto justificado em colunas estreitas, pois pode criar espaços excessivos entre palavras.
+
+## 6. Propriedades básicas
+
+### 6.1. Modelo de caixa: conteúdo, preenchimento, borda e margem
+
+Cada elemento gera caixas para a apresentação do conteúdo. Para um bloco simples, distinguimos:
+
+```text
+Margem (margin): espaço externo à borda
+┌─ Borda (border) ─────────────────────┐
+│ Preenchimento (padding)             │
+│   ┌─────────────────────────────┐   │
+│   │ Conteúdo                    │   │
+│   └─────────────────────────────┘   │
+└─────────────────────────────────────┘
+```
+
+```css
+.cartao {
+    width: 300px;
+    padding: 20px;
+    border: 2px solid #cbd5e1;
+    margin: 16px;
+}
+```
+
+Com o comportamento padrão `box-sizing: content-box`, os 300px se referem ao conteúdo. A largura incluindo preenchimentos e bordas é `300 + 40 + 4 = 344px`, sem contar margens.
+
+Com `box-sizing: border-box`, os 300px já incluem conteúdo, preenchimento e bordas. As margens continuam externas. Por isso, usamos frequentemente:
+
+```css
+* {
+    box-sizing: border-box;
+}
+```
+
+### 6.2. Espaçamentos e abreviações
+
+```css
+.cartao {
+    padding: 1rem;                  /* todos os lados */
+    margin: 1rem auto;             /* vertical; horizontal */
+}
+
+.aviso {
+    padding: 1rem 2rem 1.5rem 2rem; /* topo, direita, baixo, esquerda */
+    margin-bottom: 1rem;
+}
+```
+
+Com três valores, a ordem é topo, lados horizontais e baixo. `margin: 1rem auto` pode centralizar horizontalmente um bloco cuja largura seja menor que a largura disponível. Margens verticais entre blocos podem colapsar em determinadas condições; não conte sempre com a soma das duas margens.
+
+### 6.3. Bordas, fundos e dimensões
+
+| Propriedade | Finalidade | Exemplo |
+|---|---|---|
+| `color` | Cor do texto | `color: #0f172a` |
+| `background-color` | Cor de fundo | `background-color: #f8fafc` |
+| `background` | Abreviação para propriedades de fundo | `background: #fff` |
+| `border` | Espessura, estilo e cor da borda | `border: 1px solid #cbd5e1` |
+| `border-radius` | Arredondamento dos cantos | `border-radius: 8px` |
+| `width` / `height` | Largura e altura | `width: 100%` |
+| `max-width` | Limite máximo de largura | `max-width: 48rem` |
+| `min-height` | Limite mínimo de altura | `min-height: 100vh` |
+| `box-shadow` | Sombra da caixa | `box-shadow: 0 2px 8px #0002` |
+| `overflow` | Tratamento do conteúdo que excede a caixa | `overflow: auto` |
+
+Em `border`, declarar apenas a cor normalmente não basta para mostrar a borda: defina também um estilo, como `solid`. `background` pode redefinir várias propriedades do fundo; use `background-color` quando quiser alterar apenas a cor.
+
+Prefira deixar a altura acompanhar o conteúdo em caixas de texto. Uma altura fixa pode cortar conteúdo quando o texto cresce ou o usuário aumenta a fonte.
+
+### 6.4. Exibição básica
+
+```css
+label {
+    display: block;
+    margin-bottom: 0.25rem;
+}
+
+.botao {
+    display: inline-block;
+    padding: 0.75em 1.25em;
+}
+```
+
+`block` gera uma caixa de bloco; `inline` participa do fluxo em linha; `inline-block` participa desse fluxo e permite controlar dimensões como uma caixa. `display: none` retira o elemento do layout e, normalmente, da árvore de acessibilidade. Não o utilize para esconder rótulos necessários à compreensão da página.
+
+Flexbox e Grid serão estudados como recursos de organização de layouts. Para esta aula, o fluxo normal da página é suficiente.
+
+## 7. Exemplo completo — Página de um curso
+
+Crie uma pasta com os dois arquivos abaixo e abra `index.html` no navegador. O exemplo não depende de servidor, imagens ou fontes externas.
+
+```text
+pratica-css/
+├── index.html
+└── estilo.css
+```
+
+### 7.1. Arquivo `index.html`
+
+```html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oficina de Desenvolvimento Web</title>
+    <link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+    <header class="cabecalho">
+        <h1 id="titulo-principal">Oficina de Desenvolvimento Web</h1>
+        <p>Aprenda a construir suas primeiras páginas.</p>
+    </header>
+
+    <main class="container">
+        <section class="cartao" aria-labelledby="sobre-titulo">
+            <h2 id="sobre-titulo">Sobre a oficina</h2>
+            <p>Estudaremos HTML, CSS e a organização visual de uma página.</p>
+            <p class="aviso destaque">Inscrições abertas para estudantes.</p>
+            <ul>
+                <li>Estrutura de documentos HTML</li>
+                <li>Seletores e propriedades CSS</li>
+                <li>Construção de uma página de curso</li>
+            </ul>
+            <a class="botao" href="#informacoes">Consultar informações</a>
+        </section>
+
+        <section class="cartao" id="informacoes"
+                 aria-labelledby="informacoes-titulo">
+            <h2 id="informacoes-titulo">Informações</h2>
+            <p>Modalidade: presencial.</p>
+            <div class="detalhes">
+                <p>Local: laboratório de informática.</p>
+            </div>
+            <p>Para participar, acompanhe as orientações da coordenação.</p>
+        </section>
+    </main>
+
+    <footer class="rodape">
+        <p>Exemplo didático — Programação Web.</p>
+    </footer>
+</body>
+</html>
+```
+
+### 7.2. Arquivo `estilo.css`
+
+```css
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background-color: #f1f5f9;
+    color: #334155;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+.cabecalho {
+    padding: 2rem 1rem;
+    background-color: hsl(224, 64%, 33%);
+    color: #fff;
+    text-align: center;
+}
+
+#titulo-principal {
+    margin: 0;
+    font-size: 2rem;
+    line-height: 1.2;
+}
+
+.container {
+    width: 90%;
+    max-width: 48rem;
+    margin: 2rem auto;
+}
+
+.cartao {
+    margin-bottom: 1.5rem;
+    padding: 1.5rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 0.75rem;
+    background: #fff;
+    box-shadow: 0 2px 8px rgb(15 23 42 / 8%);
+}
+
+h2, .destaque {
+    font-weight: 700;
+}
+
+h2 {
+    margin-top: 0;
+    color: #1e3a8a;
+    font-size: 1.5rem;
+}
+
+.cartao p {
+    margin-bottom: 1rem;
+}
+
+.cartao > p {
+    line-height: 1.8;
+}
+
+.aviso {
+    padding: 0.75rem;
+    border-left: 4px solid #92400e;
+    background-color: #fef3c7;
+    color: #78350f;
+}
+
+.botao {
+    display: inline-block;
+    padding: 0.75em 1.25em;
+    border: 2px solid #1e3a8a;
+    border-radius: 0.5rem;
+    background-color: #1e3a8a;
+    color: #fff;
+    text-decoration: none;
+}
+
+a[href="#informacoes"] {
+    font-weight: 700;
+}
+
+.botao:hover {
+    background-color: #172554;
+}
+
+.botao:focus-visible {
+    outline: 3px solid #1e3a8a;
+    outline-offset: 3px;
+}
+
+.rodape {
+    padding: 1rem;
+    text-align: center;
+    font-size: 0.875rem;
+}
+```
+
+O resultado esperado é uma página com cabeçalho azul, cartões brancos, aviso amarelo e um link apresentado como botão. A largura do conteúdo acompanha a janela até atingir o limite de `48rem`.
+
+O elemento “Consultar informações” continua sendo um link: sua função é navegar até uma seção da página. A aparência de botão não altera a semântica do HTML.
+
+## 8. Prática guiada e inspeção no navegador
+
+1. Abra a página e confirme que `estilo.css` foi carregado. Se não houver estilos, confira o nome, a pasta e o `href` do arquivo.
+2. Use **Inspecionar** no aviso. No painel de estilos, identifique as regras aplicadas e as declarações sobrescritas, normalmente exibidas riscadas.
+3. Observe a cor e a fonte no painel de estilos computados. Diferencie propriedades herdadas de propriedades aplicadas diretamente.
+4. Compare o parágrafo “Modalidade” com o parágrafo “Local”. Ambos correspondem a `.cartao p`, mas apenas o primeiro corresponde a `.cartao > p`.
+5. Desative temporariamente `box-sizing: border-box` e observe o modelo de caixa nas ferramentas de desenvolvimento.
+6. Reduza a largura da janela e aumente o zoom. Verifique a quebra das linhas e a adaptação dos cartões.
+7. Pressione Tab até alcançar o link e confirme a presença do foco visível. Pressione Enter para navegar até as informações.
+
+As alterações feitas no painel de estilos são temporárias. Transfira as mudanças desejadas para `estilo.css` para preservá-las.
+
+### Experimento de cascata
+
+Acrescente ao final de `estilo.css`:
+
+```css
+.aviso { color: darkgreen; }
+.cartao .aviso { color: darkblue; }
+.aviso { color: darkred; }
+```
+
+Antes de recarregar, preveja a cor. O resultado é **azul-escuro**, porque `.cartao .aviso` tem especificidade `(0, 2, 0)`, superior à das outras duas regras.
+
+Agora remova a regra `.cartao .aviso`: o texto ficará **vermelho-escuro**, pelo desempate por ordem. Por último, acrescente `!important` à declaração verde: ela passará a vencer as demais declarações normais. Remova essas regras experimentais ao terminar.
+
+## 9. Atividade proposta — Estilização do cadastro acadêmico
+
+Retome o formulário da Aula 3 ou crie uma versão com nome, e-mail e curso. Crie uma folha externa `cadastro.css` e implemente:
+
+1. Fonte padrão, cor de texto e altura de linha definidas no `body`.
+2. Um contêiner centralizado com largura fluida e largura máxima.
+3. Campos com preenchimento, borda e cantos arredondados.
+4. Rótulos legíveis e associados aos campos por `for` e `id`.
+5. Um estilo específico para `input[type="email"]` e outro para `[required]`.
+6. Uma classe reutilizável de aviso e uma regra agrupada para títulos.
+7. Uso justificado de `px`, `%`, `rem` e `em`.
+8. Estados de foco visíveis para campos e botões.
+
+Utilize seletores específicos para os campos de texto: aplicar `width: 100%` a todos os inputs também afeta radios e checkboxes. Mantenha uma indicação textual para campos obrigatórios.
+
+**Entrega:** arquivos HTML e CSS, acompanhados de uma explicação curta sobre uma ocorrência de herança, um conflito de especificidade e a escolha de duas unidades. A página deve permanecer utilizável em uma janela estreita e com zoom aumentado, sem depender de `!important` para organizar os estilos.
+
+Nesta etapa, a atividade trata da apresentação. O envio e o armazenamento do cadastro continuam dependendo de um servidor, conforme discutido na aula anterior.
+
+## 10. Questões de revisão
+
+1. Quais são as partes de uma regra CSS?
+2. Qual é a diferença entre CSS inline, interno e externo?
+3. Quando usar classe e quando usar ID no HTML? Como isso afeta os seletores?
+4. Qual é a diferença entre `.painel p`, `.painel > p` e `.painel, p`?
+5. Por que uma regra escrita por último nem sempre vence?
+6. Por que `!important` não deve ser entendido como aumento de especificidade?
+7. `border` e `color` são herdadas da mesma maneira?
+8. Com fonte raiz de 16px e fonte do pai de 24px, quanto valem `font-size: 2rem` e `font-size: 2em` no filho?
+9. Qual é a diferença entre `width: 50%` e `width: 50vw`?
+10. Como `padding`, `border` e `margin` participam do modelo de caixa?
+11. O que muda ao utilizar `box-sizing: border-box`?
+12. Por que `text-align: center` não substitui a centralização de um contêiner com margens automáticas?
