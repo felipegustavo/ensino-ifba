@@ -1,0 +1,150 @@
+---
+id: aula-5
+title: "Aula 5 — Computação como serviço: instâncias e serverless"
+sidebar_position: 6
+description: Instâncias, dimensionamento, escalabilidade e computação serverless, com seus efeitos sobre operação e cobrança.
+---
+
+## 1. Como executar uma aplicação na nuvem?
+
+Um portal acadêmico recebe acessos durante todo o semestre, enfrenta picos nas matrículas e gera miniaturas sempre que alguém envia uma imagem.
+
+**Pergunta inicial:** essas tarefas precisam consumir capacidade computacional da mesma forma?
+
+- **Instância de VM:** contratar uma máquina virtual e administrar seu sistema operacional e suas aplicações.
+- **Contêiner gerenciado:** fornecer uma imagem e configurar sua execução em uma plataforma que assume parte da operação.
+- **Função serverless:** fornecer código executado em resposta a eventos, com infraestrutura de execução gerenciada pelo provedor.
+
+**Objetivo:** reconhecer essas formas de consumir computação e seus efeitos sobre operação e cobrança.
+
+## 2. Instâncias e famílias de capacidade
+
+Uma **instância** é uma máquina virtual provisionada no serviço de nuvem. Sua configuração define recursos como vCPUs, memória e capacidades de disco e rede.
+
+As **famílias de instâncias** agrupam configurações voltadas a diferentes necessidades. Os nomes e as combinações disponíveis variam entre provedores.
+
+| Perfil de capacidade | Característica | Exemplo de carga |
+|---|---|---|
+| Uso geral | Equilíbrio entre CPU e memória. | Portal ou API com demanda moderada. |
+| Otimizado para computação | Maior capacidade de processamento em relação à memória. | Cálculos e processamento intensivo. |
+| Otimizado para memória | Mais RAM em relação à CPU. | Cache ou análise de grandes conjuntos de dados em memória. |
+| Otimizado para armazenamento | Ênfase em capacidade ou desempenho de acesso a dados. | Processamento com muitas operações de disco. |
+| Computação acelerada | Aceleradores, como GPUs, para tarefas compatíveis. | Treinamento de modelos e processamento gráfico. |
+
+**Família e tamanho são escolhas diferentes:** primeiro identificar o perfil da carga; depois selecionar a quantidade de recursos. Mais vCPUs não resolvem, por si só, falta de memória ou lentidão no disco.
+
+## 3. Dimensionamento e superdimensionamento
+
+**Dimensionar** é escolher capacidade suficiente para atender à demanda e aos requisitos de desempenho, mantendo uma margem justificada.
+
+| Situação | Efeito possível | O que observar |
+|---|---|---|
+| Recursos insuficientes | Lentidão, filas e falhas. | Saturação de CPU, memória, disco ou rede. |
+| Recursos adequados | Atendimento da carga com margem para variações. | Tempo de resposta e utilização nos períodos relevantes. |
+| Recursos muito acima da necessidade | Capacidade ociosa e gasto desnecessário. | Utilização baixa de forma persistente, inclusive nos picos. |
+
+**Exemplo didático:** uma API usa uma VM com 8 vCPUs e 32 GiB de RAM, mas medições representativas indicam baixo uso de CPU e consumo de até 4 GiB de RAM. Uma configuração menor pode ser avaliada, verificando se mantém o tempo de resposta esperado.
+
+- Medir o comportamento normal e os picos, evitando decidir apenas pela média.
+- Identificar o recurso que limita a aplicação antes de ampliar a máquina.
+- Testar a configuração e acompanhar o resultado após o ajuste.
+- Revisar a capacidade quando a demanda ou a aplicação mudar.
+
+**Superdimensionamento:** reservar recursos muito além da necessidade. Uma VM ligada e ociosa geralmente continua gerando cobrança de computação.
+
+## 4. Escalabilidade vertical e horizontal
+
+| Estratégia | O que muda | Exemplo | Limite ou cuidado |
+|---|---|---|---|
+| **Vertical** | Capacidade de uma instância. | Passar de 2 vCPUs e 4 GiB para 4 vCPUs e 8 GiB. | Há um tamanho máximo; a alteração pode exigir interrupção. |
+| **Horizontal** | Quantidade de instâncias ou réplicas. | Passar de uma para três cópias da API. | Exige distribuir trabalho e coordenar o estado da aplicação. |
+
+```text
+Vertical
+Uma VM pequena → Uma VM maior
+
+Horizontal
+                     ┌── API 1
+Usuários → Balanceador ── API 2
+                     └── API 3
+```
+
+Na escala horizontal, sessões e arquivos que precisam ser acessados por qualquer réplica não devem depender apenas da memória ou do disco local de uma delas.
+
+- **Escalabilidade:** capacidade de atender ao crescimento da carga com mais recursos.
+- **Elasticidade:** ajustar a capacidade à variação da demanda, aumentando e reduzindo recursos.
+- **Escalonamento automático:** aplicar regras para realizar esses ajustes, com limites e tempo de reação.
+
+**Mais réplicas não eliminam todos os gargalos:** o banco de dados ou a rede podem continuar limitando o atendimento. Para reduzir o impacto de falhas, também é necessário distribuir as réplicas entre domínios de falha adequados.
+
+## 5. Serverless e funções como serviço
+
+Na **computação serverless**, o provedor administra a infraestrutura de execução, e o cliente trabalha com abstrações de maior nível. Os servidores continuam existindo, mas sua administração direta fica a cargo do provedor.
+
+**FaaS — Function as a Service:** modelo em que uma função é executada em resposta a um evento. A plataforma prepara o ambiente e gerencia a capacidade de execução conforme suas regras e limites.
+
+| Quem | Responsabilidades típicas |
+|---|---|
+| Provedor | Operar servidores, disponibilizar o ambiente de execução e gerenciar sua capacidade. |
+| Cliente | Manter código e dependências, configurar recursos e permissões, proteger dados e acompanhar erros e custos. |
+
+**Serverless é mais amplo que FaaS:** também pode aparecer em serviços de contêineres e outros serviços gerenciados. Nem todo contêiner gerenciado é serverless.
+
+O cliente continua tomando decisões sobre memória, concorrência e integrações, conforme as opções oferecidas pelo serviço.
+
+## 6. Eventos, limites e inicialização a frio
+
+Um **evento** sinaliza algo que aconteceu e pode disparar uma função: uma requisição HTTP, a chegada de uma mensagem, o envio de um arquivo ou um horário agendado.
+
+```text
+Aluno envia uma imagem
+          ↓
+Armazenamento registra o arquivo
+          ↓ evento de criação
+Função gera uma miniatura
+          ↓
+Miniatura salva no armazenamento
+```
+
+| Aspecto | Efeito sobre a aplicação |
+|---|---|
+| Tempo máximo de execução | Uma tarefa longa pode precisar ser dividida ou executada em outro modelo. |
+| Memória e armazenamento temporário | O processamento precisa caber nos recursos configurados e nos limites do serviço. |
+| Concorrência | Há limites para execuções simultâneas; picos podem gerar espera ou rejeições, conforme a integração. |
+| Estado entre execuções | Não se deve depender da reutilização do mesmo ambiente; dados duráveis devem ficar em armazenamento externo. |
+| Reentrega de eventos | Conforme a origem e a configuração, um evento pode ser processado novamente. |
+
+Uma função **idempotente** evita duplicar o efeito de uma operação quando recebe o mesmo evento mais de uma vez. Por exemplo, registrar o identificador de uma solicitação ajuda a evitar a emissão duplicada de um certificado.
+
+**Inicialização a frio — cold start:** ocorre quando a plataforma precisa preparar um novo ambiente antes de executar o código. Isso acrescenta latência e pode acontecer após inatividade ou ao ampliar a capacidade.
+
+Reutilizar um ambiente já preparado pode reduzir esse atraso, mas não é uma garantia para todas as chamadas. Dependências menores e recursos para manter ambientes prontos podem ajudar; manter capacidade pronta pode gerar cobrança adicional.
+
+## 7. VM, contêiner gerenciado e função serverless
+
+| Aspecto | Instância de VM | Contêiner gerenciado | Função serverless |
+|---|---|---|---|
+| Unidade fornecida pelo cliente | Configuração da máquina e software. | Imagem da aplicação e configuração. | Código da função ou pacote compatível. |
+| Controle do ambiente | Maior controle sobre SO e serviços instalados. | Controle da imagem; acesso ao hospedeiro depende da oferta. | Controle limitado ao ambiente e às opções do serviço. |
+| Operação do cliente | Atualizar SO, dependências e aplicação. | Atualizar imagem e configurar execução; responsabilidades variam. | Atualizar código e dependências, configurar eventos e permissões. |
+| Escala | Alterar tamanho ou quantidade de VMs, manualmente ou com automação. | Ajustar réplicas e recursos, conforme a plataforma. | Plataforma ajusta ambientes de execução, dentro de limites. |
+| Duração do trabalho | Pode manter processos contínuos. | Pode executar serviços contínuos ou tarefas. | Cada execução deve respeitar o tempo máximo do serviço. |
+| Cobrança típica | Capacidade provisionada e tempo de uso. | Recursos e tempo alocados ou consumidos, conforme a oferta. | Invocações e recursos associados ao tempo de execução, conforme a oferta. |
+
+**A unidade de cobrança importa:** uma VM pode continuar cobrando computação enquanto aguarda trabalho; uma função sob demanda costuma concentrar essa cobrança nas execuções. Capacidade mantida pronta e planos específicos podem mudar essa relação.
+
+**Exemplo didático:** uma VM disponível por 24 horas acumula esse período de uso mesmo que processe tarefas durante apenas 10 minutos. Já 600 invocações de uma função, com duração de 1 segundo cada, somam 600 segundos de execução, antes de considerar regras de medição. Esses tempos, sozinhos, não permitem comparar o valor final: recursos e tarifas também diferem.
+
+Armazenamento, transferência de dados, registros e serviços associados podem gerar custos em qualquer alternativa. Parar a computação não implica eliminar todos os recursos cobrados.
+
+## 8. Qual alternativa faz sentido?
+
+| Cenário | Alternativa a considerar | Motivo e cuidado |
+|---|---|---|
+| Sistema legado contínuo que exige configuração específica do SO. | VM. | Oferece controle do ambiente, mas exige administrar e atualizar o sistema. |
+| API empacotada em imagem, com tráfego contínuo e picos de matrícula. | Contêiner gerenciado. | Facilita executar réplicas; exige planejar estado, limites e distribuição de requisições. |
+| Geração rápida de miniaturas após envios esporádicos de imagens. | Função serverless. | Combina com eventos e ociosidade entre tarefas; é preciso avaliar duração, reentregas e inicialização a frio. |
+
+**A escolha depende da carga:** frequência, duração, variação da demanda, latência aceitável e necessidade de controle. Carga contínua não impede usar funções, mas requer comparar custos e limites com outras opções.
+
+**Para discutir:** “serverless” significa ausência de servidores? Uma tarefa executada poucas vezes ao dia, mas com duração de várias horas, seria automaticamente uma boa candidata a FaaS? Por quê?

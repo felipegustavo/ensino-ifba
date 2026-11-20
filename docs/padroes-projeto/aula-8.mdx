@@ -1,0 +1,223 @@
+---
+id: aula-08-builder
+title: "Aula 8 — Builder"
+sidebar_label: "Aula 8 — Builder"
+description: "Construção de objetos em etapas com Builder, exemplo completo em Java e comparação com Factory Method e Abstract Factory."
+---
+
+# Builder
+
+## 1. Problema: construir relatórios com configurações diferentes
+
+Um portal acadêmico permite montar relatórios com título, autor, seções e rodapé. O título é obrigatório, mas as demais informações podem variar: um relatório simples apresenta apenas um aviso; outro reúne várias seções e identifica o responsável.
+
+Um construtor com muitos parâmetros torna as chamadas difíceis de ler. Considere esta possível chamada, antes da aplicação do padrão:
+
+```java
+new Relatorio("Matrículas", "Secretaria", secoes, true, "Uso interno");
+```
+
+O que significa o argumento `true`? Quais valores devemos passar quando não queremos autor ou rodapé? Criar várias sobrecargas também aumenta o número de combinações que precisamos manter.
+
+Outra alternativa seria instanciar um relatório vazio e chamar setters. Nesse caso, o objeto poderia circular pelo sistema antes de receber as informações necessárias para ser utilizado.
+
+**Pergunta:** como construir o relatório em etapas legíveis e entregar um objeto pronto para uso somente ao final?
+
+## 2. Intenção do padrão
+
+**Builder**, ou construtor, é um padrão criacional que separa a construção de um objeto complexo de sua representação, permitindo que um mesmo processo de construção produza representações diferentes.
+
+Na estrutura clássica, uma interface define as etapas, builders concretos implementam essas etapas e um **diretor** pode organizar a sequência de construção. O diretor é opcional: o próprio cliente pode coordenar as chamadas.
+
+Uma variante comum em Java utiliza um builder associado a um único tipo de produto, com métodos que retornam o próprio builder para permitir encadeamento. É essa variante, chamada aqui de **Builder fluente**, que utilizaremos para configurar um relatório e validar seu estado antes da criação.
+
+| Etapa | Operação no exemplo |
+|---|---|
+| Informar o dado obrigatório | `new Relatorio.Builder(titulo)` |
+| Configurar dados opcionais | `autor()`, `adicionarSecao()`, `rodape()` |
+| Validar e obter o produto | `build()` |
+
+Na aula anterior, Factory Method permitia que subclasses escolhessem o tipo de documento criado. Aqui, o foco é organizar as etapas de montagem de um objeto.
+
+## 3. Participantes
+
+| Papel | Participante no exemplo |
+|---|---|
+| Produto | `Relatorio` |
+| Builder concreto | `Relatorio.Builder` |
+| Operação de conclusão | `build()` |
+| Cliente | `main` de `ExemploBuilder` |
+| Diretor | Não há uma classe separada; o cliente escolhe as etapas |
+
+```text
+ExemploBuilder (cliente)
+  | cria e configura
+  v
+Relatorio.Builder
+  | autor(...)
+  | adicionarSecao(...)
+  | rodape(...)
+  | build()
+  v
+Relatorio (produto pronto para uso)
+```
+
+Neste exemplo, não precisamos de uma interface de builder porque há apenas uma implementação de construção. O builder mantém os dados temporários; o produto recebe uma cópia desses dados e não oferece setters.
+
+## 4. Exemplo completo em Java
+
+O exemplo monta dois relatórios e exibe seu conteúdo no console; não cria arquivos nem exige bibliotecas externas. Salve todo o bloco em `ExemploBuilder.java`:
+
+```java
+import java.util.ArrayList;
+import java.util.List;
+
+final class Relatorio {
+    private final String titulo;
+    private final String autor;
+    private final List<String> secoes;
+    private final String rodape;
+
+    private Relatorio(Builder builder) {
+        this.titulo = builder.titulo;
+        this.autor = builder.autor;
+        this.secoes = List.copyOf(builder.secoes);
+        this.rodape = builder.rodape;
+    }
+
+    public void exibir() {
+        System.out.println("Relatório: " + titulo);
+        if (!autor.isEmpty()) {
+            System.out.println("Autor: " + autor);
+        }
+        for (String secao : secoes) {
+            System.out.println("- " + secao);
+        }
+        if (!rodape.isEmpty()) {
+            System.out.println("Rodapé: " + rodape);
+        }
+    }
+
+    public static class Builder {
+        private final String titulo;
+        private String autor = "";
+        private final List<String> secoes = new ArrayList<>();
+        private String rodape = "";
+
+        public Builder(String titulo) {
+            this.titulo = validarTexto(titulo, "Título");
+        }
+
+        public Builder autor(String autor) {
+            this.autor = validarTexto(autor, "Autor");
+            return this;
+        }
+
+        public Builder adicionarSecao(String secao) {
+            this.secoes.add(validarTexto(secao, "Seção"));
+            return this;
+        }
+
+        public Builder rodape(String rodape) {
+            this.rodape = validarTexto(rodape, "Rodapé");
+            return this;
+        }
+
+        public Relatorio build() {
+            if (secoes.isEmpty()) {
+                throw new IllegalStateException(
+                    "O relatório deve ter pelo menos uma seção."
+                );
+            }
+            return new Relatorio(this);
+        }
+
+        private static String validarTexto(String texto, String campo) {
+            if (texto == null || texto.isBlank()) {
+                throw new IllegalArgumentException(
+                    campo + " não pode estar vazio."
+                );
+            }
+            return texto.strip();
+        }
+    }
+}
+
+public class ExemploBuilder {
+    public static void main(String[] args) {
+        Relatorio simples = new Relatorio.Builder("Avisos")
+            .adicionarSecao("Inscrições abertas para monitoria.")
+            .build();
+
+        Relatorio completo = new Relatorio.Builder("Matrículas")
+            .autor("Secretaria acadêmica")
+            .adicionarSecao("Total de estudantes: 120.")
+            .adicionarSecao("Turmas ofertadas: 4.")
+            .rodape("Uso interno")
+            .build();
+
+        simples.exibir();
+        System.out.println();
+        completo.exibir();
+    }
+}
+```
+
+Execute com um JDK 17 ou superior:
+
+```bash
+javac -encoding UTF-8 ExemploBuilder.java
+java ExemploBuilder
+```
+
+Saída da execução:
+
+```text
+Relatório: Avisos
+- Inscrições abertas para monitoria.
+
+Relatório: Matrículas
+Autor: Secretaria acadêmica
+- Total de estudantes: 120.
+- Turmas ofertadas: 4.
+Rodapé: Uso interno
+```
+
+## 5. Acompanhe a colaboração
+
+1. O `main` cria um builder e fornece o título obrigatório.
+2. Cada chamada configura o estado temporário do builder. Os métodos retornam `this`, permitindo encadear as etapas.
+3. Autor e rodapé mantêm o valor padrão vazio quando suas etapas são omitidas. Se forem informados, precisam conter texto válido.
+4. O método `build()` verifica se há pelo menos uma seção e só então chama o construtor privado de `Relatorio`.
+5. O produto copia a lista de seções com `List.copyOf()`. Alterações posteriores no builder não modificam os relatórios já criados.
+6. O cliente utiliza o relatório pronto, sem depender do builder para exibi-lo.
+
+O builder é mutável, mas o relatório deste exemplo é imutável: seus campos são privados e finais, os textos são imutáveis e a lista copiada não permite alterações. Essa proteção exige cuidado na implementação; usar Builder, por si só, não garante imutabilidade.
+
+Para observar a validação final, substitua temporariamente o conteúdo do `main` por:
+
+```java
+new Relatorio.Builder("Relatório sem conteúdo").build();
+```
+
+A execução lança `IllegalStateException` com a mensagem `O relatório deve ter pelo menos uma seção.`. O builder pode estar incompleto durante a montagem, mas não entrega um produto que viole essa regra.
+
+:::note Builder não é apenas encadeamento de métodos
+Retornar `this` cria uma interface fluente, mas isso também pode existir em classes que não implementam Builder. Neste exemplo, o padrão aparece na separação entre o estado de construção e o produto, concluída por `build()`. Um Builder também pode ter métodos que retornam `void`.
+:::
+
+Se várias partes do sistema precisarem repetir a mesma receita de relatório, um diretor poderá concentrar a sequência de chamadas ao builder. Na estrutura clássica, esse diretor trabalha com o contrato das etapas, permitindo trocar o builder concreto e obter outra representação. Os dois relatórios deste exemplo são configurações diferentes do mesmo produto, não representações produzidas por builders distintos.
+
+## 6. Quando utilizar?
+
+O padrão faz sentido quando a criação envolve várias etapas, muitos parâmetros opcionais ou regras que precisam ser verificadas antes de disponibilizar o objeto. Também ajuda a tornar as chamadas de criação mais legíveis e a reutilizar receitas de montagem quando há um diretor.
+
+| Padrão | Foco da criação | Como aparece nos exemplos |
+|---|---|---|
+| Builder | Construção de um objeto em etapas | `Relatorio.Builder` acumula configurações e conclui com `build()` |
+| Factory Method | Um produto por uma operação que subclasses especializam | `EmissorDocumento` usa `criarDocumento()` no fluxo de emissão |
+| Abstract Factory | Famílias de produtos relacionados | `FabricaTema` cria botões e caixas de seleção compatíveis |
+
+Os padrões podem ser combinados: uma fábrica pode utilizar um builder internamente para montar um produto. A escolha depende do problema de criação que precisamos resolver.
+
+Builder acrescenta código e exige manter as opções de construção coerentes com o produto. Neste exemplo, também é possível esquecer uma seção e descobrir o problema apenas em `build()`. Para objetos com poucos campos e criação simples, um construtor claro pode ser suficiente.
