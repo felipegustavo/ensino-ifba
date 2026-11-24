@@ -126,8 +126,7 @@ As aulas podem combinar exposição dialogada, leitura e discussão de diagramas
 - rede virtual privada (VPC/VNet) como ambiente lógico isolado;
 - CIDR, endereços IPv4 privados e planejamento de sub-redes;
 - sub-redes públicas e privadas;
-- tabelas de rotas e gateways;
-- acesso à internet, NAT e endereços públicos;
+- gateways;
 - grupos de segurança e listas de controle de rede: função e diferenças conceituais;
 - segmentação e princípio do menor privilégio.
 
@@ -144,16 +143,18 @@ As aulas podem combinar exposição dialogada, leitura e discussão de diagramas
 - DNS e resolução de nomes para serviços em nuvem;
 - balanceadores de carga e distribuição de requisições;
 - proxy reverso e terminação TLS em nível conceitual;
+- gateways
 - VPN site-to-site e acesso remoto;
 - conexão dedicada e conectividade híbrida;
 - CDN, pontos de presença e cache próximo ao usuário;
-- latência, largura de banda e disponibilidade da conexão.
 
 **Roteiro de 2 h:** percurso de uma requisição (25 min); exposição dos componentes (45 min); análise de diagrama (30 min); discussão de falhas de conectividade (20 min).
 
 **Questão para discussão:** uma aplicação está saudável no data center, mas usuários de uma região percebem lentidão. Que componentes devem ser investigados?
 
 ## Aula 8 — Armazenamento em nuvem e proteção de dados
+
+Faça a aula 7 de tópicos 2
 
 **Objetivos:** distinguir os principais tipos de armazenamento e relacioná-los a desempenho, durabilidade e recuperação.
 

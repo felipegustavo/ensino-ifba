@@ -1,0 +1,152 @@
+---
+id: aula-7
+title: "Aula 7 — Armazenamento e recuperação de dados em nuvem"
+sidebar_position: 8
+description: Armazenamento de objetos, blocos e arquivos, proteção dos dados e objetivos de recuperação.
+---
+
+## 1. Onde guardar os dados?
+
+Um portal acadêmico precisa armazenar **imagens e documentos**, manter o **disco de uma instância** e compartilhar arquivos entre servidores.
+
+| Necessidade | Tipo a considerar |
+|---|---|
+| Imagens e documentos enviados. | Objetos. |
+| Sistema operacional e dados de uma instância. | Blocos. |
+| Diretório compartilhado entre servidores. | Arquivos. |
+
+**Objetivo:** relacionar o tipo de armazenamento a desempenho, durabilidade e recuperação.
+
+## 2. Armazenamento de objetos
+
+Dados são armazenados como **objetos**, identificados por uma chave e acompanhados de metadados.
+
+```text
+Contêiner de objetos
+├── imagens/foto.jpg
+└── documentos/edital.pdf
+```
+
+- A aplicação acessa objetos por uma API, normalmente via HTTP.
+- Adequado para imagens, documentos, vídeos e cópias de segurança.
+- Os nomes podem representar caminhos, sem exigir uma hierarquia real de diretórios.
+- Em geral, altera-se um objeto criando ou enviando uma nova versão completa.
+
+## 3. Armazenamento em blocos
+
+Um **volume em blocos** oferece espaço para uma instância usar como disco.
+
+```text
+Instância → Volume em blocos → Sistema de arquivos e dados
+```
+
+- O sistema operacional pode formatar o volume e criar um sistema de arquivos.
+- Uso comum: disco de inicialização, aplicações e bancos de dados.
+- Pode oferecer baixa latência e acesso a partes dos dados.
+- Capacidade, desempenho e possibilidade de conexão a várias instâncias dependem do serviço.
+
+## 4. Armazenamento de arquivos
+
+Um **sistema de arquivos** organiza dados em diretórios e arquivos e pode ser compartilhado pela rede.
+
+```text
+Servidor A ─┐
+            ├──→ Diretório compartilhado
+Servidor B ─┘
+```
+
+- Servidores acessam arquivos por protocolos como **NFS** ou **SMB**.
+- Uso comum: documentos compartilhados e aplicações que precisam de uma estrutura de diretórios.
+- Permissões, concorrência e desempenho da rede influenciam o acesso.
+
+## 5. Comparando os tipos
+
+| Aspecto | Objetos | Blocos | Arquivos |
+|---|---|---|---|
+| Organização | Objetos e chaves. | Blocos em volumes. | Arquivos e diretórios. |
+| Acesso típico | API. | Volume conectado à instância. | Sistema de arquivos pela rede. |
+| Exemplo | Fotos e documentos. | Disco de uma VM. | Diretório compartilhado. |
+| Desempenho | Adequado ao acesso a objetos. | Geralmente adequado a operações de baixa latência. | Depende do serviço, da rede e dos acessos simultâneos. |
+
+**A escolha depende da carga:** tamanho dos dados, frequência de acesso, latência, operações por segundo e custo.
+
+## 6. Durabilidade e disponibilidade
+
+| Conceito | Pergunta | Exemplo de problema |
+|---|---|---|
+| **Durabilidade** | Os dados continuam preservados ao longo do tempo? | Perda permanente de um documento. |
+| **Disponibilidade** | O serviço está acessível quando necessário? | Documento preservado, mas temporariamente inacessível. |
+
+- Um serviço pode preservar os dados mesmo durante uma interrupção de acesso.
+- Durabilidade não impede exclusão acidental ou alteração indevida por um usuário autorizado.
+- Valores anunciados dependem das condições e da configuração de cada serviço.
+
+## 7. Versionamento e replicação
+
+| Recurso | O que faz | Cuidado |
+|---|---|---|
+| **Versionamento** | Mantém versões anteriores de um objeto. | Versões também ocupam espaço e podem ser excluídas conforme permissões e regras. |
+| **Replicação** | Copia dados para outro destino, que pode estar em outra região. | Alterações ou exclusões podem ser propagadas conforme a configuração. |
+
+```text
+Documento v1 → alteração → Documento v2
+                               ↓
+                         Cópia em outra região
+```
+
+Replicação pode ter atraso. **Replicação não substitui backup:** uma cópia atualizada pode conter o mesmo erro da origem.
+
+## 8. Classes e ciclo de vida
+
+| Classe de acesso | Uso típico | Compensação comum |
+|---|---|---|
+| Frequente | Dados consultados regularmente. | Armazenamento mais caro; acesso geralmente mais simples. |
+| Infrequente | Dados acessados ocasionalmente. | Menor custo de armazenamento; possível cobrança por acesso. |
+| Arquivamento | Dados raramente acessados. | Recuperação pode ser mais lenta e ter custo adicional. |
+
+**Ciclo de vida:** regras movimentam ou removem dados conforme idade e necessidade.
+
+```text
+Documento ativo → Acesso infrequente → Arquivamento → Exclusão
+```
+
+- Prazos, custos mínimos e tempo de recuperação variam conforme o serviço.
+- Definir retenção e conferir as regras antes de automatizar a exclusão.
+
+## 9. Backup e retenção
+
+**Backup** é uma cópia criada para restaurar dados após perda, corrupção ou exclusão.
+
+- Definir frequência, conteúdo e local das cópias.
+- **Retenção:** período durante o qual cada cópia deve ser mantida.
+- Proteger cópias contra alteração ou exclusão indevida e separar seu acesso do ambiente principal.
+- Testar a restauração e verificar se os dados recuperados estão utilizáveis.
+
+**Snapshot** é uma captura do estado de um volume em determinado momento; sua independência e retenção dependem do serviço e da configuração.
+
+## 10. RPO e RTO
+
+| Objetivo | Pergunta | Exemplo |
+|---|---|---|
+| **RPO** — objetivo de ponto de recuperação | Quanto tempo de dados a organização aceita perder? | RPO de 1 hora: recuperar dados com perda de até 1 hora. |
+| **RTO** — objetivo de tempo de recuperação | Em quanto tempo o serviço precisa voltar? | RTO de 2 horas: restaurar o serviço em até 2 horas após a interrupção. |
+
+```text
+Última cópia utilizável ── perda de dados ── Falha ── recuperação ── Serviço retorna
+          ←──────── RPO ────────→             ←──── RTO ────→
+```
+
+- Cópias mais frequentes podem ajudar a atender um RPO menor.
+- Automação, infraestrutura disponível e testes podem ajudar a atender um RTO menor.
+- Frequência de backup, sozinha, não garante o RPO: conclusão e integridade das cópias também importam.
+
+## 11. Criptografia em trânsito e em repouso
+
+| Situação | O que protege | Exemplo |
+|---|---|---|
+| **Em trânsito** | Dados durante a comunicação. | TLS no envio de um documento à nuvem. |
+| **Em repouso** | Dados gravados no armazenamento ou em cópias. | Criptografia de um volume ou backup. |
+
+- Chaves precisam de gestão, permissões e proteção adequadas.
+- Criptografia não substitui controle de acesso, backup ou testes de recuperação.
+- É preciso verificar quais trechos e quais cópias estão protegidos.

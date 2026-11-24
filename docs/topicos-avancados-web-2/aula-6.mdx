@@ -1,0 +1,162 @@
+---
+id: aula-6
+title: "Aula 6 — Conectividade e distribuição de serviços em nuvem"
+sidebar_position: 7
+description: DNS, balanceamento, proxy reverso, gateways, conectividade híbrida e CDN.
+---
+
+## 1. Como o usuário chega à aplicação?
+
+Um aluno acessa **portal.exemplo.edu.br**. A aplicação possui várias réplicas na nuvem e consulta um sistema no campus.
+
+```text
+Aluno → DNS → CDN → Balanceador → Réplicas do portal
+                                       ↓
+                              Rede do campus
+```
+
+- **DNS:** encontra o destino associado ao nome.
+- **CDN e balanceador:** ajudam a entregar conteúdo e distribuir acessos.
+- **Conectividade híbrida:** liga ambientes locais e em nuvem.
+
+**Objetivo:** reconhecer o papel de cada componente no caminho da requisição.
+
+## 2. DNS e resolução de nomes
+
+O **DNS** traduz nomes em informações usadas para localizar serviços, como endereços IP.
+
+```text
+1. Navegador solicita portal.exemplo.edu.br
+2. Resolvedor DNS consulta cache ou servidores DNS
+3. DNS retorna o endereço configurado
+4. Navegador conecta-se ao destino
+```
+
+| Registro | Função | Exemplo |
+|---|---|---|
+| **A** | Nome para endereço IPv4. | `portal.exemplo.edu.br` → IPv4 |
+| **AAAA** | Nome para endereço IPv6. | `portal.exemplo.edu.br` → IPv6 |
+| **CNAME** | Nome como apelido de outro nome. | `portal.exemplo.edu.br` → nome do serviço |
+
+- **TTL:** tempo durante o qual uma resposta pode permanecer em cache.
+- Uma alteração de DNS pode levar tempo para aparecer aos clientes por causa dos caches.
+- O DNS localiza o destino; normalmente **não transporta as requisições HTTP** da aplicação.
+
+## 3. Balanceadores de carga
+
+Um **balanceador** recebe tráfego e o distribui entre destinos, como réplicas de uma API.
+
+```text
+                    ┌→ API 1
+Usuários → Balanceador → API 2
+                    └→ API 3
+```
+
+| Recurso | Papel |
+|---|---|
+| Distribuição | Encaminhar requisições ou conexões entre destinos. |
+| Verificação de saúde | Identificar destinos que respondem à verificação configurada. |
+| Encaminhamento | Aplicar regras, por exemplo, por nome ou caminho da URL. |
+
+- Destinos considerados indisponíveis podem ser retirados da distribuição.
+- Mais réplicas ajudam a atender picos e reduzir o impacto de falhas.
+- Sessões e dados compartilhados precisam funcionar entre réplicas.
+- O balanceador também precisa ser dimensionado e ter disponibilidade planejada.
+
+## 4. Proxy reverso e terminação TLS
+
+Um **proxy reverso** recebe requisições em nome dos servidores da aplicação e as encaminha ao destino adequado.
+
+```text
+Cliente ── HTTPS ──→ Proxy reverso ──→ Aplicação
+                         ↓
+                 Terminação TLS
+```
+
+- **Terminação TLS:** o proxy estabelece a conexão TLS com o cliente e descriptografa a requisição.
+- No trecho seguinte, pode usar HTTP ou estabelecer outra conexão HTTPS.
+- O certificado usado pelo cliente fica configurado no ponto que termina o TLS.
+- Um balanceador pode atuar como proxy reverso; as funções podem coexistir no mesmo serviço.
+
+**Atenção:** HTTPS até o proxy não garante, por si só, criptografia entre o proxy e a aplicação.
+
+## 5. Gateways
+
+Um **gateway** é um ponto de passagem entre redes ou serviços, com uma função definida pelo seu tipo.
+
+| Tipo | Papel conceitual | Exemplo |
+|---|---|---|
+| Gateway de internet | Possibilitar conectividade entre uma rede virtual e a internet, conforme rotas e regras. | Acesso público a um portal. |
+| Gateway NAT | Permitir saída de recursos privados usando um endereço traduzido. | Servidor privado baixa atualizações. |
+| Gateway de VPN | Encerrar e gerenciar conexões VPN em uma rede. | Conectar o campus à nuvem. |
+| API gateway | Receber chamadas de API e aplicar políticas de acesso e encaminhamento. | Direcionar chamadas para serviços distintos. |
+
+**Gateway não é sinônimo de balanceador:** o nome descreve um ponto de passagem; suas funções variam conforme o serviço.
+
+## 6. VPN site-to-site e acesso remoto
+
+Uma **VPN** cria um túnel criptografado sobre uma rede intermediária, frequentemente a internet.
+
+| Modalidade | Conexão | Exemplo |
+|---|---|---|
+| **Site-to-site** | Rede ↔ rede, por gateways. | Campus conectado à rede na nuvem. |
+| **Acesso remoto** | Dispositivo do usuário ↔ rede, por cliente VPN. | Administrador acessa recursos internos de casa. |
+
+```text
+Campus ── Gateway ══ túnel VPN ══ Gateway ── Rede na nuvem
+```
+
+- A VPN protege o tráfego no túnel, mas exige autenticação, rotas e regras de acesso.
+- Capacidade e disponibilidade dependem também dos links e equipamentos envolvidos.
+
+## 7. Conexão dedicada e conectividade híbrida
+
+**Conectividade híbrida** integra infraestrutura local e recursos em nuvem.
+
+| Alternativa | Característica | Ponto de atenção |
+|---|---|---|
+| VPN pela internet | Túnel sobre conectividade pública existente. | Desempenho depende do caminho pela internet. |
+| Conexão dedicada | Ligação privada por meio de infraestrutura e parceiros do provedor. | Prazo, disponibilidade e custo de implantação. |
+
+- Uma conexão dedicada pode oferecer desempenho mais previsível, dependendo do contrato e do percurso.
+- **Privada não significa automaticamente criptografada:** TLS ou VPN podem ser necessários.
+- Redundância de links e equipamentos deve ser planejada quando a continuidade é importante.
+
+## 8. CDN, pontos de presença e cache
+
+Uma **CDN** distribui conteúdo usando servidores em diferentes localidades, próximos aos usuários.
+
+```text
+Aluno → Ponto de presença da CDN → conteúdo em cache
+                    └───────────→ origem, se necessário
+```
+
+| Conceito | Papel |
+|---|---|
+| **Ponto de presença — PoP** | Localidade com infraestrutura da CDN. |
+| **Cache** | Cópia temporária de conteúdo para atender novas requisições. |
+| **Origem** | Serviço de onde a CDN busca o conteúdo. |
+
+- Imagens, arquivos CSS e vídeos são exemplos comuns de conteúdo armazenado em cache.
+- O cache pode reduzir latência e requisições à origem.
+- Conteúdo personalizado exige regras adequadas para evitar compartilhar dados entre usuários.
+- Validade e invalidação do cache controlam quando buscar uma versão atualizada.
+
+## 9. O caminho completo
+
+```text
+Aluno → DNS → CDN → Balanceador / proxy → Réplicas do portal
+                                               ↓
+                                     VPN ou conexão dedicada
+                                               ↓
+                                        Sistema no campus
+```
+
+| Componente | Contribuição para o portal |
+|---|---|
+| DNS | Indica o destino associado ao nome. |
+| CDN | Entrega conteúdo em cache próximo ao aluno. |
+| Balanceador / proxy | Recebe e encaminha requisições às réplicas. |
+| VPN ou conexão dedicada | Conecta a nuvem à infraestrutura do campus. |
+
+O caminho real varia conforme a arquitetura: nem toda requisição precisa passar por todos esses componentes.

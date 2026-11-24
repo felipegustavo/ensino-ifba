@@ -176,51 +176,7 @@ O plano de avaliação deve nascer junto dos objetivos. Defina:
 
 Se houver um limite de aceitação, justifique-o por requisitos do contexto ou por uma referência pertinente. Não escolha o limite depois de ver os resultados apenas para declarar sucesso.
 
-## 7. Exemplo completo — ADS
-
-**Cenário fictício:** protótipo para acompanhar solicitações de manutenção, retomando a aula anterior.
-
-**Pergunta:** em que medida o protótipo atende aos requisitos de rastreabilidade definidos para o setor?
-
-**Percurso possível:** DSR, com levantamento do fluxo, requisitos fundamentados, desenvolvimento incremental e avaliação por cenários de teste. O uso de ciclos curtos de implementação organiza o desenvolvimento; a DSR orienta a investigação.
-
-| Requisito | Procedimento de avaliação | Evidência |
-|---|---|---|
-| Registrar autoria e data das alterações | Executar mudanças com perfis diferentes e consultar o histórico | Registro esperado e obtido em cada cenário |
-| Recuperar a sequência de estados | Criar, encaminhar, concluir e reabrir uma solicitação | Comparação entre sequência executada e histórico apresentado |
-| Restringir alterações por perfil | Tentar operações permitidas e proibidas com contas de teste | Resultado de cada tentativa e vínculo com a regra de acesso |
-
-**Dados:** solicitações fictícias, contas de teste e uma matriz que relacione requisitos a cenários. Registre a versão do protótipo e o estado inicial da base para permitir nova execução.
-
-**Análise:** apresentar atendimento por requisito, falhas e situações não cobertas. Se usar percentual de aprovação, informar também o total de casos e a gravidade das falhas; muitos casos simples aprovados podem ocultar um requisito crítico não atendido.
-
-**Limite:** essa avaliação examina rastreabilidade nos cenários selecionados. Não sustenta, sozinha, conclusões sobre redução do tempo de atendimento ou usabilidade. Essas afirmações exigiriam procedimentos adicionais.
-
-## 8. Exemplo completo — Redes
-
-**Cenário fictício:** comparação entre duas configurações de uma rede Wi-Fi de laboratório.
-
-**Pergunta:** como as configurações A e B se comparam em vazão e latência sob três níveis definidos de carga?
-
-**Percurso possível:** experimento em laboratório, com protocolo definido antes da coleta.
-
-| Elemento | Definição para o planejamento |
-|---|---|
-| Fatores manipulados | Configuração A/B e três níveis de carga, definidos por valores de tráfego oferecido |
-| Medidas observadas | Vazão útil em Mbit/s e tempo de ida e volta, ou RTT, em ms |
-| Condições controladas | Equipamentos, posições, canal, versões, duração e perfil do tráfego, exceto o fator em comparação |
-| Registro do ambiente | Topologia, parâmetros alterados, interferências observadas e condições de execução |
-| Repetições | Quantidade justificada por um piloto, variabilidade observada e recursos disponíveis |
-| Ordem de execução | Alternada ou aleatorizada para reduzir associação entre configuração e variação ao longo do tempo |
-| Referência | Configuração A como base de comparação, sem pressupor que B será superior |
-
-**Coleta:** identificar cada execução, registrar configuração, carga, horário e medições brutas. Definir previamente aquecimento, duração da coleta e tratamento de execuções interrompidas. RTT não deve ser apresentado como se fosse atraso em um único sentido.
-
-**Análise:** comparar A e B em cada carga, apresentar medidas de tendência central e dispersão e visualizar a distribuição dos dados. Amostras sucessivas dentro de uma execução não devem ser tratadas automaticamente como repetições independentes. Testes estatísticos, se utilizados, precisam ser compatíveis com o desenho e seus pressupostos.
-
-**Limite:** diferenças podem variar com interferência, equipamentos e perfil de tráfego. O resultado descreve as condições estudadas e não estabelece a melhor configuração para qualquer rede.
-
-## 9. Como avaliar academicamente um TCC
+## 7. Como avaliar academicamente um TCC
 
 A avaliação acadêmica considera a coerência e a qualidade do percurso. Um resultado desfavorável à solução pode produzir um bom TCC quando os procedimentos são adequados e a análise é honesta.
 
@@ -239,7 +195,7 @@ Para cada critério, pode-se atribuir um nível: **0 — ausente; 1 — insufici
 
 Na revisão do **pré-projeto**, examine a viabilidade e o plano de execução e avaliação. Não cobre resultados que ainda não deveriam existir nem trate resultados esperados como evidência coletada.
 
-## 10. Qualidade e limites das evidências
+## 8. Qualidade e limites das evidências
 
 Antes da execução, antecipe fatores que podem enfraquecer as conclusões:
 

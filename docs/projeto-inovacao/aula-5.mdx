@@ -1,0 +1,89 @@
+---
+title: "Exemplos de TCC para ADS e Redes de Computadores"
+sidebar_label: "Exemplos de TCC"
+sidebar_position: 5
+description: "Exemplos comentados de propostas de TCC e atividade de elaboração para cursos superiores de tecnologia."
+---
+
+## 1. Objetivos da aula
+
+Ao final da aula, você deverá ser capaz de reconhecer a relação entre problema, objetivos, método e avaliação; comparar possibilidades de TCC em ADS e Redes; e elaborar uma proposta inicial com escopo viável.
+
+Os exemplos são **propostas didáticas fictícias**, não trabalhos já executados. Os resultados e avaliações descritos são planejados, não evidências obtidas. Adapte-os ao contexto, aos recursos disponíveis e às regras do seu curso. Um TCC de tecnologia pode desenvolver uma solução, avaliar alternativas ou investigar uma prática; o essencial é apresentar uma questão delimitada e evidências para respondê-la.
+
+## 2. Exemplos para Análise e Desenvolvimento de Sistemas
+
+### 2.1 Acompanhamento de solicitações em um laboratório
+
+- **Contexto e problema:** solicitações de manutenção chegam por diferentes canais e seu andamento é difícil de acompanhar. Como um protótipo pode apoiar o registro e o acompanhamento dessas solicitações em um laboratório?
+- **Objetivo geral:** desenvolver e avaliar um protótipo para registrar e acompanhar solicitações.
+- **Objetivos específicos:** levantar necessidades com responsáveis; implementar cadastro, mudança de status e consulta ao histórico; avaliar as funções e a realização de tarefas.
+- **Método:** levantamento de requisitos, desenvolvimento incremental e testes com cenários definidos. Quando houver acesso e autorização, convidar usuários do contexto para executar tarefas e relatar dificuldades.
+- **Avaliação:** verificar requisitos por casos de teste e registrar conclusão, erros e dificuldades nas tarefas. Comparar os resultados aos requisitos definidos previamente.
+- **Escopo e limites:** um laboratório e três funções centrais; sem integração com sistemas institucionais. A avaliação com poucos participantes não permite generalizar para outras organizações.
+
+### 2.2 Comparação de estratégias de cache em uma aplicação web
+
+- **Problema:** como o uso de cache em memória afeta o tempo de resposta de uma consulta frequente em uma aplicação de teste?
+- **Objetivo geral:** comparar o tempo de resposta da consulta com e sem cache em cargas definidas.
+- **Objetivos específicos:** implementar as duas configurações; criar dados e cargas reproduzíveis; executar medições repetidas e analisar a variação.
+- **Método:** experimento em ambiente controlado, mantendo equipamento, dados e consulta constantes e variando a configuração de cache. Registrar versões, carga e número de repetições.
+- **Avaliação:** comparar tempos de resposta em milissegundos, incluindo mediana e dispersão, para cada cenário; verificar também se as respostas permanecem corretas.
+- **Escopo e limites:** uma consulta e um ambiente de teste. Os resultados dependem da carga, do equipamento e da validade dos dados armazenados em cache.
+
+### 2.3 Acessibilidade em um fluxo de inscrição
+
+- **Problema:** quais barreiras de acesso podem ser identificadas em um fluxo de inscrição de um sistema web selecionado?
+- **Objetivo geral:** identificar e analisar barreiras de acessibilidade nesse fluxo e propor correções priorizadas.
+- **Objetivos específicos:** selecionar páginas e critérios de análise; executar verificações automatizadas e manuais; documentar problemas e sugestões de correção.
+- **Método:** estudo aplicado de um fluxo delimitado, usando critérios de acessibilidade explicitados e navegação por teclado, além de ferramenta automatizada. Registrar passos para reproduzir cada achado.
+- **Avaliação:** relacionar cada barreira ao critério adotado, ao impacto no fluxo e à evidência observada; caso correções sejam implementadas, repetir as verificações nos mesmos cenários.
+- **Escopo e limites:** apenas o fluxo selecionado. Ferramentas automatizadas e testes por teclado não cobrem todas as necessidades de pessoas com deficiência.
+
+## 3. Exemplos para Redes de Computadores
+
+### 3.1 Monitoramento de disponibilidade em laboratório
+
+- **Problema:** como acompanhar a disponibilidade de serviços de um laboratório e registrar períodos de indisponibilidade?
+- **Objetivo geral:** implantar e avaliar uma solução de monitoramento para serviços selecionados em ambiente de laboratório.
+- **Objetivos específicos:** identificar serviços e requisitos; configurar coleta e alertas; testar cenários de falha controlada.
+- **Método:** instalar uma ferramenta de monitoramento em laboratório autorizado, documentar topologia, intervalo de coleta e cenários de interrupção planejados.
+- **Avaliação:** comparar falhas simuladas com os registros e alertas gerados, observando detecção e tempo entre interrupção e alerta. Repetir cenários e registrar condições.
+- **Escopo e limites:** poucos serviços e falhas simuladas; a detecção em laboratório não garante desempenho igual em produção.
+
+### 3.2 Comparação de configurações de rede sem fio
+
+- **Problema:** como duas configurações de canal afetam a vazão e a perda de pacotes em um ambiente interno delimitado?
+- **Objetivo geral:** comparar as configurações em pontos e condições definidos de um laboratório.
+- **Objetivos específicos:** caracterizar o ambiente; definir configurações e pontos de medição; repetir ensaios e analisar as medidas.
+- **Método:** experimento autorizado mantendo os mesmos equipamentos, posições e procedimento de geração de tráfego; registrar horário e interferências observáveis.
+- **Avaliação:** comparar vazão em Mbps e perda de pacotes em percentual por configuração e ponto, apresentando variação entre repetições.
+- **Escopo e limites:** um ambiente e dois canais. Interferências variáveis podem afetar os resultados; não se deve generalizar para qualquer rede sem fio.
+
+### 3.3 Automação de configurações de equipamentos
+
+- **Problema:** um procedimento automatizado consegue aplicar configurações básicas de forma correta e reduzir o tempo de execução em um laboratório?
+- **Objetivo geral:** desenvolver e avaliar um procedimento automatizado para configurar equipamentos em um ambiente de teste.
+- **Objetivos específicos:** definir configurações esperadas; criar o procedimento; comparar sua execução com a configuração manual em cenários equivalentes.
+- **Método:** usar equipamentos de laboratório ou emulação, com configuração inicial documentada. Executar ambos os procedimentos repetidamente e registrar erros e tempos.
+- **Avaliação:** verificar se os parâmetros finais atendem aos requisitos e comparar tempos de execução em minutos, incluindo tempo de correção de erros. Registrar experiência de quem executa os testes.
+- **Escopo e limites:** configurações básicas em uma topologia pequena; resultados dependem dos equipamentos, do cenário e da experiência dos operadores. Não incluir credenciais nos artefatos publicados.
+
+## 4. Comparando as propostas
+
+| Proposta | Principal contribuição | Evidência planejada |
+|---|---|---|
+| Solicitações | Protótipo e análise de uso | Testes funcionais e realização de tarefas |
+| Cache | Comparação de desempenho | Tempos de resposta e correção |
+| Acessibilidade | Diagnóstico e recomendações | Barreiras reproduzíveis e critérios adotados |
+| Monitoramento | Solução configurada e avaliada | Registros e alertas em falhas simuladas |
+| Rede sem fio | Comparação de configurações | Vazão e perda em cenários definidos |
+| Automação | Procedimento e comparação | Correção da configuração e tempo de execução |
+
+A inovação pode estar na aplicação, adaptação ou avaliação de uma solução para um contexto específico. Utilizar uma ferramenta existente não impede uma contribuição: é preciso explicar o problema, justificar as escolhas e demonstrar o que foi aprendido com a avaliação.
+
+**Entrega sugerida:** uma página com título provisório, contexto e justificativa, pergunta, objetivos, método, avaliação, escopo e recursos necessários. Indique quais informações ainda precisam ser confirmadas com a orientação ou com a organização envolvida.
+
+Para revisar a proposta, pergunte: o problema é específico? Há acesso aos dados e recursos? As métricas correspondem ao objetivo? O plano permite concluir algo mesmo se a solução não alcançar o resultado esperado? O cronograma comporta desenvolvimento, avaliação e escrita?
+
+Use dados fictícios e ambientes autorizados nos exercícios. A participação de pessoas e o acesso a dados reais dependem das orientações e procedimentos aplicáveis ao curso e ao contexto. Consulte também a [aula sobre estrutura, metodologia e avaliação](./aula-4.mdx).

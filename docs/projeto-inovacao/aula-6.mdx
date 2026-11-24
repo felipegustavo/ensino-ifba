@@ -1,0 +1,145 @@
+---
+title: "Técnicas de avaliação de TCCs em ADS e Redes"
+sidebar_label: "Técnicas de avaliação de TCCs"
+sidebar_position: 6
+description: "Planejamento e aplicação de técnicas para avaliar resultados de TCCs de ADS e Redes de Computadores."
+---
+
+## 1. Objetivos da aula
+
+Ao final da aula, você deverá ser capaz de escolher técnicas de avaliação coerentes com a pergunta do TCC, elaborar um protocolo de coleta e análise, interpretar resultados com atenção aos limites e revisar a qualidade acadêmica de uma proposta.
+
+Na [aula 4](./aula-4.mdx), vimos como estruturar um plano de avaliação; na [aula 5](./aula-5.mdx), conhecemos propostas para os dois cursos. Agora vamos detalhar **como obter e analisar evidências** sobre seus resultados. Também examinaremos como revisar o trabalho academicamente. Os exemplos desta aula são fictícios e os números, quando apresentados, são ilustrativos.
+
+## 2. O que estamos avaliando?
+
+A avaliação dos **resultados do TCC** examina, por exemplo, se um sistema atende a requisitos, se uma configuração melhora determinada métrica ou se uma análise responde à pergunta de pesquisa. Já a **avaliação acadêmica** examina a qualidade do trabalho como um todo: problema, fundamentação, método, evidências, análise e apresentação. Um resultado contrário à expectativa pode fundamentar um bom TCC quando o processo é bem documentado e a conclusão respeita as evidências.
+
+Construa o plano a partir desta cadeia:
+
+**Pergunta → objeto → critério → indicador → técnica → análise → conclusão.**
+
+| Elemento | Pergunta orientadora | Exemplo |
+|---|---|---|
+| Objeto | O que será avaliado? | Protótipo de registro de solicitações |
+| Critério | Qual qualidade importa? | Correção funcional |
+| Indicador | Que evidência representa essa qualidade? | Quantidade de casos aprovados sobre os executados |
+| Técnica | Como obter a evidência? | Testes funcionais com resultados esperados definidos |
+| Referência | Com o que comparar? | Requisitos estabelecidos antes dos testes |
+| Análise | Como interpretar? | Identificar requisitos atendidos e falhas por cenário |
+
+Uma técnica pode produzir mais de um indicador, e uma qualidade pode exigir mais de uma técnica. Ter muitos gráficos não substitui o alinhamento com os objetivos.
+
+## 3. Técnicas aplicáveis a ADS
+
+### 3.1 Testes funcionais
+
+Verificam o comportamento observado em cenários ligados a requisitos. Para cada caso, registre identificação, requisito, condições iniciais, entrada, passos, resultado esperado e obtido e situação (aprovado ou reprovado).
+
+**Exemplo:** para o requisito “registrar solicitação”, teste envio com campos obrigatórios preenchidos e envio com campo obrigatório vazio. A aprovação é definida pela resposta esperada em cada caso. A proporção de casos aprovados é `casos aprovados / casos executados × 100`, acompanhada da lista de falhas.
+
+**Limite:** passar nos testes executados não prova ausência de todos os defeitos. Inclua situações normais, inválidas e limites relevantes, sem confundir quantidade de testes com cobertura completa.
+
+### 3.2 Avaliação de usabilidade por tarefas
+
+Selecione tarefas relacionadas aos objetivos do sistema, como registrar e localizar uma solicitação. Defina perfil e recrutamento dos participantes, instruções, ambiente e critério de conclusão. Observe a execução, registre conclusão, erros e tempo, e recolha comentários ao final sem conduzir as respostas.
+
+A taxa de conclusão é `tarefas concluídas / tarefas tentadas × 100`; apresente também quantas pessoas participaram e quais dificuldades ocorreram. Um questionário de percepção pode complementar a observação, mas satisfação isolada não demonstra eficiência ou acessibilidade. Uma amostra pequena ajuda a identificar problemas no contexto estudado, sem representar automaticamente todos os usuários.
+
+### 3.3 Questionários: usabilidade e aceitação
+
+Questionários coletam **percepções** após uma experiência com o sistema. Defina o público, apresente tarefas representativas antes das perguntas e registre versão, ambiente, recrutamento e quantidade de respostas. Combine os resultados com observação das tarefas: uma opinião favorável, por si só, não demonstra que uma tarefa foi concluída corretamente ou que houve ganho real de produtividade.
+
+#### SUS: percepção de usabilidade
+
+A **System Usability Scale (SUS)** é um questionário padronizado de dez afirmações, respondidas em cinco níveis de concordância, que produz uma pontuação global de percepção de usabilidade. Aplique os dez itens e a escala conforme a versão escolhida; registre a fonte e a tradução. O [material original de Brooke](https://digital.ahrq.gov/sites/default/files/docs/survey/systemusabilityscale%2528sus%2529_comp%255B1%255D.pdf) descreve o instrumento e o cálculo.
+
+Para cada participante, subtraia 1 da resposta aos itens ímpares; para os itens pares, subtraia a resposta de 5. Some as dez contribuições e multiplique por 2,5: o resultado varia de 0 a 100. Por exemplo, uma soma de contribuições igual a 30 produz 75 pontos. Essa pontuação **não é porcentagem de acertos**. Apresente a pontuação individual ou distribuição, o número de respostas e a variação; uma média isolada pode esconder dificuldades. Não aplique a fórmula a um questionário alterado ou incompleto como se fosse o SUS original.
+
+#### TAM: utilidade e facilidade de uso percebidas
+
+O **Technology Acceptance Model (TAM)** é um modelo para investigar fatores relacionados à aceitação de tecnologia. Entre seus construtos centrais estão a **utilidade percebida** — quanto a pessoa acredita que a tecnologia pode melhorar seu desempenho na atividade — e a **facilidade de uso percebida** — quanto acredita que seu uso exige pouco esforço. Dependendo da versão e da pergunta do estudo, também se pode investigar intenção de uso. A pesquisa de [Davis (1989)](https://doi.org/10.2307/249008) apresenta escalas para os dois construtos centrais.
+
+O TAM é um modelo, não um único questionário universal nem um cálculo automático de aceitação. Para um estudo, selecione uma escala publicada adequada, informe fonte, versão, tradução, construtos e forma de análise. Se adaptar itens, documente as alterações e teste a compreensão com pessoas de perfil semelhante ao público; não afirme que a versão adaptada foi validada sem evidência. Perguntas criadas apenas para explorar o tema devem ser identificadas como **inspiradas no TAM**, não como aplicação de uma escala validada.
+
+Os itens abaixo são **exemplos didáticos**, não uma reprodução nem instrumento validado. Após uma tarefa, use, por exemplo, uma escala de 1 (discordo totalmente) a 5 (concordo totalmente), com opção de não responder:
+
+| Construto | ADS: sistema de solicitações | Redes: painel de monitoramento |
+|---|---|---|
+| Utilidade percebida | Acredito que o sistema ajudaria a acompanhar solicitações. | Acredito que o painel ajudaria a identificar interrupções. |
+| Facilidade de uso percebida | Aprender a registrar uma solicitação parece fácil. | Aprender a localizar um alerta no painel parece fácil. |
+| Intenção de uso, se pertinente | Eu usaria o sistema para acompanhar solicitações. | Eu usaria o painel nas atividades de monitoramento. |
+
+Apresente as respostas por item e construto, com número de respondentes, contagens por opção e, quando adequado, mediana. Se calcular um escore composto, explique os itens, o tratamento de respostas ausentes e a regra adotada na escala escolhida; não misture construtos sem justificativa. Acrescente uma pergunta aberta, como “Que dificuldade você encontrou?”, e relacione os relatos às observações das tarefas.
+
+**Exemplo de interpretação:** se a maioria considerar o painel útil, mas relatar dificuldade para localizar alertas, o resultado sugere utilidade percebida com uma possível barreira de uso naquele grupo. Não comprova melhoria real no tempo de atendimento, adoção futura ou aceitação por todos os profissionais. Para investigar desempenho, complemente com tempos, conclusão de tarefas ou registros pertinentes. Uma amostra pequena ou recrutada por conveniência limita generalizações e não sustenta, por si só, testes complexos de relações entre construtos.
+
+### 3.4 Inspeção de acessibilidade
+
+Delimite páginas e fluxos, escolha critérios de acessibilidade pertinentes e registre a versão utilizada. Combine verificação automatizada com inspeção manual, por exemplo navegação por teclado e conferência de rótulos. Para cada achado, documente página, passos, critério, impacto e evidência; se houver correção, repita a verificação nas mesmas condições.
+
+A ferramenta automatizada encontra apenas parte das barreiras. A inspeção de um fluxo também não comprova que todo o sistema é acessível; quando pertinente e viável, complemente a análise com participação de pessoas com deficiência e os cuidados aplicáveis.
+
+## 4. Técnicas aplicáveis a Redes
+
+### 4.1 Medição de desempenho e comparação controlada
+
+Defina topologia, equipamentos, versões, configurações, carga, duração e pontos de medição. Escolha um fator a comparar, mantenha os demais o mais estáveis possível, repita os ensaios e registre interferências e falhas. Alterne a ordem dos cenários quando viável para reduzir efeitos de tempo e aquecimento.
+
+- **Vazão:** quantidade de dados entregues por unidade de tempo, por exemplo em Mbps; informe o ponto e o intervalo de medição.
+- **Latência:** tempo de trânsito ou de ida e volta, conforme o instrumento; informe qual foi medido, em milissegundos.
+- **Perda:** proporção de pacotes enviados que não chegaram ao destino, em percentual, para o fluxo e intervalo observados.
+
+**Exemplo:** comparar dois canais sem fio nos mesmos pontos, com o mesmo tráfego e várias repetições. Apresente valores por cenário e sua variação; uma única medição não sustenta conclusão geral. Interferência, distância e carga podem afetar o resultado.
+
+### 4.2 Injeção controlada de falhas
+
+Para avaliar monitoramento ou recuperação, defina falhas reproduzíveis em laboratório autorizado, como interromper um serviço de teste. Registre a hora da interrupção, detecção, alerta e recuperação, além das configurações e do intervalo de coleta.
+
+A proporção de falhas detectadas é `falhas detectadas / falhas simuladas × 100`. O tempo de detecção é o intervalo entre a interrupção registrada e sua detecção. Inclua alertas indevidos e falhas não detectadas quando ocorrerem. O resultado vale para os cenários ensaiados; não garante detecção de todos os tipos de falha.
+
+### 4.3 Verificação de configuração
+
+Crie uma lista de requisitos observáveis, por exemplo endereçamento e conectividade entre segmentos permitidos. Registre o estado inicial, aplique a configuração e verifique o estado final e os testes de conectividade esperados, inclusive acessos que devem ser bloqueados. Para comparar procedimento manual e automatizado, use estados iniciais equivalentes e inclua o tempo de correção de erros.
+
+Relate requisitos atendidos, falhas, tempo e condições. Equipamentos, topologia e experiência dos operadores limitam a comparação. Retire credenciais e dados sensíveis dos registros compartilhados.
+
+## 5. Técnicas úteis nos dois cursos
+
+**Entrevistas e observação** ajudam a compreender processos, necessidades e dificuldades. Defina perfil e seleção de participantes, roteiro e registro; organize respostas por temas e apresente evidências também quando divergirem. Relatos são percepções situadas e não substituem medição técnica de desempenho.
+
+**Análise documental e de registros** pode examinar chamados, configurações ou logs. Defina período, fonte, critérios de seleção e campos analisados; documente registros incompletos e explique como foram tratados. A ausência de registro não prova que um evento não ocorreu.
+
+**Comparação com requisitos ou solução de referência** exige critérios e cenários equivalentes. Explique por que a referência foi escolhida e quais diferenças entre as condições podem afetar a interpretação. Para uma revisão de literatura ou diagnóstico, avalie também a transparência da busca, seleção e análise das fontes, em vez de exigir um protótipo.
+
+## 6. Elaborando um protocolo de avaliação
+
+Antes de coletar dados, preencha o roteiro:
+
+1. **Pergunta e objetivo:** o que você precisa responder ou verificar?
+2. **Objeto e versão:** qual sistema, processo, topologia ou conjunto de fontes será examinado?
+3. **Critérios e indicadores:** o que importa, como será medido, em que unidade e com qual regra de cálculo?
+4. **Referência e decisão:** qual requisito, situação anterior ou alternativa será usado na comparação? Se houver limite de aceitação, justifique-o antes da coleta.
+5. **Cenários e recursos:** quais tarefas, cargas ou falhas serão usados? Descreva ambiente, ferramentas, dados, participantes e seleção, quando houver.
+6. **Procedimento:** quais passos, duração e repetições serão realizados? O que será mantido constante e o que poderá variar?
+7. **Registro e análise:** onde guardar evidências, como tratar falhas e dados ausentes, e como organizar e comparar os resultados?
+8. **Limites e cuidados:** quais fatores afetam as conclusões? Quais autorizações e cuidados com pessoas e dados são necessários?
+
+### Exemplo preenchido: monitoramento em laboratório
+
+**Pergunta:** o monitoramento detecta interrupções de um serviço de teste e em quanto tempo? **Objeto:** serviço e ferramenta configurados em uma topologia documentada. **Cenário:** dez interrupções planejadas, com serviço restabelecido entre elas e horário registrado. **Indicadores:** falhas detectadas e tempo entre interrupção e detecção; registrar também alertas indevidos. **Análise:** apresentar as dez observações, proporção detectada, mediana e faixa dos tempos, incluindo falhas não detectadas. **Limites:** uma topologia e um tipo de interrupção; intervalo de coleta e relógios dos equipamentos influenciam as medições. O número de repetições é ilustrativo e deve ser justificado pela viabilidade e pelo objetivo.
+
+## 7. Como analisar e apresentar resultados
+
+Organize os dados por cenário e informe unidades, quantidade de observações e condições. Para medidas numéricas, apresente valores individuais quando possível, mediana ou média conforme apropriado e alguma indicação de variação, como mínimo e máximo. Para relatos, explique como formou categorias e relacione interpretações aos registros, preservando a identidade dos participantes.
+
+Imagine que, em dez falhas simuladas, oito foram detectadas. A proporção observada seria 80% nesse ensaio; as duas falhas não detectadas precisam ser investigadas e relatadas. O resultado não permite afirmar que a solução detectará 80% das falhas em qualquer rede. Diferencie **resultado** (o que foi observado), **discussão** (possíveis explicações e comparação com objetivos e literatura) e **conclusão** (resposta proporcional às evidências).
+
+Evite escolher critérios apenas depois de observar os dados, omitir resultados desfavoráveis ou atribuir causalidade a uma comparação em que vários fatores mudaram. Guarde os registros necessários para conferir os cálculos e reproduzir o procedimento, respeitando as condições de acesso e privacidade.
+
+**Entrega sugerida:** protocolo de uma a duas páginas e ficha de revisão comentada. Use dados fictícios e ambientes autorizados nos exercícios. Para estudos com pessoas ou dados reais, consulte a orientação e os procedimentos aplicáveis antes da coleta.
+
+## Referências para aprofundamento
+
+- Davis, F. D. [Perceived Usefulness, Perceived Ease of Use, and User Acceptance of Information Technology](https://doi.org/10.2307/249008). *MIS Quarterly*, 13(3), 319–340, 1989.
+- Brooke, J. [SUS: A Quick and Dirty Usability Scale](https://digital.ahrq.gov/sites/default/files/docs/survey/systemusabilityscale%2528sus%2529_comp%255B1%255D.pdf). Descrição do instrumento e cálculo da pontuação.
